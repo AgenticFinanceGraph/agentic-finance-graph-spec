@@ -1,0 +1,265 @@
+{
+  "note": "The data-quality assertions behind every published figure: what each one checks, how severe a failure is, and its weight. Zero failing rows means pass. The queries themselves run on our own database and are not published.",
+  "count": 37,
+  "checks": [
+    {
+      "id": "me_required_fields",
+      "dimension": "completeness",
+      "severity": "block",
+      "weight": 3,
+      "what": "A payment row is missing a field every downstream figure needs."
+    },
+    {
+      "id": "me_duplicate_log",
+      "dimension": "uniqueness",
+      "severity": "block",
+      "weight": 3,
+      "what": "The same on-chain log (transaction + log position) is stored twice, which double-counts it."
+    },
+    {
+      "id": "me_identical_in_one_tx",
+      "dimension": "uniqueness",
+      "severity": "info",
+      "weight": 1,
+      "what": "Identical transfers inside one transaction. Usually a batch payment, not a duplicate: on 2026-09-24 all four counted groups were checked against their on-chain receipts and every one matched. Rows without a log position cannot be told apart from a double insert, which is why me_duplicate_log exists."
+    },
+    {
+      "id": "me_missing_log_index",
+      "dimension": "completeness",
+      "severity": "info",
+      "weight": 1,
+      "what": "Payments stored before log positions were recorded. They fill in as the payment scan re-reads each wallet; until then me_duplicate_log cannot see them."
+    },
+    {
+      "id": "me_amount_range",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 3,
+      "what": "A payment amount is negative or implausibly large for a single agent transfer."
+    },
+    {
+      "id": "me_known_values",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 3,
+      "what": "A kind, rail, asset or confidence value appeared that no downstream code knows how to treat. Since 27 Sep 2026: PAY and EARN (income), four stablecoins."
+    },
+    {
+      "id": "me_address_format",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 3,
+      "what": "A sender or recipient is not a lowercase CAIP-10 address, so joins against it silently miss."
+    },
+    {
+      "id": "me_counted_self_payment",
+      "dimension": "consistency",
+      "severity": "block",
+      "weight": 3,
+      "what": "A wallet paying itself is counted as spending. Moving your own money is not paying anybody."
+    },
+    {
+      "id": "me_pre_registration_leak",
+      "dimension": "consistency",
+      "severity": "block",
+      "weight": 3,
+      "what": "A payment from BEFORE the agent was registered is counted. This exact leak once overstated the headline by 46%."
+    },
+    {
+      "id": "me_orphan_actor",
+      "dimension": "referential",
+      "severity": "block",
+      "weight": 3,
+      "what": "A payment points at an actor that does not exist."
+    },
+    {
+      "id": "me_sender_never_bound",
+      "dimension": "referential",
+      "severity": "warn",
+      "weight": 3,
+      "what": "A payment is attributed to an agent whose wallet was never bound to it, so the attribution has no basis."
+    },
+    {
+      "id": "me_pass_through_backlog",
+      "dimension": "freshness",
+      "severity": "warn",
+      "weight": 3,
+      "what": "Counted payments older than the backlog window have not been checked for pass-through routing yet. Pre-registration payments are excluded from every total already, so they never need checking (the first run flagged 3,313 of them by mistake)."
+    },
+    {
+      "id": "me_freshness",
+      "dimension": "freshness",
+      "severity": "warn",
+      "weight": 3,
+      "what": "The newest observed payment is older than the scan's own cadence allows: the payment scan may have stalled."
+    },
+    {
+      "id": "me_volume_swing",
+      "dimension": "volume",
+      "severity": "info",
+      "weight": 1,
+      "what": "Yesterday's number of newly recorded payments is far from the trailing 7-day median. Needs a week of history."
+    },
+    {
+      "id": "actor_liveness_range",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 3,
+      "what": "A liveness level outside the L0–L9 ladder."
+    },
+    {
+      "id": "actor_rank_without_evidence",
+      "dimension": "consistency",
+      "severity": "block",
+      "weight": 3,
+      "what": "An agent is ranked L7 or above with no countable payment behind it. The rank is the product; this is the check that protects it."
+    },
+    {
+      "id": "actor_evidence_without_rank",
+      "dimension": "consistency",
+      "severity": "warn",
+      "weight": 3,
+      "what": "An agent has a countable payment but is still ranked below L7: a promotion is pending."
+    },
+    {
+      "id": "actor_l9_counterparties",
+      "dimension": "consistency",
+      "severity": "block",
+      "weight": 3,
+      "what": "An L9 agent does not have the three distinct counterparties in 30 days that L9 requires."
+    },
+    {
+      "id": "binding_orphan_actor",
+      "dimension": "referential",
+      "severity": "block",
+      "weight": 3,
+      "what": "A binding points at an actor that does not exist."
+    },
+    {
+      "id": "binding_wallet_format",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 3,
+      "what": "A bound wallet is not a lowercase CAIP-10 address."
+    },
+    {
+      "id": "binding_interval",
+      "dimension": "consistency",
+      "severity": "block",
+      "weight": 3,
+      "what": "A binding closes before it opens."
+    },
+    {
+      "id": "binding_shared_wallet",
+      "dimension": "uniqueness",
+      "severity": "info",
+      "weight": 1,
+      "what": "One wallet is currently bound to several identities: an operator wallet, not an agent wallet."
+    },
+    {
+      "id": "snapshot_not_finite",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 2,
+      "what": "A published value is null, NaN or infinite."
+    },
+    {
+      "id": "snapshot_from_future",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 2,
+      "what": "A published value claims a timestamp in the future."
+    },
+    {
+      "id": "snapshot_rate_out_of_range",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 2,
+      "what": "A published rate or share is below 0 or above 1. A negative share was once published live."
+    },
+    {
+      "id": "series_missing_definition",
+      "dimension": "completeness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "A metric was written in the last day without a definition id, so /def cannot explain it."
+    },
+    {
+      "id": "acp_negative_amount",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 1,
+      "what": "An ACP job has a negative amount."
+    },
+    {
+      "id": "acp_paid_exceeds_funded",
+      "dimension": "consistency",
+      "severity": "warn",
+      "weight": 1,
+      "what": "An ACP job paid out more than it was funded with (outside rounding)."
+    },
+    {
+      "id": "bankr_address_format",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 1,
+      "what": "A Bankr token, deployer or fee recipient is not a lowercase address."
+    },
+    {
+      "id": "bankr_fee_split",
+      "dimension": "consistency",
+      "severity": "warn",
+      "weight": 1,
+      "what": "Bankr's platform plus creator fee exceeds the total fee it reported for the same token."
+    },
+    {
+      "id": "bankr_negative_fee",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 1,
+      "what": "A cited Bankr fee is negative."
+    },
+    {
+      "id": "partner_shared_flag",
+      "dimension": "consistency",
+      "severity": "block",
+      "weight": 1,
+      "what": "A wallet declared by several partner identities is not flagged as shared, so it could count as an agent wallet."
+    },
+    {
+      "id": "x402_address_format",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 1,
+      "what": "A named x402 seller is not a lowercase address, so payments to it are never attributed."
+    },
+    {
+      "id": "cursor_stalled",
+      "dimension": "freshness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "A worker that pages through a source has not saved a new position for several of its own cycles, so whatever it feeds has quietly stopped updating."
+    },
+    {
+      "id": "catalogue_full_pass",
+      "dimension": "freshness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "The x402 harvest has not completed a full pass of the catalogue within the window. This is the page-one freeze of September 2026, caught by the machine instead of by a reader."
+    },
+    {
+      "id": "registration_from_future",
+      "dimension": "validity",
+      "severity": "block",
+      "weight": 2,
+      "what": "A registration claims to have been minted in the future."
+    },
+    {
+      "id": "waitlist_email_format",
+      "dimension": "validity",
+      "severity": "warn",
+      "weight": 1,
+      "what": "A waitlist entry does not look like an email address. Only a hash is returned: this table holds personal data."
+    }
+  ]
+}
