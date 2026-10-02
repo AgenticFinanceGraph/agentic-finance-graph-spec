@@ -1,13 +1,13 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-09-27T22:43:39.486Z",
+  "exported_at": "2026-10-02T18:07:01.849Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
     "retention": "A superseded version stays served for at least 90 days.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 230,
+  "count": 244,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -628,6 +628,156 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "bridge.follow.back_to_payer.v1",
+      "title": "Bridged back to the paying wallet's own address",
+      "unit": "USD / ratio",
+      "chain_set": "eip155:8453 (Base) as source; destination as reported",
+      "window": "all counted payments",
+      "definition": "Dollars from bridge.follow.crosschain.v1 that reached the paying wallet's own address on the destination chain, either directly (the bridge reports that address as the recipient, as in bridge.follow.same_address.v1) or through a contract that passed the delivered token on to that address in the same destination transaction. The share divides by bridge.follow.crosschain.v1. Also published: the part of it for which claim tokens (vault shares, aTokens) were minted to that address in the same transaction, a position the payer holds on the destination chain.",
+      "method": "For deliveries the bridge reports to a different address, read the delivery transaction's receipt on the destination chain (public RPC endpoints for Arbitrum, Ethereum, OP Mainnet, Polygon and BNB Smart Chain) and take the first Transfer out of the reported recipient in that transaction. It counts as back to the payer only if that Transfer goes to the paying wallet's address, compared byte for byte. A Transfer from the zero address to the payer in the same transaction marks a position.",
+      "excludes": [
+        "Deliveries on chains we do not read receipts for, and CCTP attestations (no delivery transaction is reported).",
+        "Anything that happens after the delivery transaction."
+      ],
+      "does_not_assert": [
+        "That the same operator controls both addresses. A counterfactual smart account can sit at the same address on two chains.",
+        "That the position is still held today.",
+        "That money which went elsewhere was spent: it is only not proven to be the payer's own."
+      ],
+      "source": "AFG-Pulse bridge follow",
+      "since": "2026-10-02",
+      "url": "https://agenticfinancegraph.com/def/bridge.follow.back_to_payer.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "bridge.follow.candidates.v1",
+      "title": "Agent bridge exits we follow to the other side",
+      "unit": "USD / payments",
+      "chain_set": "eip155:8453 (Base) as source",
+      "window": "all counted payments",
+      "definition": "Counted payments from a bound agent wallet on Base into a bridge contract we can follow: Across (SpokePool and routers whose receipts forward the full amount to it), LI.FI (LiFiDiamond, Permit2Proxy), Relay (RelayDepository, RelayRouterV3), deBridge (DlnSource), Circle CCTP (TokenMinter, TokenMessenger) and CCTP wrappers (CashmereCCTP, CCTPv2WithExecutor).",
+      "method": "The counted set (no pre-registration payments, no same-transaction pass-through hops, receipt checked), filtered to recipients in the bridge map. Each address in the map carries a citable label in the counterparty label config.",
+      "excludes": [
+        "Bridges without a public status API, and bridges we have not labelled."
+      ],
+      "does_not_assert": [
+        "That a bridge exit is spending. It is money moving, usually to the same owner on another chain."
+      ],
+      "source": "AFG-Pulse bridge follow",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/bridge.follow.candidates.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "bridge.follow.crosschain.v1",
+      "title": "Bridge exits delivered to another chain",
+      "unit": "USD / chains / ratio",
+      "chain_set": "eip155:8453 (Base) as source; destination as reported",
+      "window": "all counted payments",
+      "definition": "Dollars from bridge.follow.candidates.v1 that the bridge reports as delivered on a chain other than Base (Across filled, LI.FI done, Relay success, deBridge fulfilled or unlocked), or, for CCTP, attested by Circle. Also published: the number of distinct destination chains and the share of the largest one.",
+      "method": "As bridge.follow.resolved.v1. The destination chain is the bridge's own field; non-EVM destinations keep each bridge's own numbering mapped to a name (Solana, Hyperliquid, Lighter, Sui, Aptos), never read as an EVM chain id. Dollars are the source-side counted value on Base, not the delivered amount.",
+      "excludes": [
+        "Routes that ended on Base (bridge.follow.same_chain.v1).",
+        "Refunds (bridge.follow.refunded.v1)."
+      ],
+      "does_not_assert": [
+        "That the money is spent on the destination chain. What happens there next is not read here.",
+        "For CCTP, that the mint happened: Circle's attestation authorises the mint, which is a separate destination transaction we do not read.",
+        "That any of it is added to a Base figure. It never is."
+      ],
+      "source": "AFG-Pulse bridge follow",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/bridge.follow.crosschain.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "bridge.follow.refunded.v1",
+      "title": "Bridge exits refunded",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base) as source",
+      "window": "all counted payments",
+      "definition": "Dollars from bridge.follow.candidates.v1 that the bridge reports as refunded or expired: the deposit came back instead of being delivered.",
+      "method": "As bridge.follow.resolved.v1.",
+      "excludes": [],
+      "does_not_assert": [
+        "Where the refund went after it came back."
+      ],
+      "source": "AFG-Pulse bridge follow",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/bridge.follow.refunded.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "bridge.follow.resolved.v1",
+      "title": "Bridge exits whose outcome the bridge has reported",
+      "unit": "USD / ratio",
+      "chain_set": "eip155:8453 (Base) as source",
+      "window": "all counted payments",
+      "definition": "Dollars from bridge.follow.candidates.v1 for which the bridge's own status API returns an outcome: delivered on another chain, attested (CCTP), refunded or expired, or a route that ended on Base. The share divides by all candidate dollars.",
+      "method": "For each source transaction on Base, one call to the bridge's public, keyless status API: Across app.across.to/api/deposit, LI.FI li.quest/v1/status (accepted only when its sending leg is that Base transaction), Relay api.relay.link/requests/v2, deBridge dln-api.debridge.finance, Circle iris-api.circle.com/v2/messages. Largest first, every two hours; pending answers re-asked hourly, not-found up to four times.",
+      "excludes": [
+        "Pending, failed, not-found and not-yet-asked payments (the unresolved remainder)."
+      ],
+      "does_not_assert": [
+        "That an unresolved payment is lost. Most are simply not yet asked or not indexed by the bridge's API."
+      ],
+      "source": "AFG-Pulse bridge follow",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/bridge.follow.resolved.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "bridge.follow.same_address.v1",
+      "title": "Bridged to the same address on another chain",
+      "unit": "USD / ratio",
+      "chain_set": "eip155:8453 (Base) as source; destination as reported",
+      "window": "all counted payments",
+      "definition": "Dollars from bridge.follow.crosschain.v1 whose receiving address on the destination chain equals, byte for byte, the wallet that paid on Base. The share divides by bridge.follow.crosschain.v1.",
+      "method": "Compare the bridge-reported recipient (Across recipient, LI.FI toAddress, Relay recipient, deBridge receiverDst, CCTP mintRecipient) with the paying wallet, lower-cased. Non-EVM recipients never match.",
+      "excludes": [
+        "Recipients the bridge does not report."
+      ],
+      "does_not_assert": [
+        "That the same operator controls both addresses. A counterfactual smart account can sit at the same address on two chains under different control.",
+        "That a different address means a different owner. Many agents bridge to their own second wallet."
+      ],
+      "source": "AFG-Pulse bridge follow",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/bridge.follow.same_address.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "bridge.follow.same_chain.v1",
+      "title": "Bridge-aggregator routes that stayed on Base",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all counted payments",
+      "definition": "Dollars from bridge.follow.candidates.v1 whose route, as reported by the aggregator, ended on Base: the aggregator was used to swap, and the money never left the chain.",
+      "method": "As bridge.follow.resolved.v1: the destination chain the aggregator reports is Base (8453).",
+      "excludes": [],
+      "does_not_assert": [
+        "That these payments are mislabelled as bridge exits in the category split. The category describes the contract; this measures the route. Both are published."
+      ],
+      "source": "AFG-Pulse bridge follow",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/bridge.follow.same_chain.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "cctp.exit.usd.v1",
       "title": "USD value of observed agent payments into CCTP",
       "unit": "USD",
@@ -643,7 +793,32 @@
       ],
       "source": "AFG-Pulse counterparty map",
       "since": "2026-09-07",
+      "superseded_by": [
+        "cctp.exit.usd.v2"
+      ],
       "url": "https://agenticfinancegraph.com/def/cctp.exit.usd.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "cctp.exit.usd.v2",
+      "title": "USD value of counted agent payments into CCTP",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all counted payments",
+      "definition": "The summed USD value of the payments in cctp.exits.v2.",
+      "method": "As cctp.exits.v2, summing the recorded USD value.",
+      "excludes": [
+        "As cctp.exits.v2."
+      ],
+      "does_not_assert": [
+        "That a small value means agents hold no cross-chain balances. We observe outbound payments on Base, not balances elsewhere."
+      ],
+      "replaces": "cctp.exit.usd.v1",
+      "source": "AFG-Pulse counterparty map",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/cctp.exit.usd.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -666,7 +841,34 @@
       ],
       "source": "AFG-Pulse counterparty map",
       "since": "2026-09-07",
+      "superseded_by": [
+        "cctp.exits.v2"
+      ],
       "url": "https://agenticfinancegraph.com/def/cctp.exits.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "cctp.exits.v2",
+      "title": "Counted agent payments into Circle CCTP",
+      "unit": "payments",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all counted payments",
+      "definition": "Counted payments from a bound agent wallet whose recipient is a Circle CCTP contract on Base: TokenMessenger, MessageTransmitter or TokenMinter, V1 or V2. A USDC burn destined for another chain.",
+      "method": "Match the recipient of every counted payment against Circle's published CCTP contract addresses, including both TokenMinters (verified source on the explorer). depositForBurn moves the USDC from the sender to the TokenMinter and burns it there, so the minter is where a direct CCTP exit shows up in the transfer tape.",
+      "excludes": [
+        "Payments through contracts that wrap CCTP (CashmereCCTP, CCTPv2WithExecutor): the agent pays the wrapper, not Circle. They are counted as bridge exits (cp.cat.bridge.usd.v1) and followed in bridge.follow.*.",
+        "Payments before the wallet's first registration, and same-transaction pass-through hops, as for every counted payment."
+      ],
+      "does_not_assert": [
+        "That the USDC was minted on the destination. A burn on Base is not a mint elsewhere; bridge.follow.* reads Circle's attestation for that.",
+        "That CCTP is used or unused generally. This counts our tracked agents, not the protocol."
+      ],
+      "replaces": "cctp.exits.v1",
+      "source": "AFG-Pulse counterparty map",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/cctp.exits.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -687,7 +889,32 @@
       ],
       "source": "AFG-Pulse counterparty map",
       "since": "2026-09-07",
+      "superseded_by": [
+        "cctp.watched.v2"
+      ],
       "url": "https://agenticfinancegraph.com/def/cctp.watched.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "cctp.watched.v2",
+      "title": "CCTP contract addresses watched",
+      "unit": "addresses",
+      "chain_set": "eip155:8453 + eip155:1",
+      "window": "current",
+      "definition": "How many Circle CCTP contract addresses the exit check (cctp.exits.v2) matches against, now including the TokenMinters.",
+      "method": "Counted from the static map built from Circle's published contract reference.",
+      "excludes": [
+        "CCTP deployments on chains our payment scan does not cover."
+      ],
+      "does_not_assert": [
+        "That this is every CCTP contract Circle operates."
+      ],
+      "replaces": "cctp.watched.v1",
+      "source": "AFG-Pulse counterparty map",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/cctp.watched.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -757,6 +984,50 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "census.registrations.bnb.v1",
+      "title": "ERC-8004 registrations minted on BNB Smart Chain",
+      "unit": "registrations",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "all time, to the latest block read",
+      "definition": "The number of registrations ever minted in the ERC-8004 Identity registry at 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432 on BNB Smart Chain: the highest token id seen in a mint (Transfer from the zero address), plus one.",
+      "method": "The registry numbers tokens sequentially from 0 on every chain, each chain with its own storage (checked on Ethereum, where the mint count equals the highest id plus one). The afg-bnb watcher reads every mint from the registry's Transfer logs up to the chain head; the highest id read is the chain's own counter, so the figure is complete even though our mint log starts on 26 Sep 2026.",
+      "excludes": [
+        "Burns are not subtracted: this counts issuance, not current holders."
+      ],
+      "does_not_assert": [
+        "That a registration is an agent. Most BNB registrations come from batch minting; a mint count is not a market.",
+        "Anything about Base. Token id N on BNB is unrelated to token id N on Base, and this figure is never added to a Base or cross-chain total."
+      ],
+      "source": "AFG-Pulse per-chain registrations",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/census.registrations.bnb.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "census.registrations.chain.v1",
+      "title": "ERC-8004 registrations minted on one other chain",
+      "unit": "registrations",
+      "chain_set": "one of eip155:1, eip155:42161, eip155:10, eip155:137 (named by the metric)",
+      "window": "all time, to the latest block read",
+      "definition": "The number of registrations ever minted in the ERC-8004 Identity registry at 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432 on the chain the metric names.",
+      "method": "Counted from the registry's own mint events (Transfer from the zero address), read by afg-chains. Published only when the mint log is complete, i.e. every id from 0 to the highest is present.",
+      "excludes": [
+        "Burns are not subtracted.",
+        "Other registry contracts, so a third-party counter that indexes several registries can read higher."
+      ],
+      "does_not_assert": [
+        "That a registration is an operating agent."
+      ],
+      "source": "AFG-Pulse per-chain registrations",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/census.registrations.chain.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "census.registrations.owned.v1",
       "title": "Registrations with a current owner",
       "unit": "registrations",
@@ -790,6 +1061,49 @@
       "source": "AFG-Pulse registry census and sweep",
       "since": "2026-09-27",
       "url": "https://agenticfinancegraph.com/def/census.scan.backlog.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "controller.kind.v1",
+      "title": "Counted agent money by the paying wallet's account type",
+      "unit": "ratio / wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all counted payments; account type at the last code read",
+      "definition": "Counted dollars (and paying wallets) split by the account type of the wallet that paid: a plain key account (EOA, no code), a key account with EIP-7702 delegated code (code starts 0xef0100), or a contract account (any other code, e.g. a Safe or an ERC-4337 account). Shares divide by the counted dollars whose payer has been read (controller.read.v1).",
+      "method": "eth_getCode on each paying wallet at the latest block, over the public Base RPC; paying wallets are read first. Refreshed as wallets are read; the split is recomputed hourly.",
+      "excludes": [
+        "Counted dollars whose payer has not been read yet.",
+        "Changes of type between the payment and the read: this is the type at the last read, not at the block of each payment."
+      ],
+      "does_not_assert": [
+        "That a policy, a cap or a session key exists, or what it allows. Most spending rules for agent wallets live in a wallet provider's API or a secure enclave, which the chain does not show.",
+        "That one account type is safe and another unsafe.",
+        "Who the operator is."
+      ],
+      "source": "AFG-Pulse controller mix",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/controller.kind.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "controller.read.v1",
+      "title": "Counted agent money whose payer's account type we have read",
+      "unit": "ratio",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all counted payments",
+      "definition": "Counted dollars whose paying wallet has had its code read, divided by all counted dollars.",
+      "method": "As controller.kind.v1.",
+      "excludes": [],
+      "does_not_assert": [
+        "Anything about the unread part."
+      ],
+      "source": "AFG-Pulse controller mix",
+      "since": "2026-09-30",
+      "url": "https://agenticfinancegraph.com/def/controller.read.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
