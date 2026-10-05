@@ -16,7 +16,7 @@ It says, precisely enough to implement:
 | Path | What it is |
 |---|---|
 | [`SPEC.md`](SPEC.md) | The specification |
-| [`definitions/definitions.json`](definitions/definitions.json) | Every published metric definition, verbatim from `/api/def` (244 ids). Frozen once published |
+| [`definitions/definitions.json`](definitions/definitions.json) | Every published metric definition, verbatim from `/api/def` (276 ids). Frozen once published |
 | [`checks/checks.json`](checks/checks.json) | The data-quality checks: what each one tests, how severe a failure is, and its weight |
 | [`test-vectors/classified-payments.json`](test-vectors/classified-payments.json) | Real Base transfers with the class our rules gave them, to test an implementation against |
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3 — 5 October 2026
+
+Thirty-two new definitions (276 in all), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def):
+
+- **Agent statements** (`agent.statement.v1`, `agent.statement.root.v1`). For every agent at L7 or above, every three hours, a statement of one closed window: payments out split into spend, routing hops and payments whose receipt is not read yet (they must add up to the outflow), what left the agent's control, income in, open flags. Canonical JSON (keys sorted, numbers as decimal strings) hashed with keccak-256, each statement carrying the previous one's hash, and one Merkle root per window over keccak256(uint256(agentId) || statementHash), sorted-pair hashing, signed with Ed25519. Roots are published at /api/statements and not yet committed on chain.
+- **Detector records** (`detector.score.v1`): per rule, fired, open, re-derived, held, withdrawn, next to address poisoning. A cell no stored record can fill is null.
+- **Who paid an address** (`cp.payers.l7.v1`): counted payments into one receiving address, distinct paying agents at L7 or above, and the top payer's share. An address that only received routing hops is not a payee.
+- **Spending by the day it was paid** (`pay.usd.by_day.v1`), **the address-poisoning watch** (`poison.*`, nine definitions), **Solana agents** (`sol.agents.*`, five) and **every BNB Smart Chain registration owner, receipt-checked** (`xchain.bnb.*`, fourteen).
+
+The data checks and the test vectors are unchanged.
+
 ## 0.2 — 2 October 2026
 
 Fourteen new definitions (244 in all), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def):
