@@ -1,30 +1,31 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-02T18:07:01.849Z",
+  "exported_at": "2026-10-05T11:37:13.013Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
     "retention": "A superseded version stays served for at least 90 days.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 244,
+  "count": 276,
   "definitions": [
     {
       "id": "acp.clients.v1",
       "title": "Distinct ACP clients",
       "unit": "addresses",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Distinct addresses recorded as the client on an indexed ACP job.",
-      "method": "Taken from the indexed client topic of JobCreated, JobFunded and Refunded.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "Distinct client addresses over acp.jobs.v1.",
+      "method": "JobCreated events.",
       "excludes": [
-        "Clients on jobs outside the scanned range."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "Demand size. A client can open many jobs, and many jobs pay nothing."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.clients.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -32,20 +33,21 @@
     },
     {
       "id": "acp.completed.v1",
-      "title": "ACP jobs marked completed",
+      "title": "ACP jobs completed",
       "unit": "jobs",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Jobs that received a JobCompleted event, which the contract emits with the evaluator that signed it off.",
-      "method": "Latched true on first occurrence; a job cannot un-complete.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "Jobs from acp.jobs.v1 that reached the completed state.",
+      "method": "State-change events on the same contract.",
       "excludes": [
-        "Jobs rejected, expired or still open."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "That the provider was paid. Completion and payment are separate events, and they do not always both happen."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.completed.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -117,20 +119,21 @@
     },
     {
       "id": "acp.funded.v1",
-      "title": "ACP jobs funded into escrow",
+      "title": "ACP jobs funded",
       "unit": "jobs",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Jobs that received a JobFunded event carrying an amount above zero.",
-      "method": "Amount read from the event's data word as USDC at six decimals, a unit confirmed by matching a funding event against the USDC transfer in its own transaction receipt.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "Jobs from acp.jobs.v1 whose budget was paid into escrow with a value above zero (USDC, six decimals, matched against the funding transaction's own Transfer).",
+      "method": "Funding events on the same contract.",
       "excludes": [
-        "Jobs funded with zero, which are counted as jobs but not as funded."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "That the work happened. Escrow is money set aside, not money earned."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.funded.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -138,20 +141,21 @@
     },
     {
       "id": "acp.fundedusd.v1",
-      "title": "USDC funded into ACP escrow",
+      "title": "Dollars funded into ACP escrow",
       "unit": "USD",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Total value placed into escrow through JobFunded events within the scanned range.",
-      "method": "Summed per job, because a job can be funded more than once.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "The sum of escrow funding over acp.jobs.v1, in USDC at one dollar.",
+      "method": "Funding events with amounts.",
       "excludes": [
-        "Zero-value funding events."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "Revenue. Escrowed money can be refunded, and refunds are tracked separately."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.fundedusd.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -161,19 +165,19 @@
       "id": "acp.jobs.v1",
       "title": "ACP jobs indexed",
       "unit": "jobs",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Distinct Agent Commerce Protocol job ids seen in events from the ACP Core contract on Base within the scanned block range.",
-      "method": "Decoded from the verified implementation ABI. Every observed topic resolves to a named event; none is named by guesswork.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "Every job created on the Virtuals Agent Commerce Protocol core contract on Base (0x238E541BfefD82238730D00a2208E5497F1832E0, an EIP-1967 proxy confirmed on chain on 12 Sep 2026; event names from its verified ABI), jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins.",
+      "method": "JobCreated events read from public Base nodes in 1,900-block windows from a cursor.",
       "excludes": [
-        "Blocks outside the scanned range. The index walks forward from thirty days before its first run."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "That a job was worked, delivered or paid. A job id exists from the moment one is created, and most never pay anything.",
-        "Job volume for Virtuals as a whole. It is what this contract emitted in the range we read."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.jobs.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -181,21 +185,21 @@
     },
     {
       "id": "acp.paid.v1",
-      "title": "ACP jobs that actually paid a provider",
+      "title": "ACP jobs that paid the provider",
       "unit": "jobs",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Jobs whose summed PaymentReleased value is greater than zero.",
-      "method": "Value, not event count. A PaymentReleased carrying zero is not a payment, and most of them carry zero.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "Jobs from acp.jobs.v1 with at least one payment release to the provider above zero. A release of zero is not a payment.",
+      "method": "PaymentReleased events with their amounts.",
       "excludes": [
-        "Jobs with a payout event that released nothing.",
-        "Evaluator fees, counted separately."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "A count of payout events. The gap between the two is published as the zero-value payout rate, because counting events instead of value would overstate this economy several times over."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.paid.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -203,20 +207,21 @@
     },
     {
       "id": "acp.paidproviders.v1",
-      "title": "ACP providers that were actually paid",
+      "title": "ACP providers paid above zero",
       "unit": "addresses",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Distinct provider addresses on jobs whose released value exceeded zero.",
-      "method": "Value-gated, exactly as the paid-jobs count is.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "Distinct providers that received at least one payment release above zero.",
+      "method": "PaymentReleased events with amounts.",
       "excludes": [
-        "Providers whose only payouts released zero."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "That they are agents. The contract records an address."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.paidproviders.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -224,22 +229,21 @@
     },
     {
       "id": "acp.paidusd.v1",
-      "title": "USDC released to ACP providers",
+      "title": "Dollars paid to ACP providers",
       "unit": "USD",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Total value released to providers through PaymentReleased events within the scanned range.",
-      "method": "USDC at six decimals on Base, confirmed against a transaction receipt rather than inferred from the magnitude of the numbers.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "The sum of payment releases above zero to providers over acp.jobs.v1, in USDC at one dollar.",
+      "method": "PaymentReleased events with amounts.",
       "excludes": [
-        "Zero-value releases, which add nothing by construction.",
-        "Evaluator fees and refunds, both tracked separately."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "The size of the agent economy. It is one job protocol on one chain over one window, and the tickets are cents.",
-        "That the recipient is an agent rather than a person operating one. The contract records an address, not an identity."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.paidusd.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -271,18 +275,19 @@
       "id": "acp.providers.v1",
       "title": "Distinct ACP providers",
       "unit": "addresses",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "Distinct addresses recorded as the provider on an indexed ACP job.",
-      "method": "Taken from the indexed provider topic of JobCreated, ProviderSet, JobSubmitted and PaymentReleased.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "Distinct provider addresses over acp.jobs.v1.",
+      "method": "JobCreated events.",
       "excludes": [
-        "Providers on jobs outside the scanned range."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "That each address is a separate operator. One operator can run many providers."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.providers.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -358,22 +363,66 @@
     },
     {
       "id": "acp.zerorate.v1",
-      "title": "Share of paid-out ACP jobs that released nothing",
+      "title": "Share of ACP payouts that released nothing",
       "unit": "ratio",
-      "chain_set": "Base",
-      "window": "indexed range",
-      "definition": "One minus the share of jobs with a payout event whose released value was above zero.",
-      "method": "Both counts come from one query so they cannot be read from different instants.",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "jobs created since Base block 49,910,184 (13 Aug 2026), when our index of the contract begins",
+      "definition": "Of jobs with at least one payment-release event, the share whose releases were all zero.",
+      "method": "PaymentReleased events with amounts.",
       "excludes": [
-        "Jobs that never reached a payout event at all."
+        "Jobs created before 13 Aug 2026.",
+        "Jobs on other ACP deployments or chains."
       ],
       "does_not_assert": [
-        "Fraud or failure. A zero-value release is a legitimate outcome for a free or cancelled job.",
-        "That the remaining payments are large. They are cents."
+        "That the work was delivered or was any good: the contract records states and money, not quality."
       ],
       "source": "AFG-Pulse ACP job index",
-      "since": "2026-09-12",
+      "since": "2026-10-03",
       "url": "https://agenticfinancegraph.com/def/acp.zerorate.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "agent.statement.root.v1",
+      "title": "Statement root, one 3-hour window",
+      "unit": "root",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "one 3-hour UTC window",
+      "definition": "The Merkle root over every agent statement in one window, with the number of leaves, the previous window's root, and an Ed25519 signature by our statement key over 'afg-statement-root:v1:<windowStart>:<windowEnd>:<root>:<prevRoot>:<leaves>'. Any statement can be proven to belong to its window from the root and its proof.",
+      "method": "Leaves ordered by agent id; sorted-pair keccak-256 hashing, the odd leaf carried up. The public key is published at /api/statements. Roots are not yet committed on chain: that needs a funded publisher key, which only the operator can create.",
+      "excludes": [
+        "Windows the statement job did not run for: they are missing, never back-filled with an invented root."
+      ],
+      "does_not_assert": [
+        "That a root is on chain until a transaction hash is published beside it."
+      ],
+      "source": "AFG-Pulse statements",
+      "since": "2026-10-05",
+      "url": "https://agenticfinancegraph.com/def/agent.statement.root.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "agent.statement.v1",
+      "title": "Agent statement, one 3-hour window",
+      "unit": "statement",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "one 3-hour UTC window, published three to six hours after it closes so the payment scan has finished it",
+      "definition": "For one ranked agent (L7 or above) and one window: payments out (count and USDC, as 6-decimal base units), split into spend (counted) and routing hops, which must add up to the outflow; what left the agent's control; income in; and the open detection kinds on its wallet. Fields we do not observe are omitted, never zero-filled. Each statement carries the hash of the agent's previous statement (prevHash), so the history cannot be rewritten without breaking the chain.",
+      "method": "Canonical JSON (keys sorted, numbers as decimal strings), keccak-256. Built from money_events, actors and incidents by afg-statements every three hours. Leaves keccak256(agentId as uint256 || statementHash) form one Merkle tree per window (sorted-pair hashing); the root is published and signed.",
+      "excludes": [
+        "Agents below L7.",
+        "Activity the payment scan had not read when the statement was written; a later correction appears in a later statement, never as an edit."
+      ],
+      "does_not_assert": [
+        "That the agent is trustworthy: a statement is a dated record of what we observed.",
+        "Anything about chains other than Base."
+      ],
+      "source": "AFG-Pulse statements",
+      "since": "2026-10-05",
+      "url": "https://agenticfinancegraph.com/def/agent.statement.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -1493,6 +1542,30 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "cp.payers.l7.v1",
+      "title": "Who paid this address: ranked agents and counted payments",
+      "unit": "agents / payments / USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time, or the pack's dated window",
+      "definition": "For one receiving address: the payments into it from wallets bound to ERC-8004 registrations that are counted (made after the paying agent was registered, and not routing hops), with first_seen, last_seen, n_payments, the counted USD, distinct paying agents at L7 or above, and the top payer's share of the counted USD. An address that only ever received routing hops is not a payee and gets no pack.",
+      "method": "money_events kind PAY with to_id = the address, excluding pre_registration and pass_through rows; the paying actor's liveness and its open binding (method, confidence) from tables actors and bindings.",
+      "excludes": [
+        "Routing hops (pass_through): the money passed through to someone else in the same transaction.",
+        "Payments made before the paying agent's registration.",
+        "Payments from wallets not bound to a registration."
+      ],
+      "does_not_assert": [
+        "Who operates the receiving address.",
+        "That a payment bought anything: a payment is a transfer to a different address, observed on chain."
+      ],
+      "source": "AFG-Pulse payment scan",
+      "since": "2026-10-05",
+      "url": "https://agenticfinancegraph.com/def/cp.payers.l7.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "cp.repeat.v1",
       "title": "Destinations paid by three or more different agents",
       "unit": "addresses",
@@ -1616,6 +1689,30 @@
       "source": "AFG-Pulse detectors",
       "since": "2026-09-11",
       "url": "https://agenticfinancegraph.com/def/detection.week.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "detector.score.v1",
+      "title": "Detector record, per rule",
+      "unit": "detections",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time (fired, checked, confirmed, reversed); now (open); since the poisoning watch's first block (poisoning_adjacent)",
+      "definition": "For each detector rule: fired = detections the rule logged; open = of those, live now under the incident rule; checked = fires later re-derived from stored payments and receipts by the verification job; confirmed = checked and still held; reversed = checked and withdrawn, each with its reason stored; poisoning_adjacent = fires whose wallet received an address-poisoning transfer within seven days either side, counted only for fires inside the poisoning watch's window. The poisoning watch's own record (address_poisoning_loss) counts losses and how many two independent reads confirmed.",
+      "method": "Read from the detection log (table incidents), the verification records (table findings: verified_at, verification.ok, retired_reason), and the poisoning watch (tables poison_events, poison_losses). Published with every detections document, hourly.",
+      "excludes": [
+        "Fires we never re-derived: they count in fired but not in checked.",
+        "Any case we cannot bind to a stored record. Known cases replayed in a research note are listed by name with their source, not added to the counts."
+      ],
+      "does_not_assert": [
+        "A false-positive rate: checked is a non-random subset of fired.",
+        "That an unchecked fire was right or wrong.",
+        "That a poisoning-adjacent fire was caused by the poisoning."
+      ],
+      "source": "AFG-Pulse incident detectors",
+      "since": "2026-10-05",
+      "url": "https://agenticfinancegraph.com/def/detector.score.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -3459,6 +3556,27 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "pay.usd.by_day.v1",
+      "title": "Counted agent spending by the day it was paid",
+      "unit": "USD per day",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "each UTC day, last 120 days",
+      "definition": "The counted set of pay.usd.total.v1 (receipts checked, routing hops and money moved before registration left out) grouped by the UTC day of the payment's block time, as known at the time of publication. pay_usd_last_day is the last complete day; pay_usd_7d_avg and pay_usd_30d_avg are the means of the last 7 and 30 complete days. The full series is /api/payday.",
+      "method": "One SQL grouping of the payments table, hourly. The running total's day-to-day change is not used: it mixes payments made that day with older payments found that day.",
+      "excludes": [
+        "The current UTC day and the one before it from the averages: they are still being found by the scan (provisional in /api/payday)."
+      ],
+      "does_not_assert": [
+        "That a day is final. A day's figure rises when the scan finds more of its payments, and falls if a receipt check later moves a payment out of the counted set."
+      ],
+      "source": "AFG-Pulse payday",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/pay.usd.by_day.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "pay.usd.leftcontrol.v1",
       "title": "Counted payments less own positions",
       "unit": "USD",
@@ -3544,6 +3662,192 @@
       "source": "AFG-Pulse payment scan",
       "since": "2026-09-06",
       "url": "https://agenticfinancegraph.com/def/pay.usd.total.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.copy_lag.median.v1",
+      "title": "Minutes from an agent's payment to the first look-alike copy (median)",
+      "unit": "minutes",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "payments 1 to 14 days old",
+      "definition": "For each real payment by a watched wallet made between 14 days and 1 day ago, the minutes until the first poisoning transfer from the same wallet to a different address whose first 4 and last 4 hex characters match the payee, within 7 days. The median over payments that were copied.",
+      "method": "Block times from the Base block number (two seconds a block).",
+      "excludes": [
+        "Payments never copied within 7 days."
+      ],
+      "does_not_assert": [
+        "That one actor made all the copies."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.copy_lag.median.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.events.24h.v1",
+      "title": "Poisoning transfers into agent wallets' history, last 24 hours",
+      "unit": "transfers",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours",
+      "definition": "A poisoning transfer is (a) a Transfer of zero from the wallet in USDC, USDT, DAI, USDbC, EURC, WETH or cbBTC (anyone can call transferFrom for zero without an approval) to an address whose first 4 and last 4 hex characters both match a different payee of the wallet, or (b) a Transfer from the wallet in a token that is not one of those contracts but whose symbol, after removing accents and invisible characters and mapping look-alike letters (Cyrillic, Greek, Georgian, Lisu) to Latin, reads as one of them, sent to an address whose last 4 hex characters match one of the wallet's payees, or (c) any other token sent to an address that has no contract code and whose first 4 and last 4 hex characters both match a payee. Counted over the last 24 hours across every watched wallet.",
+      "method": "Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract.",
+      "excludes": [
+        "Fake-symbol tokens sent to addresses that resemble none of the wallet's payees (they are not tied to a payment to copy).",
+        "NFT transfers."
+      ],
+      "does_not_assert": [
+        "That the wallet's owner noticed, or lost anything."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.events.24h.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.fake_tokens.7d.v1",
+      "title": "Fake-symbol token contracts used against agent wallets, last 7 days",
+      "unit": "tokens",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 7 days",
+      "definition": "Distinct token contracts behind fake-symbol poisoning transfers (case b of poison.events.24h.v1) in the last 7 days.",
+      "method": "Token symbol from alchemy_getTokenMetadata, normalised as described in poison.events.24h.v1.",
+      "excludes": [],
+      "does_not_assert": [
+        "Who deployed them."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.fake_tokens.7d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.loss.usd.v1",
+      "title": "Dollars agents paid to planted look-alike addresses",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "as poison.losses.v1",
+      "definition": "The sum of poison.losses.v1 payments in USDC, USDT, DAI and USDbC, at one dollar each.",
+      "method": "As poison.losses.v1.",
+      "excludes": [
+        "EURC, WETH and cbBTC losses (counted in poison.losses.v1, not priced here)."
+      ],
+      "does_not_assert": [
+        "As poison.losses.v1."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.loss.usd.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.loss.wallets.v1",
+      "title": "Agent wallets that paid a planted look-alike",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "as poison.losses.v1",
+      "definition": "Distinct wallets with at least one poison.losses.v1 payment.",
+      "method": "As poison.losses.v1.",
+      "excludes": [],
+      "does_not_assert": [
+        "As poison.losses.v1."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.loss.wallets.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.losses.v1",
+      "title": "Agent payments to planted look-alike addresses",
+      "unit": "payments",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time since the watch's first block (120 days before 3 Oct 2026)",
+      "definition": "Real-token payments (value above zero) from a watched wallet to an address that had received a poisoning transfer from that wallet earlier, and that the wallet had never paid before that first poisoning transfer, where the transaction that planted the address was sent by someone other than the wallet and the address has no contract code (both read from the chain; a payment to a new deployment of a contract the wallet already used is an upgrade, not a loss). Each one is counted only after Blockscout's index shows the same transfer (sender, recipient, token and amount), a second source independent of the log query.",
+      "method": "Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract. Second check: base.blockscout.com transaction token-transfers.",
+      "excludes": [
+        "Payments Blockscout has not confirmed yet (retried every hour).",
+        "Look-alikes the wallet paid without them being planted in its history first."
+      ],
+      "does_not_assert": [
+        "That the payment was not intended: an operator could pay any address on purpose.",
+        "That the money cannot be recovered."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.losses.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.targeted.7d.v1",
+      "title": "Agent wallets targeted by poisoners, last 7 days",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 7 days",
+      "definition": "Distinct watched wallets with at least one poisoning transfer (poison.events.24h.v1 rule) in the last 7 days.",
+      "method": "Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract.",
+      "excludes": [],
+      "does_not_assert": [
+        "That a targeted wallet paid a poisoner."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.targeted.7d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.targeted.share.7d.v1",
+      "title": "Share of paying agent wallets targeted, last 7 days",
+      "unit": "ratio",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 7 days",
+      "definition": "Of the watched wallets that made a real payment in USDC, USDT, DAI, USDbC, EURC, WETH or cbBTC in the last 7 days, the share that also received at least one poisoning transfer in those 7 days.",
+      "method": "Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract.",
+      "excludes": [
+        "Wallets that did not pay in the window."
+      ],
+      "does_not_assert": [
+        "Causation: a wallet that pays is simply visible to poisoners."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.targeted.share.7d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.watch.v1",
+      "title": "Agent wallets watched for address poisoning",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "current",
+      "definition": "The number of wallets in the poisoning watch: Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract.",
+      "method": "Distinct sender addresses of counted payments on Base.",
+      "excludes": [
+        "Wallets that have only received money."
+      ],
+      "does_not_assert": [
+        "That any of them was targeted."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/poison.watch.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4200,6 +4504,114 @@
       "source": "AFG-Pulse reputation ingest",
       "since": "2026-09-07",
       "url": "https://agenticfinancegraph.com/def/rep.toptag.share.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "sol.agents.cards.v1",
+      "title": "Solana agent cards: retrievable, valid, declaring a service",
+      "unit": "ratio / registrations",
+      "chain_set": "solana:mainnet",
+      "window": "registration files probed so far (up to 400 a run, oldest checked first)",
+      "definition": "Of registration files fetched through our probe sandbox: the share that answered (L2), the share that parse as an agent registration (L3), and the share that declare at least one service endpoint (L4), graded exactly as Base cards. Also published: the number of files probed and how many declare x402 support.",
+      "method": "lib/probe.mjs: SSRF-guarded fetch, 8 s timeout, 256 KB cap, then the same grading as the Base liveness ladder.",
+      "excludes": [
+        "Files not yet probed."
+      ],
+      "does_not_assert": [
+        "That a declared service works or takes payment."
+      ],
+      "source": "AFG-Pulse Solana agents (afg-solagents)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/sol.agents.cards.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "sol.agents.pay.30d.v1",
+      "title": "What Solana agents and their owners paid, last 30 days",
+      "unit": "wallets / USD / transfers",
+      "chain_set": "solana:mainnet",
+      "window": "rolling 30 days",
+      "definition": "USDC and USDT that left the agent's own wallet (the MPL Core asset-signer address) and the owner wallets of Metaplex MPL Agent Registry agents, after the owner's first registration. The amount is the address's net USDC or USDT change in the transaction, so money that arrives and leaves in one transaction nets to zero. Published: owners paying and their outflow, agent wallets paying and their outflow, and payments whose largest recipient is an x402 Bazaar seller on Solana.",
+      "method": "Registration time from the oldest signature on each identity record (the asset's when the record has none); token accounts from getTokenAccountsByOwner (classic Token program, refreshed daily); signatures per token account from a cursor; each transaction read once with getTransaction (jsonParsed). Public Solana nodes first, Alchemy capped per run. Published only when every account is backfilled and the queue is empty.",
+      "excludes": [
+        "Swaps: a transaction where the address also received another token or SOL, or that ran Jupiter, Raydium, Orca, Meteora, pump.fun, Phoenix or SolFi.",
+        "Transfers before the owner's first registration.",
+        "Token-2022 balances and SOL payments."
+      ],
+      "does_not_assert": [
+        "That an owner's payment is agent spending: an owner wallet belongs to a person or a company.",
+        "Never added to any Base figure."
+      ],
+      "source": "AFG-Pulse Solana agent payments (afg-solpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/sol.agents.pay.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "sol.agents.registered.v1",
+      "title": "Agents registered on Solana (Metaplex registry)",
+      "unit": "registrations",
+      "chain_set": "solana:mainnet",
+      "window": "current",
+      "definition": "Every record of the Metaplex MPL Agent Registry on Solana: one Agent Identity record (program 1DREGFgysWYxLnRnKQnwrxnJQeSMk2HmGaC6whw2B2p) per registered agent, pointing at an MPL Core asset whose AgentIdentity plugin holds the registration URI, read with getProgramAccounts on public Solana nodes. Also published: distinct asset owners and the largest owner's share of registrations.",
+      "method": "getProgramAccounts on the Agent Identity program; owners from Alchemy's DAS getAssets.",
+      "excludes": [
+        "Agents registered anywhere else on Solana."
+      ],
+      "does_not_assert": [
+        "That a registration is a working agent: it is issuance, like an ERC-8004 mint."
+      ],
+      "source": "AFG-Pulse Solana agents (afg-solagents)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/sol.agents.registered.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "sol.agents.uri.v1",
+      "title": "Solana registrations that point to a registration file",
+      "unit": "registrations",
+      "chain_set": "solana:mainnet",
+      "window": "current",
+      "definition": "Records of sol.agents.registered.v1 whose asset still exists and carries an AgentIdentity plugin with a URI.",
+      "method": "Alchemy DAS getAssets, external_plugins of type AgentIdentity.",
+      "excludes": [
+        "Assets that no longer exist."
+      ],
+      "does_not_assert": [
+        "That the URI answers."
+      ],
+      "source": "AFG-Pulse Solana agents (afg-solagents)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/sol.agents.uri.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "sol.agents.wallets.v1",
+      "title": "Solana agent wallets holding USDC",
+      "unit": "wallets / USD",
+      "chain_set": "solana:mainnet",
+      "window": "read once a day",
+      "definition": "For each existing asset, its MPL Core asset-signer address (derived from the asset; in 60 of the first 74 registration files that state a wallet address it is this one): USDC balance and SOL balance. Published: wallets read, wallets holding at least 1 USDC, and their USDC total.",
+      "method": "Alchemy getTokenAccountsByOwner (USDC mint EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v) and getBalance.",
+      "excludes": [
+        "Wallets other than the asset signer, such as an operator's own wallet."
+      ],
+      "does_not_assert": [
+        "That a funded wallet has paid anyone."
+      ],
+      "source": "AFG-Pulse Solana agents (afg-solagents)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/sol.agents.wallets.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5123,6 +5535,286 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "xchain.bnb.contract.share.30d.v1",
+      "title": "Share of BNB owner outflow sent to contracts",
+      "unit": "ratio",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "Of the receipt-checked dollars, neither pass-through nor a swap, the share sent to an address with contract code: bridges, vaults, protocols, payment contracts. An address delegated under EIP-7702 counts as an account, not a contract.",
+      "method": "Receipts (eth_getTransactionReceipt) from the public Binance nodes, batched, largest transfers first, for the last 35 days. eth_getCode on each recipient, cached.",
+      "excludes": [
+        "Pass-through and swaps."
+      ],
+      "does_not_assert": [
+        "What the contract is."
+      ],
+      "source": "AFG-Pulse BNB Smart Chain owner scan (afg-bnbpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.contract.share.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.outflow.usd.30d.v1",
+      "title": "Stablecoins sent by BNB registration owners, last 30 days",
+      "unit": "USD",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "The dollar sum of the transfers counted in xchain.bnb.owners.paying.30d.v1.",
+      "method": "As xchain.bnb.owners.paying.30d.v1.",
+      "excludes": [
+        "As xchain.bnb.owners.paying.30d.v1."
+      ],
+      "does_not_assert": [
+        "As xchain.bnb.owners.paying.30d.v1. Never added to any Base figure."
+      ],
+      "source": "AFG-Pulse BNB Smart Chain owner scan (afg-bnbpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.outflow.usd.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.owner.wallets.v1",
+      "title": "Wallets that own BNB Smart Chain registrations",
+      "unit": "wallets",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "current",
+      "definition": "Distinct owner addresses of xchain.bnb.registrations.v1, excluding burn addresses.",
+      "method": "As xchain.bnb.registrations.v1.",
+      "excludes": [
+        "Burn addresses."
+      ],
+      "does_not_assert": [
+        "That an owner wallet is controlled by an agent rather than by a person or a minting service."
+      ],
+      "source": "AFG-Pulse other-chain census (afg-xchain)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.owner.wallets.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.owners.paying.30d.v1",
+      "title": "BNB registration owners that sent stablecoins, last 30 days",
+      "unit": "wallets",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "Owner wallets from xchain.bnb.owner.wallets.v1 that sent at least one transfer above zero of USDT (0x55d3…7955), USDC (0x8ac7…580d), FDUSD (0xc5f0…6409) and USD1 (0x8d0d…b0d) on BNB Smart Chain, 18 decimals each, checked on chain on 3 Oct 2026, at one dollar to a different address in the last 30 days, counting only transfers after the owner's first registration on BNB.",
+      "method": "Transfer logs of the four tokens with the sender topic set to every owner, 15,000 owners per eth_getLogs (afg-bnbpay, hourly), window by window from a cursor, back to the first BNB registration in February 2026. Owners that appear later are caught up from their first registration before they join. Published only once the scan has reached the chain head. Until 3 Oct 2026 this was planned as a 5,000-owner sample (xchain.bnb.sample.paying.30d.v1); the full scan replaced it the same day.",
+      "excludes": [
+        "Transfers before the owner's own first registration.",
+        "Transfers to the sender itself or to burn addresses.",
+        "Wallets that only hold registrations someone else minted: an unsolicited transfer or airdrop of a registration does not make a wallet an agent owner. On 3 Oct 2026 one such wallet, a payment hot wallet, had sent $66M in six weeks."
+      ],
+      "does_not_assert": [
+        "That a transfer is a purchase or agent spending: receipts split it into pass-through, DEX swaps, transfers to contracts and transfers to plain wallets (xchain.bnb.passthrough.share.30d.v1 and the definitions beside it).",
+        "That the owner is an agent."
+      ],
+      "source": "AFG-Pulse BNB Smart Chain owner scan (afg-bnbpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.owners.paying.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.passthrough.share.30d.v1",
+      "title": "Share of BNB owner outflow that passed straight through",
+      "unit": "ratio",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "Of the receipt-checked dollars in xchain.bnb.outflow.usd.30d.v1, the share where about the same stablecoin amount (within 2%) arrived at the sender in the same transaction: a hop in a route, not money the owner spent. The same rule as on Base.",
+      "method": "Receipts (eth_getTransactionReceipt) from the public Binance nodes, batched, largest transfers first, for the last 35 days. USDT, USDC, FDUSD, USD1 and the retired BUSD count as the same money.",
+      "excludes": [
+        "Unread receipts."
+      ],
+      "does_not_assert": [
+        "Who built the route."
+      ],
+      "source": "AFG-Pulse BNB Smart Chain owner scan (afg-bnbpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.passthrough.share.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.receipts.checked.30d.v1",
+      "title": "BNB owner outflow with its receipt read, last 30 days",
+      "unit": "ratio",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "The share of the dollars in xchain.bnb.outflow.usd.30d.v1 whose transaction receipt has been read and classified. The splits beside it are published only once this reaches 98%.",
+      "method": "Receipts (eth_getTransactionReceipt) from the public Binance nodes, batched, largest transfers first, for the last 35 days.",
+      "excludes": [
+        "Transfers older than 35 days."
+      ],
+      "does_not_assert": [
+        "Anything about a transfer whose receipt has not been read yet."
+      ],
+      "source": "AFG-Pulse BNB Smart Chain owner scan (afg-bnbpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.receipts.checked.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.registrations.v1",
+      "title": "BNB Smart Chain registrations with a known owner",
+      "unit": "registrations",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "current",
+      "definition": "Registrations on the ERC-8004 identity registry on BNB Smart Chain (eip155:56) at 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, the same address as on Base with separate storage with a current owner, read daily from Alchemy's NFT API (getOwnersForContract).",
+      "method": "Owner list from the NFT API; mint blocks from the registry's own Transfer events from the zero address.",
+      "excludes": [
+        "Registrations whose owner is the burn address."
+      ],
+      "does_not_assert": [
+        "That a registration is an agent: most BNB registrations were minted in batches, which is issuance."
+      ],
+      "source": "AFG-Pulse other-chain census (afg-xchain)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.registrations.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.sample.outflow.30d.v1",
+      "superseded_by": "xchain.bnb.outflow.usd.30d.v1",
+      "title": "Stablecoins sent by the sampled BNB owners, last 30 days",
+      "unit": "USD",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "The dollar sum of the transfers counted in xchain.bnb.sample.paying.30d.v1.",
+      "method": "As xchain.bnb.sample.paying.30d.v1.",
+      "excludes": [
+        "As xchain.bnb.sample.paying.30d.v1."
+      ],
+      "does_not_assert": [
+        "As xchain.bnb.sample.paying.30d.v1. Never added to any Base figure, and not scaled up to all owners."
+      ],
+      "source": "AFG-Pulse other-chain census (afg-xchain)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.sample.outflow.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.sample.paying.30d.v1",
+      "superseded_by": "xchain.bnb.owners.paying.30d.v1",
+      "title": "Share of sampled BNB registration owners that sent stablecoins, last 30 days",
+      "unit": "ratio",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "Of a fixed random sample of 5,000 owner wallets, drawn once on 3 Oct 2026 as the owners of xchain.bnb.owner.wallets.v1 with the lowest sha256 of their lowercase address, and stored, the share that sent at least one transfer above zero of USDT, USDC, FDUSD and USD1 on BNB Smart Chain (18 decimals each, checked on chain on 3 Oct 2026), at one dollar to a different address in the last 30 days, counting only transfers after the owner's first registration on BNB. Published only once the sample's scan has reached the chain head.",
+      "method": "Transfer logs of the four tokens with the sender topic set to the sampled owners, 1,000 per eth_getLogs, window by window from a cursor.",
+      "excludes": [
+        "Owners outside the sample.",
+        "Transfers before the owner's first registration, to itself, or to burn addresses."
+      ],
+      "does_not_assert": [
+        "That a transfer is a purchase or agent spending: no receipt check runs on BNB.",
+        "That an owner is an agent."
+      ],
+      "source": "AFG-Pulse other-chain census (afg-xchain)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.sample.paying.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.sample.v1",
+      "superseded_by": "xchain.bnb.owners.paying.30d.v1",
+      "title": "BNB Smart Chain owner sample",
+      "unit": "wallets",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "fixed",
+      "definition": "The size of a fixed random sample of 5,000 owner wallets, drawn once on 3 Oct 2026 as the owners of xchain.bnb.owner.wallets.v1 with the lowest sha256 of their lowercase address, and stored. Reading every owner (about 291,000) would take about 292 log queries per seven-day window, so BNB is measured through this sample.",
+      "method": "As xchain.bnb.owner.wallets.v1, then the sample is drawn once.",
+      "excludes": [],
+      "does_not_assert": [
+        "That the sample matches every subgroup of owners; it is a simple random sample by hash."
+      ],
+      "source": "AFG-Pulse other-chain census (afg-xchain)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.sample.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.swap.share.30d.v1",
+      "title": "Share of BNB owner outflow that was a DEX swap",
+      "unit": "ratio",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "Of the receipt-checked dollars, not pass-through, the share where a token other than a stablecoin arrived at the sender in the same transaction, or where the sender's own transaction emitted a Uniswap V2, V3 or V4, PancakeSwap V3 or Curve swap event or unwrapped WBNB: a trade, not a payment.",
+      "method": "Receipts (eth_getTransactionReceipt) from the public Binance nodes, batched, largest transfers first, for the last 35 days.",
+      "excludes": [
+        "Pass-through transfers."
+      ],
+      "does_not_assert": [
+        "That every swap venue on BNB is recognised; an unknown venue whose token arrives at the sender is still caught by the token rule."
+      ],
+      "source": "AFG-Pulse BNB Smart Chain owner scan (afg-bnbpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.swap.share.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.wallet.senders.30d.v1",
+      "title": "BNB owners that sent stablecoins to plain wallets, receipt-checked",
+      "unit": "wallets",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "Owners with at least one transfer counted in xchain.bnb.wallet.usd.30d.v1.",
+      "method": "As xchain.bnb.wallet.usd.30d.v1.",
+      "excludes": [
+        "As xchain.bnb.wallet.usd.30d.v1."
+      ],
+      "does_not_assert": [
+        "That the owner is an agent."
+      ],
+      "source": "AFG-Pulse BNB Smart Chain owner scan (afg-bnbpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.wallet.senders.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "xchain.bnb.wallet.usd.30d.v1",
+      "title": "BNB owner outflow sent to plain wallets, receipt-checked",
+      "unit": "USD",
+      "chain_set": "eip155:56 (BNB Smart Chain)",
+      "window": "rolling 30 days",
+      "definition": "Receipt-checked dollars in xchain.bnb.outflow.usd.30d.v1 that were neither pass-through nor a swap and went to an address without contract code.",
+      "method": "Receipts (eth_getTransactionReceipt) from the public Binance nodes, batched, largest transfers first, for the last 35 days.",
+      "excludes": [
+        "Pass-through, swaps, transfers to contracts, unread receipts."
+      ],
+      "does_not_assert": [
+        "That it is spending: a plain wallet can be an exchange deposit address or the owner's own other wallet, and we do not attribute either.",
+        "Never added to any Base figure."
+      ],
+      "source": "AFG-Pulse BNB Smart Chain owner scan (afg-bnbpay)",
+      "since": "2026-10-03",
+      "url": "https://agenticfinancegraph.com/def/xchain.bnb.wallet.usd.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "xchain.outflow.usd.30d.v1",
       "title": "Stablecoins sent by owners on other chains, 30 days",
       "unit": "USD",
@@ -5170,11 +5862,12 @@
       "unit": "wallets",
       "chain_set": "eip155:1, eip155:42161, eip155:10, eip155:137",
       "window": "rolling 30 days",
-      "definition": "Owner wallets from xchain.owner.wallets.v1 that sent USDC, bridged USDC or USDT to another address in the last 30 days, at or after the block of their first registration on that chain.",
-      "method": "eth_getLogs with the sender topic set to 1,000 owners at a time, per chain, from a cursor.",
+      "definition": "Owner wallets from xchain.owner.wallets.v1 that registered at least one agent themselves and sent USDC, bridged USDC or USDT to another address in the last 30 days, at or after the block of their own first registration on that chain.",
+      "method": "eth_getLogs with the sender topic set to 1,000 owners at a time, per chain, from a cursor. An owner qualifies when it is the recipient of at least one of the registry's own mints (Transfer from the zero address).",
       "excludes": [
-        "Transfers before the owner's first registration on that chain.",
-        "Self-transfers."
+        "Transfers before the owner's own first registration on that chain.",
+        "Self-transfers.",
+        "Wallets that only hold registrations someone else minted: an unsolicited transfer or airdrop of a registration does not make a wallet an agent owner (since 3 Oct 2026; on that day this removed 558 of 887 wallets on these four chains, most of them recipients of spam registrations on Ethereum)."
       ],
       "does_not_assert": [
         "That a transfer is a purchase: these are not yet receipt-checked for routing hops the way Base payments are, so they are published as transfers, not as agent spending."
