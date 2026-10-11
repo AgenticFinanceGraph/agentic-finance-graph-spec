@@ -1,13 +1,13 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-05T11:37:13.013Z",
+  "exported_at": "2026-10-11T14:46:58.612Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
     "retention": "A superseded version stays served for at least 90 days.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 276,
+  "count": 280,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -1689,6 +1689,95 @@
       "source": "AFG-Pulse detectors",
       "since": "2026-09-11",
       "url": "https://agenticfinancegraph.com/def/detection.week.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "detector.drain_pattern.v2",
+      "title": "Drain-shaped payment, with the balance it took",
+      "unit": "detections",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "payments in the last 30 days",
+      "definition": "A counted payment at least five times the agent's previous largest, at least $250, to an address the agent had never paid, after at least three earlier counted payments: the unchanged v1 rule. New in v2, every detection carries a balance reading: what the paying wallet held in that stablecoin at the block before the payment, and the fraction of it the payment took.",
+      "method": "balanceOf at block minus one through an archive-capable RPC, read once per detection and stored on it. A wallet funded and emptied inside one block is read as emptied. The fraction is evidence beside the rule; it does not filter detections yet.",
+      "excludes": [
+        "Routing hops and payments from before registration, as in v1."
+      ],
+      "does_not_assert": [
+        "That a payment which emptied the wallet was a theft. On synthetic data with known answers the fraction separated every planted drain from every one-off purchase; on the live ledger 39 of the 47 drain-shaped payments since February took 80 to 100 percent of the balance. Each detection says what was seen and leaves the verdict to the reader."
+      ],
+      "source": "AFG-Pulse incident detectors, Base archive RPC",
+      "since": "2026-10-12",
+      "url": "https://agenticfinancegraph.com/def/detector.drain_pattern.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "detector.layering_fan.v1",
+      "title": "Fleet funding shape (same-amount fan-out)",
+      "unit": "detections",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "payments in the last 90 days",
+      "definition": "One ranked agent paying four or more other registered agents the same exact amount (at least $20 each) within fourteen days.",
+      "method": "AMLSim's same-amount fan-out shape, run over agent-to-agent counted payments. The shape is reported once per payer, day and amount.",
+      "excludes": [
+        "Fan-outs of differing amounts, which is what paying several suppliers looks like.",
+        "Payments to addresses that are not another registered agent's bound wallet."
+      ],
+      "does_not_assert": [
+        "Layering in the money-laundering sense. Across 317,368 agent-to-agent payments the chain holds no cycle and no scatter-gather; every fan-out found so far is one treasury funding a fleet of its own registrations, which changes what a count of agents means. A shape, never an incident."
+      ],
+      "source": "AFG-Pulse incident detectors",
+      "since": "2026-10-12",
+      "url": "https://agenticfinancegraph.com/def/detector.layering_fan.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "detector.mint_burst.v2",
+      "title": "Mint burst (a run with a sixty-minute peak)",
+      "unit": "detections",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time",
+      "definition": "A run of ERC-8004 registrations minted by one address in which no gap between consecutive mints exceeds sixty minutes, and some sixty-minute span inside the run holds twenty-five or more. One detection per run.",
+      "method": "The same sliding-window-over-runs method as the retry storm, with sixty minutes and twenty-five. Keyed on the hour the run starts.",
+      "excludes": [
+        "Runs whose densest hour holds fewer than twenty-five mints."
+      ],
+      "does_not_assert": [
+        "Anything about intent or legitimacy. Bulk minting is what a platform issuing identities for its users looks like. A burst changes what a registration count means; it is never an incident."
+      ],
+      "source": "AFG-Pulse incident detectors",
+      "since": "2026-10-12",
+      "replaces": "the calendar-hour rule (from 2026-09-11), which split runs at the hour mark and logged one run as several rows: 83 bursting addresses where the ledger holds 88. Rows logged by the old rule stay in the log as history; 71 runs it split or missed were added on 12 October 2026.",
+      "url": "https://agenticfinancegraph.com/def/detector.mint_burst.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "detector.retry_storm.v2",
+      "title": "Retry storm (a run with a ten-minute peak)",
+      "unit": "detections",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time",
+      "definition": "A run of counted payments from one agent to one payee in which no gap between consecutive payments exceeds ten minutes, and some ten-minute span inside the run holds fifty or more payments. One detection per run.",
+      "method": "A sliding ten-minute window over each payer-payee sequence gives every payment the count of payments in the ten minutes before it; consecutive payments less than ten minutes apart form a run; a run is reported when its peak count reaches fifty. Keyed on the hour the run starts, so a run the previous rule found keeps its id.",
+      "excludes": [
+        "Runs whose densest ten minutes hold fewer than fifty payments: a storm spread over twenty-five minutes is not reported, by design.",
+        "Payments from before the agent was registered."
+      ],
+      "does_not_assert": [
+        "Intent. A load test and a broken retry loop leave the same shape.",
+        "That the money was lost: the storm's total is reported beside it."
+      ],
+      "source": "AFG-Pulse incident detectors",
+      "since": "2026-10-12",
+      "replaces": "the calendar-hour rule in use from 2026-09-11 to 2026-10-11, which grouped payments by hour and asked whether fifty fell inside ten minutes. It missed every run that crossed the hour mark and every run with a stray payment later in the hour: 10 storm detections where the ledger holds 45, from 7 payer-payee pairs where there are 28. Measured on synthetic data with known answers (15 of 15 planted storms, plus the 8 hour-straddling ones the old rule missed, no false alarms) before shipping.",
+      "url": "https://agenticfinancegraph.com/def/detector.retry_storm.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5125,7 +5214,7 @@
         "The same exclusions as the event count."
       ],
       "does_not_assert": [
-        "That x402 volume is negligible in general. It says the attributed value we can see is tiny — these are micro-payments, and the whole attributed set is worth less than a dollar."
+        "That x402 volume is negligible in general. It says only what the attributed set is worth: micro-payments, a few thousand dollars in all against tens of millions of counted agent spending (updated 12 October 2026; the first version of this note said less than a dollar, which was true on 22 September)."
       ],
       "source": "AFG-Pulse rail attribution",
       "since": "2026-09-07",
