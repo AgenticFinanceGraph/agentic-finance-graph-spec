@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4 — 12 October 2026
+## 0.4 — 11 October 2026
 
 Four detector definitions (280 in all), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def):
 
