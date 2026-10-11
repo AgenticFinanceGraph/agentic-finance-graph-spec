@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4 — 12 October 2026
+
+Four detector definitions (280 in all), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def):
+
+- **`detector.retry_storm.v2`** and **`detector.mint_burst.v2`** replace the calendar-hour rules. Both read runs with a peak: consecutive events never more than the window apart, reported when the densest window inside the run reaches the threshold, keyed on the hour the run starts. The hour-bucketed v1 rules under-counted storms four to one; the fault was found on synthetic data with known answers ([amlsim-agentic](https://github.com/AgenticFinanceGraph/amlsim-agentic)) and confirmed on the live ledger (10 storm detections reported, 45 in the ledger).
+- **`detector.drain_pattern.v2`**: every drain detection carries the share of the wallet the payment took, read from the chain at the block before. Evidence beside the rule for a month, then a filter.
+- **`detector.layering_fan.v1`**: one agent paying four or more others the same exact amount within days, the same-amount fan-out shape. A shape, never an incident.
+
+The note on the x402 observed-value definition was corrected. The data checks and the test vectors are unchanged.
+
 ## 0.3 — 5 October 2026
 
 Thirty-two new definitions (276 in all), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def):

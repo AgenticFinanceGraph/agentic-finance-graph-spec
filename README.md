@@ -41,4 +41,4 @@ A count only becomes a standard when others can reproduce it and argue with it. 
 
 ## Licence
 
-CC BY 4.0. Cite as: Agentic Finance Graph, *Accounting specification for machine money*, v0.2 (2026).
+CC BY 4.0. Cite as: Agentic Finance Graph, *Accounting specification for machine money*, v0.4 (2026).
