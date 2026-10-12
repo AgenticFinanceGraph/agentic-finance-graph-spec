@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-12T22:46:39.133Z",
+  "exported_at": "2026-10-12T23:12:06.343Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 304,
+  "count": 310,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -486,6 +486,117 @@
       "revisions": [],
       "body_sha256": "7c814c860d7cd182bae8f23809785b0a94adcd38bdd8c8ed98c9b98d2d43faa0",
       "url": "https://agenticfinancegraph.com/def/agent.statement.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "approval.plain.30d.v1",
+      "title": "Approvals from agent wallets to plain accounts, last 30 days",
+      "unit": "approvals",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "approvals in the last 30 days; allowances and balances read at the time of the run",
+      "definition": "Non-zero approvals in the last 30 days from a paying agent wallet to a spender that has no contract code (or only an EIP-7702 delegation): a spender that is a key, not a program. This is the shape approval-phishing drainers use; it is also how an operator lets one of its own keys move funds. Each one is listed with its transaction in /api/approvals.",
+      "method": "ERC-20 Approval events whose owner is a paying agent wallet (any Base wallet with a counted agent payment), on USDC, USDT, DAI, USDbC, EURC, WETH and cbBTC, plus Permit2 Approval and Permit events for the same tokens, read daily with eth_getLogs over the last 30 days. For each (wallet, spender, token) whose latest ERC-20 approval was unlimited (at least half of 2^256), the allowance still standing and the token balance are read at run time from Base's public node; WETH and cbBTC at the latest stored ETH and BTC price, EURC at 1.08. Spender code read with eth_getCode at run time.",
+      "does_not_assert": [
+        "That the approval was phishing, or that anything was taken."
+      ],
+      "source": "AFG-Pulse approval watch",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "158f9655ecf78c41d1707c0c6775576deff885935f94cce1fd24d448f6205183",
+      "url": "https://agenticfinancegraph.com/def/approval.plain.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "approval.top_spender.share.v1",
+      "title": "Share of unlimited approvals held by the most-approved spender",
+      "unit": "share",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "approvals in the last 30 days; allowances and balances read at the time of the run",
+      "definition": "Of the wallets in approval.unlimited.wallets.v1, the share that has given a standing unlimited approval to the single spender approved by the most wallets. On 12 Oct 2026 that spender was the TermixEscrow proxy (272 wallets): one contract, upgradeable, that most of these wallets trust with their whole balance.",
+      "method": "ERC-20 Approval events whose owner is a paying agent wallet (any Base wallet with a counted agent payment), on USDC, USDT, DAI, USDbC, EURC, WETH and cbBTC, plus Permit2 Approval and Permit events for the same tokens, read daily with eth_getLogs over the last 30 days. For each (wallet, spender, token) whose latest ERC-20 approval was unlimited (at least half of 2^256), the allowance still standing and the token balance are read at run time from Base's public node; WETH and cbBTC at the latest stored ETH and BTC price, EURC at 1.08. Spenders are named only from our label map; others are listed by address in /api/approvals.",
+      "does_not_assert": [
+        "That the spender or its administrator is untrustworthy: concentration is a fact about exposure, not about intent."
+      ],
+      "source": "AFG-Pulse approval watch",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "77c39efacd3378e3a99ee5a5759d6d87d9f60a95d2fbcadb683957681832a0c1",
+      "url": "https://agenticfinancegraph.com/def/approval.top_spender.share.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "approval.unlimited.usd.v1",
+      "title": "Dollars behind standing unlimited approvals",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "approvals in the last 30 days; allowances and balances read at the time of the run",
+      "definition": "The sum, over the pairs counted in approval.unlimited.wallets.v1, of the approving wallet's current balance of the approved token: what the spenders could move today. On 12 Oct 2026 it was about $10,000 across 440 wallets: agent wallets keep little float, so the exposure is wide and shallow, and deepens whenever they are refilled.",
+      "method": "ERC-20 Approval events whose owner is a paying agent wallet (any Base wallet with a counted agent payment), on USDC, USDT, DAI, USDbC, EURC, WETH and cbBTC, plus Permit2 Approval and Permit events for the same tokens, read daily with eth_getLogs over the last 30 days. For each (wallet, spender, token) whose latest ERC-20 approval was unlimited (at least half of 2^256), the allowance still standing and the token balance are read at run time from Base's public node; WETH and cbBTC at the latest stored ETH and BTC price, EURC at 1.08.",
+      "excludes": [
+        "Balances of tokens the wallet did not approve."
+      ],
+      "does_not_assert": [
+        "That the money is at risk from a specific spender: most spenders are routers, escrows and lending pools."
+      ],
+      "source": "AFG-Pulse approval watch",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "ffe69fa62f1e40c9f545b8d1876572e9606b4f1c8ef6c28bf484b31bd11d44ad",
+      "url": "https://agenticfinancegraph.com/def/approval.unlimited.usd.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "approval.unlimited.wallets.v1",
+      "title": "Agent wallets with a standing unlimited approval",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "approvals in the last 30 days; allowances and balances read at the time of the run",
+      "definition": "Distinct paying agent wallets with at least one ERC-20 approval, given in the last 30 days, that is still unlimited when read: the spender can move the wallet's whole balance of that token without asking again.",
+      "method": "ERC-20 Approval events whose owner is a paying agent wallet (any Base wallet with a counted agent payment), on USDC, USDT, DAI, USDbC, EURC, WETH and cbBTC, plus Permit2 Approval and Permit events for the same tokens, read daily with eth_getLogs over the last 30 days. For each (wallet, spender, token) whose latest ERC-20 approval was unlimited (at least half of 2^256), the allowance still standing and the token balance are read at run time from Base's public node; WETH and cbBTC at the latest stored ETH and BTC price, EURC at 1.08.",
+      "excludes": [
+        "Unlimited approvals given more than 30 days ago (not read).",
+        "Permit2 allowances (their amounts and expiries differ; counted in the document, not here)."
+      ],
+      "does_not_assert": [
+        "That the spender will move anything. A standing approval is exposure, not a loss."
+      ],
+      "source": "AFG-Pulse approval watch",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "aba997d1b80b2170702f5929e16a5ceab88b8c2f0cd77d6d6a43f350bf03cb9c",
+      "url": "https://agenticfinancegraph.com/def/approval.unlimited.wallets.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "approval.wallets.30d.v1",
+      "title": "Agent wallets that gave a token approval, last 30 days",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "approvals in the last 30 days; allowances and balances read at the time of the run",
+      "definition": "Distinct paying agent wallets with at least one non-zero ERC-20 or Permit2 approval on the seven tokens in the last 30 days.",
+      "method": "ERC-20 Approval events whose owner is a paying agent wallet (any Base wallet with a counted agent payment), on USDC, USDT, DAI, USDbC, EURC, WETH and cbBTC, plus Permit2 Approval and Permit events for the same tokens, read daily with eth_getLogs over the last 30 days. For each (wallet, spender, token) whose latest ERC-20 approval was unlimited (at least half of 2^256), the allowance still standing and the token balance are read at run time from Base's public node; WETH and cbBTC at the latest stored ETH and BTC price, EURC at 1.08.",
+      "excludes": [
+        "Approvals on other tokens.",
+        "Revocations (approvals of zero)."
+      ],
+      "does_not_assert": [
+        "That an approval is unsafe: approving a router or a lending pool is how they work."
+      ],
+      "source": "AFG-Pulse approval watch",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "8d5c61018852a609b0bd99b4fae11011d1fa173f665d579c772786570a547202",
+      "url": "https://agenticfinancegraph.com/def/approval.wallets.30d.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5152,6 +5263,30 @@
       "revisions": [],
       "body_sha256": "42149939071f1788bffee8e0d7fb883ad1cf8a9f798ab861830d01ddc28ed861",
       "url": "https://agenticfinancegraph.com/def/rank.l8plus.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "rank.l9.independent.v1",
+      "title": "L9 agents with three independent counterparties",
+      "unit": "actors",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "counterparties paid in the last 30 days",
+      "definition": "Of the agents at L9 (rank.l9.v2: three or more counterparties in 30 days), those with at least three counterparties that are independent of the agent: an address with contract code (a venue, protocol or escrow), or an address that at least two different registered agents pay in counted payments. An address only this agent pays may be its operator's own, so it does not count here.",
+      "method": "Counted payments (receipt read, no routing hops, nothing before registration) from money_events; contract code from the counterparty table (eth_getCode); the number of distinct paying agents per address over all counted payments. Published beside actors_l9, not instead of it, by the payment scan.",
+      "excludes": [
+        "Agents below L9."
+      ],
+      "does_not_assert": [
+        "That an excluded counterparty belongs to the agent's operator: only that nothing in our data shows anyone else pays it.",
+        "That a contract counterparty is independent of the operator: a fleet can pay its own contract."
+      ],
+      "source": "AFG-Pulse payment scan",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "52eb7db9340f9a9dbe01cf2a1d9a02406bb18e0a73e78b97e557a4fc73f77a0a",
+      "url": "https://agenticfinancegraph.com/def/rank.l9.independent.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
