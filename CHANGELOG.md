@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5 — 12 October 2026
+
+288 definitions, exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def), each now with a dated `revisions` list and `body_sha256` (the hash of the frozen body, status fields excluded):
+
+- **`rank.l8plus.v2`, `rank.l9.v2`.** Since 27 September 2026 the L8 line has counted the four-stablecoin float (USDC, USDT, EURC at the day's rate, DAI), while `rank.l8plus.v1` still said USDC. v2 states the rule the counts follow; v1 stays published, superseded. The ladder table in SPEC.md follows.
+- **`pay.composition.v1`**: the counted total taken apart in one pass, every payment in exactly one part (own positions, bridge, work escrow, swap, other labelled, agent-to-agent, x402 sellers, unnamed), so the parts add up to that pass's total.
+- **`pay.usd.leftcontrol.netbridge.v1`**: left control minus the bridged money that reached the paying wallet's own address on another chain.
+- **`cp.labelled.usd.share.v1`**: the labelled share by value, beside the existing share by count. The category definitions carry a dated revision: their base is the counted set.
+
+Our own changes of coverage, method, labels and detector rules are now listed with dates at [/api/changepoints](https://agenticfinancegraph.com/api/changepoints). The data checks and the test vectors are unchanged.
+
 ## 0.4 — 11 October 2026
 
 Four detector definitions (280 in all), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def):

@@ -60,10 +60,12 @@ Every excluded amount is published as its own metric, so each exclusion can be a
 | L5 | A declared endpoint answers a plain GET | `probe.l5.endpoint_live.v1` |
 | L6 | The endpoint speaks MCP or A2A | — |
 | **L7** | A bound wallet was observed paying a **different** address after registration (a counted payment) | `rank.l7plus.v1` |
-| L8 | L7, and the paying wallet holds at least $10 of USDC at the latest balance read | `rank.l8plus.v1` |
-| L9 | L8, and payments to three or more distinct counterparties in the last 30 days | `rank.l9.v1` |
+| L8 | L7, and the agent's bound wallet holds at least $10 in stablecoins (USDC, USDT, EURC at the day's rate, DAI) at the latest balance read | `rank.l8plus.v2` |
+| L9 | L8, and counted payments to three or more distinct counterparties in the last 30 days | `rank.l9.v2` |
 
 L0 to L5 are measured on a uniform random sample of registrations; L7 to L9 on every registration (a census). The public rank starts at L7, because it is the first level that a registry entry alone cannot claim.
+
+`rank.l8plus.v1` and `rank.l9.v1` (USDC only) stay published as superseded: the counts have followed the four-stablecoin rule since 27 September 2026, and v2 states it.
 
 The rank does not assert that the agent is autonomous, that the registrant controls the wallet, or anything about what a payment was for. Some ranked agents rest on less than a dollar; `rank.costtofake.v1` publishes what each level costs to fake.
 
