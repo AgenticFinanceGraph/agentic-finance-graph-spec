@@ -79,9 +79,28 @@ The other detection kinds (mint bursts, retry storms, endpoints that never answe
 
 Known limits of the drain rule: it reads the four stablecoins only; it watches bound wallets only; a large first payment to a new seller trips it legitimately.
 
+**Address poisoning** (`poison.*.v2`, 12 October 2026). A poisoner plants a look-alike of an address the agent pays, hoping a later payment copies the wrong one. A plant is either:
+
+- a zero-value transfer of a real token from the agent's wallet; or
+- a transfer of a token whose symbol imitates a real one; or
+- another token sent to an address without code.
+
+The recipient must match one of the wallet's payees on the first 3 and last 4 hex characters, the threshold of Tsuchiya, Dong, Soska and Christin, *Blockchain Address Poisoning* (USENIX Security 2025). For a fake-symbol token the last 4 alone suffice.
+
+We measured the rule against the paper before adopting it:
+
+- of 82,132 plants either rule counts, our earlier first-4 + last-4 rule found 80,509 and the paper's 80,880;
+- a second, independent read of 300 sampled plants from the chain found every one sent by somebody other than the wallet, to an address without code.
+
+The one kind we do not read yet is the paper's incoming *tiny transfer* (look-alike to wallet, a real token, under 10 USD).
+
+A **loss** is a real payment to an address planted in that wallet's history first and never paid before. It is confirmed by a second source: Blockscout, or the transaction receipt from Base's public nodes.
+
 ## 6. Checking our own tables
 
-Thirty-seven assertion checks ([`checks/checks.json`](checks/checks.json)) run against the tables every three hours: required fields, duplicate logs, amount ranges, self-transfers in the counted set, payments dated before their registration, classification backlogs, stalled collectors, and more. A check passes when its query returns no rows. Failing rows are published. Each check has a weight (3 for the tables the rank is built from, 2 for the published snapshot, 1 for partner and catalogue tables) that feeds a health score.
+Forty-three assertion checks ([`checks/checks.json`](checks/checks.json)) run against the tables every three hours: required fields, duplicate logs, amount ranges, self-transfers in the counted set, payments dated before their registration, classification backlogs, stalled collectors, and more. A check passes when its query returns no rows. Failing rows are published. Each check has a weight (3 for the tables the rank is built from, 2 for the published snapshot, 1 for partner and catalogue tables) that feeds a health score.
+
+One check reads our own series rather than our tables (`unexplained_step`, added 12 October 2026). Changepoint detection (PELT, Killick, Fearnhead and Eckley 2012) finds sudden steps in each archived daily series. A step must be a material move, concentrated in one day, that persisted. Every step is matched against our dated register of coverage, method, label and detector-rule changes (`/api/changepoints`) or a checked note; one that nothing explains is a warning. On its first run it found that the register entry for the 27 September 2026 sweep named too few series, and a correcting entry was added. Entries in the register are never edited.
 
 ## 7. Measuring it twice
 
@@ -92,6 +111,12 @@ A figure is ready to publish only when it has been measured two ways. For paymen
 3. Report: matched rows and value; rows only in ours, each with a reason; rows only in the other source, each with a reason (wallet not yet scanned, bound after the transfer, and so on); matched rows whose amount, sender, recipient or asset disagree.
 
 A published total carries its reconciliation date. Registrations are already measured twice. On 27 September 2026 our census and an independent index agreed to within 0.4% on each of the five chains we cover (Base: 95,882 against 95,956, the gap being registrations minted between the two reads).
+
+## 7a. A history that cannot be quietly rewritten
+
+Every signed statement-window root is a leaf of an append-only Merkle log in the shape of Certificate Transparency (RFC 6962 section 2.1). The hashing is SHA-256 with 0x00 before a leaf and 0x01 before a node pair. Each leaf is the exact message its root was signed over.
+
+A signed tree head (size, root hash, time; Ed25519, `afg-statement-log:v1:<size>:<root>:<ms>`) is published whenever the log grows, and every head is kept. A reader who stores a head can later ask for a consistency proof (`/api/statements/log?consistency=<size>`) and check, with the RFC 9162 algorithm, that the new head extends the old one. If any earlier root had been changed, the proof fails. `agent.statement.log.v1`.
 
 ## 8. Test vectors
 

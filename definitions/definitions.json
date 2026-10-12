@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-12T20:15:43.090Z",
+  "exported_at": "2026-10-12T22:26:57.813Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 288,
+  "count": 303,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -414,6 +414,30 @@
       "revisions": [],
       "body_sha256": "c5a5014416b2424ed41faa999eadb3cdd18c0e5a516be61aecde113fe777b184",
       "url": "https://agenticfinancegraph.com/def/acp.zerorate.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "agent.statement.log.v1",
+      "title": "Statement log (append-only, RFC 6962)",
+      "unit": "signed tree head",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "every statement window since 5 Oct 2026",
+      "definition": "A Merkle log in the shape of Certificate Transparency (RFC 6962 section 2.1) whose leaves are the signed statement-window roots, in the order they were written. Each leaf is the exact message its root was signed over (afg-statement-root:v1:...). A signed tree head (tree size, root hash, time) is published whenever the log grows, signed with the statement key over afg-statement-log:v1:<tree_size>:<root_hash>:<timestamp_ms>; every head is kept.",
+      "method": "SHA-256; leaf hash = SHA-256(0x00 || leaf), node = SHA-256(0x01 || left || right). /api/statements/log serves the head, every past head and the leaves; ?consistency=<m> returns the RFC 6962 proof that the current tree extends the tree of size m, and ?inclusion=<index> the audit path of one leaf. The function rebuilds the tree from the published leaves and serves nothing if it does not match the signed head.",
+      "excludes": [
+        "Windows the statement job never wrote: they are absent, not back-filled."
+      ],
+      "does_not_assert": [
+        "That the statements are correct: the log proves our history of roots was not rewritten after a head was seen, not that what we measured was right.",
+        "That a root is on chain."
+      ],
+      "source": "AFG-Pulse statements",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "2f79bfe643e856393418147e42afece0343ee5346c2ab7e6922aa623b2764966",
+      "url": "https://agenticfinancegraph.com/def/agent.statement.log.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4316,6 +4340,33 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "payers.set.v1",
+      "title": "Payer set of an agent",
+      "unit": "addresses",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time observed",
+      "definition": "For one ERC-8004 agent on Base: the distinct addresses observed paying it, from (a) stablecoin transfers into its bound wallets read by the income scan (USDC, USDT, EURC, DAI) and (b) counted payments into its bound wallets from other registered agents' wallets read by the payment scan. Each with the number of payments, USD, first and last paid, which scan saw it, and the payer's own token id when the payer is a bound wallet.",
+      "method": "money_events kind EARN for the agent plus kind PAY with to_id among the agent's open bindings; both exclude routing hops (money that left again in the same transaction), transfers before the payee was registered, and rows whose receipt is not read yet. Up to 250 payers listed, largest by USD first; payers_total is the full count. Published for use as clientAddresses in ERC-8004 getSummary, the reviewer filter the standard asks for because unfiltered feedback is Sybil-prone.",
+      "excludes": [
+        "Payments before the agent's registration.",
+        "Routing hops.",
+        "Income older than the newest 50 stablecoin transfers at each read of a wallet (the income scan reads ranked wallets every 3 days from 27 Sep 2026).",
+        "Income into agents below L7, which the income scan does not read; their payer set holds only payments from other registered agents."
+      ],
+      "does_not_assert": [
+        "That a payer is independent of the agent's operator.",
+        "That every payer is listed: observed payers are a lower bound."
+      ],
+      "source": "AFG-Pulse income scan and payment scan",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "6a4fc549f9aee3451dc83ef5241a26eccddd9e1326c5ea2b8c9f818c8da285dc",
+      "url": "https://agenticfinancegraph.com/def/payers.set.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "poison.copy_lag.median.v1",
       "title": "Minutes from an agent's payment to the first look-alike copy (median)",
       "unit": "minutes",
@@ -4355,9 +4406,41 @@
       ],
       "source": "AFG-Pulse poisoning watch",
       "since": "2026-10-03",
-      "revisions": [],
+      "valid_until": "2026-10-12",
+      "superseded_by": "poison.events.24h.v2",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "Superseded by poison.events.24h.v2: a zero-value or other-token transfer now counts when the look-alike matches a payee on the first 3 and last 4 hex characters (the threshold of Tsuchiya et al., USENIX Security 2025), not only the first 4 and last 4. 1,438 stored zero-value plants on 539 wallets were re-matched; no new loss followed. See /api/changepoints cp-2026-10-12-poison-rule."
+        }
+      ],
       "body_sha256": "b5d62151237a16dfd411dfb22ca528cd3585249ddbeadbe25ab669d6afcfae7b",
       "url": "https://agenticfinancegraph.com/def/poison.events.24h.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.events.24h.v2",
+      "title": "Poisoning transfers into agent wallets' history, last 24 hours",
+      "unit": "transfers",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours",
+      "definition": "A poisoning transfer is (a) a Transfer of zero from the wallet in USDC, USDT, DAI, USDbC, EURC, WETH or cbBTC (anyone can call transferFrom for zero without an approval) to an address whose first 3 and last 4 hex characters both match a different payee of the wallet (rule v2; v1 required the first 4), or (b) a Transfer from the wallet in a token that is not one of those contracts but whose symbol, after removing accents and invisible characters and mapping look-alike letters (Cyrillic, Greek, Georgian, Lisu) to Latin, reads as one of them, sent to an address whose last 4 hex characters match one of the wallet's payees, or (c) any other token sent to an address that has no contract code and whose first 3 and last 4 hex characters both match a payee. Counted over the last 24 hours across every watched wallet.",
+      "method": "Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract.",
+      "excludes": [
+        "Fake-symbol tokens sent to addresses that resemble none of the wallet's payees (they are not tied to a payment to copy).",
+        "NFT transfers."
+      ],
+      "does_not_assert": [
+        "That the wallet's owner noticed, or lost anything."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-12",
+      "validation": "Measured on 12 Oct 2026 against Tsuchiya, Dong, Soska & Christin, Blockchain Address Poisoning (USENIX Security 2025): of 82,132 plants either rule counts, rule v1 counted 80,509 and the paper's first-3 + last-4 rule 80,880; v2 counts all of them. A second, independent read from the chain on a random sample of 300 counted plants found every one sent by somebody other than the wallet (directly or through an ERC-4337 UserOperation) to an address without contract code; the same check on 50 zero-value plants that only the 3 + 4 rule catches found the same. Incoming tiny transfers (look-alike to wallet, a real token, under 10 USD), the paper's third kind, are not read by this watch.",
+      "revisions": [],
+      "body_sha256": "83cdc0a2212ac7e0d0b788d773b62712d849c83f505c3ea21c7739e8e7c778c5",
+      "url": "https://agenticfinancegraph.com/def/poison.events.24h.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4399,9 +4482,40 @@
       ],
       "source": "AFG-Pulse poisoning watch",
       "since": "2026-10-03",
-      "revisions": [],
+      "valid_until": "2026-10-12",
+      "superseded_by": "poison.loss.usd.v2",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "Superseded by poison.loss.usd.v2: a zero-value or other-token transfer now counts when the look-alike matches a payee on the first 3 and last 4 hex characters (the threshold of Tsuchiya et al., USENIX Security 2025), not only the first 4 and last 4. 1,438 stored zero-value plants on 539 wallets were re-matched; no new loss followed. See /api/changepoints cp-2026-10-12-poison-rule."
+        }
+      ],
       "body_sha256": "4f8c64dbfbe3115c456da10cfd70acc104fe5126f5c2a8f94deacb2d54b0e7ab",
       "url": "https://agenticfinancegraph.com/def/poison.loss.usd.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.loss.usd.v2",
+      "title": "Dollars agents paid to planted look-alike addresses",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "as poison.losses.v2",
+      "definition": "The sum of poison.losses.v2 payments in USDC, USDT, DAI and USDbC, at one dollar each.",
+      "method": "As poison.losses.v2.",
+      "excludes": [
+        "EURC, WETH and cbBTC losses (counted in poison.losses.v2, not priced here)."
+      ],
+      "does_not_assert": [
+        "As poison.losses.v2."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-12",
+      "validation": "Measured on 12 Oct 2026 against Tsuchiya, Dong, Soska & Christin, Blockchain Address Poisoning (USENIX Security 2025): of 82,132 plants either rule counts, rule v1 counted 80,509 and the paper's first-3 + last-4 rule 80,880; v2 counts all of them. A second, independent read from the chain on a random sample of 300 counted plants found every one sent by somebody other than the wallet (directly or through an ERC-4337 UserOperation) to an address without contract code; the same check on 50 zero-value plants that only the 3 + 4 rule catches found the same. Incoming tiny transfers (look-alike to wallet, a real token, under 10 USD), the paper's third kind, are not read by this watch.",
+      "revisions": [],
+      "body_sha256": "45d009504068727bed41efa551c1000af30a4341c0501d8ab85143166e341809",
+      "url": "https://agenticfinancegraph.com/def/poison.loss.usd.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4420,9 +4534,38 @@
       ],
       "source": "AFG-Pulse poisoning watch",
       "since": "2026-10-03",
-      "revisions": [],
+      "valid_until": "2026-10-12",
+      "superseded_by": "poison.loss.wallets.v2",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "Superseded by poison.loss.wallets.v2: a zero-value or other-token transfer now counts when the look-alike matches a payee on the first 3 and last 4 hex characters (the threshold of Tsuchiya et al., USENIX Security 2025), not only the first 4 and last 4. 1,438 stored zero-value plants on 539 wallets were re-matched; no new loss followed. See /api/changepoints cp-2026-10-12-poison-rule."
+        }
+      ],
       "body_sha256": "504e1f52b3aae78280a9997957ccc20f8660bf31e3f6b201bf1a11078edb0f8f",
       "url": "https://agenticfinancegraph.com/def/poison.loss.wallets.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.loss.wallets.v2",
+      "title": "Agent wallets that paid a planted look-alike",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "as poison.losses.v2",
+      "definition": "Distinct wallets with at least one poison.losses.v2 payment.",
+      "method": "As poison.losses.v2.",
+      "excludes": [],
+      "does_not_assert": [
+        "As poison.losses.v2."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-12",
+      "validation": "Measured on 12 Oct 2026 against Tsuchiya, Dong, Soska & Christin, Blockchain Address Poisoning (USENIX Security 2025): of 82,132 plants either rule counts, rule v1 counted 80,509 and the paper's first-3 + last-4 rule 80,880; v2 counts all of them. A second, independent read from the chain on a random sample of 300 counted plants found every one sent by somebody other than the wallet (directly or through an ERC-4337 UserOperation) to an address without contract code; the same check on 50 zero-value plants that only the 3 + 4 rule catches found the same. Incoming tiny transfers (look-alike to wallet, a real token, under 10 USD), the paper's third kind, are not read by this watch.",
+      "revisions": [],
+      "body_sha256": "62defa167645f232520e8d2c042d203e6d36e80ca8868cf84a856059a99aeb29",
+      "url": "https://agenticfinancegraph.com/def/poison.loss.wallets.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4445,9 +4588,47 @@
       ],
       "source": "AFG-Pulse poisoning watch",
       "since": "2026-10-03",
-      "revisions": [],
+      "valid_until": "2026-10-12",
+      "superseded_by": "poison.losses.v2",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "Superseded by poison.losses.v2: a zero-value or other-token transfer now counts when the look-alike matches a payee on the first 3 and last 4 hex characters (the threshold of Tsuchiya et al., USENIX Security 2025), not only the first 4 and last 4. 1,438 stored zero-value plants on 539 wallets were re-matched; no new loss followed. See /api/changepoints cp-2026-10-12-poison-rule."
+        }
+      ],
       "body_sha256": "dc8c7b44a434fcc8e5ed8a892a2236792f563f65c8fe19822312881b61bcfd73",
       "url": "https://agenticfinancegraph.com/def/poison.losses.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.losses.v2",
+      "title": "Agent payments to planted look-alike addresses",
+      "unit": "payments",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time since the watch's first block (120 days before 3 Oct 2026)",
+      "definition": "Real-token payments (value above zero) from a watched wallet to an address that had received a poisoning transfer (poison.events.24h.v2 rule) from that wallet earlier, and that the wallet had never paid before that first poisoning transfer, where the transaction that planted the address was sent by someone other than the wallet and the address has no contract code (both read from the chain; a payment to a new deployment of a contract the wallet already used is an upgrade, not a loss). Each one is counted only after Blockscout's index shows the same transfer (sender, recipient, token and amount), a second source independent of the log query.",
+      "method": "Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract. Second check: base.blockscout.com transaction token-transfers.",
+      "excludes": [
+        "Payments Blockscout has not confirmed yet (retried every hour).",
+        "Look-alikes the wallet paid without them being planted in its history first."
+      ],
+      "does_not_assert": [
+        "That the payment was not intended: an operator could pay any address on purpose.",
+        "That the money cannot be recovered."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-12",
+      "validation": "Measured on 12 Oct 2026 against Tsuchiya, Dong, Soska & Christin, Blockchain Address Poisoning (USENIX Security 2025): of 82,132 plants either rule counts, rule v1 counted 80,509 and the paper's first-3 + last-4 rule 80,880; v2 counts all of them. A second, independent read from the chain on a random sample of 300 counted plants found every one sent by somebody other than the wallet (directly or through an ERC-4337 UserOperation) to an address without contract code; the same check on 50 zero-value plants that only the 3 + 4 rule catches found the same. Incoming tiny transfers (look-alike to wallet, a real token, under 10 USD), the paper's third kind, are not read by this watch.",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "From 22:10 UTC the second, independent read of a loss falls back to the transaction receipt from Base's public RPC nodes (mainnet.base.org, then base-rpc.publicnode.com), operated separately from the log provider, when Blockscout's Base API refuses our requests (it answers our collector with a Cloudflare challenge since 12 October 2026). Each loss records which source confirmed it (verified_by)."
+        }
+      ],
+      "body_sha256": "e7121665f3f944ba3af37f2af01d399bb7a42cf176f17d63884c2f627437cca2",
+      "url": "https://agenticfinancegraph.com/def/poison.losses.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4466,9 +4647,38 @@
       ],
       "source": "AFG-Pulse poisoning watch",
       "since": "2026-10-03",
-      "revisions": [],
+      "valid_until": "2026-10-12",
+      "superseded_by": "poison.targeted.7d.v2",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "Superseded by poison.targeted.7d.v2: a zero-value or other-token transfer now counts when the look-alike matches a payee on the first 3 and last 4 hex characters (the threshold of Tsuchiya et al., USENIX Security 2025), not only the first 4 and last 4. 1,438 stored zero-value plants on 539 wallets were re-matched; no new loss followed. See /api/changepoints cp-2026-10-12-poison-rule."
+        }
+      ],
       "body_sha256": "8227b4b1e8b027ddca6dc750b3550d16aedee32eef997332b55d6cf14934ecac",
       "url": "https://agenticfinancegraph.com/def/poison.targeted.7d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.targeted.7d.v2",
+      "title": "Agent wallets targeted by poisoners, last 7 days",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 7 days",
+      "definition": "Distinct watched wallets with at least one poisoning transfer (poison.events.24h.v2 rule) in the last 7 days.",
+      "method": "Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract.",
+      "excludes": [],
+      "does_not_assert": [
+        "That a targeted wallet paid a poisoner."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-12",
+      "validation": "Measured on 12 Oct 2026 against Tsuchiya, Dong, Soska & Christin, Blockchain Address Poisoning (USENIX Security 2025): of 82,132 plants either rule counts, rule v1 counted 80,509 and the paper's first-3 + last-4 rule 80,880; v2 counts all of them. A second, independent read from the chain on a random sample of 300 counted plants found every one sent by somebody other than the wallet (directly or through an ERC-4337 UserOperation) to an address without contract code; the same check on 50 zero-value plants that only the 3 + 4 rule catches found the same. Incoming tiny transfers (look-alike to wallet, a real token, under 10 USD), the paper's third kind, are not read by this watch.",
+      "revisions": [],
+      "body_sha256": "c6bff940f0964ad779866aa5aab1b89993fbe895c6353dc1d4e20cb5b6a8390a",
+      "url": "https://agenticfinancegraph.com/def/poison.targeted.7d.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4489,9 +4699,40 @@
       ],
       "source": "AFG-Pulse poisoning watch",
       "since": "2026-10-03",
-      "revisions": [],
+      "valid_until": "2026-10-12",
+      "superseded_by": "poison.targeted.share.7d.v2",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "Superseded by poison.targeted.share.7d.v2: a zero-value or other-token transfer now counts when the look-alike matches a payee on the first 3 and last 4 hex characters (the threshold of Tsuchiya et al., USENIX Security 2025), not only the first 4 and last 4. 1,438 stored zero-value plants on 539 wallets were re-matched; no new loss followed. See /api/changepoints cp-2026-10-12-poison-rule."
+        }
+      ],
       "body_sha256": "75de352ceeecec6b81cfaaf70fadc36857bce21c52d770e0fe4de9b5bdde48cf",
       "url": "https://agenticfinancegraph.com/def/poison.targeted.share.7d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.targeted.share.7d.v2",
+      "title": "Share of paying agent wallets targeted, last 7 days",
+      "unit": "ratio",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 7 days",
+      "definition": "Of the watched wallets that made a real payment in USDC, USDT, DAI, USDbC, EURC, WETH or cbBTC in the last 7 days, the share that also received at least one poisoning transfer in those 7 days.",
+      "method": "Every Base wallet that has made at least one counted agent payment (money_events kind PAY), with the payees it has paid. One eth_getLogs per 2,000 wallets returns every ERC-20 Transfer whose sender is one of them, from any token contract.",
+      "excludes": [
+        "Wallets that did not pay in the window."
+      ],
+      "does_not_assert": [
+        "Causation: a wallet that pays is simply visible to poisoners."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-12",
+      "validation": "Measured on 12 Oct 2026 against Tsuchiya, Dong, Soska & Christin, Blockchain Address Poisoning (USENIX Security 2025): of 82,132 plants either rule counts, rule v1 counted 80,509 and the paper's first-3 + last-4 rule 80,880; v2 counts all of them. A second, independent read from the chain on a random sample of 300 counted plants found every one sent by somebody other than the wallet (directly or through an ERC-4337 UserOperation) to an address without contract code; the same check on 50 zero-value plants that only the 3 + 4 rule catches found the same. Incoming tiny transfers (look-alike to wallet, a real token, under 10 USD), the paper's third kind, are not read by this watch.",
+      "revisions": [],
+      "body_sha256": "3c6395ca979897d57e30dc26abfb46da7593b32c01901165d39813195ca4eb1f",
+      "url": "https://agenticfinancegraph.com/def/poison.targeted.share.7d.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4515,6 +4756,97 @@
       "revisions": [],
       "body_sha256": "93f6490cd2587d380508e04d7eca570e4acce071e5878f18f0c166b18c917a8a",
       "url": "https://agenticfinancegraph.com/def/poison.watch.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "probe.domain.checked.v1",
+      "title": "Registrations needing endpoint-domain verification",
+      "unit": "registrations",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "most recent sweep",
+      "definition": "In the probe sweep's uniform random sample, the registrations that declare at least one HTTPS service endpoint on a domain other than the one serving their registration file (or whose registration file is not served over HTTPS at all), so control of that endpoint domain is not shown by the registration itself.",
+      "method": "ERC-8004, Endpoint Domain Verification (Optional): domain control is already shown when an endpoint sits on the domain that serves the registration file (same host, or one a subdomain of the other); every other HTTPS endpoint domain needs the well-known proof. Shared hosting platforms' submit URLs are excluded, as for L5.",
+      "does_not_assert": [
+        "That an unverified endpoint is fake. The check is optional in the standard."
+      ],
+      "source": "AFG-Pulse liveness probe",
+      "since": "2026-10-12",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "From the sweep at 22:16 UTC on 12 October 2026, two kinds of endpoint domain are not counted, because no agent can publish a proof there: profile links on shared public platforms (github.com, x.com, facebook.com, sites.google.com, farcaster.xyz, basescan.org and similar) and reserved example names (example.com, *.test). The first sweep, at 21:57 UTC on 12 October, counted them: 329 registrations, 1 verified."
+        }
+      ],
+      "body_sha256": "9d9e8ccfe04de7f10a6037487ca84db57912d58969af2d52ea5ffc53858b634d",
+      "url": "https://agenticfinancegraph.com/def/probe.domain.checked.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "probe.domain.file.v1",
+      "title": "Endpoint-domain proof file present",
+      "unit": "ratio (0–1)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "most recent sweep",
+      "definition": "Of the registrations counted by probe.domain.checked.v1, the share for which at least one off-domain endpoint domain serves /.well-known/agent-registration.json at all (status 2xx), whether or not it lists this agent.",
+      "method": "Same fetch as probe.domain.verified.v1. The gap between this and the verified rate is domains that publish a file listing other agents, or a file without a registrations list.",
+      "source": "AFG-Pulse liveness probe",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "ccbb78fe440beafef6dc842a8997999aa43d0cd1e73f06ff37a02cc246cdef47",
+      "url": "https://agenticfinancegraph.com/def/probe.domain.file.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "probe.domain.tophost.v1",
+      "title": "Endpoint-domain set: share on the most common host",
+      "unit": "ratio (0–1)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "most recent sweep",
+      "definition": "Of the registrations counted by probe.domain.checked.v1, the share whose checked endpoint domains include the single most common one. A high share means the verified rate mostly describes one platform.",
+      "method": "Counted over the same sweep, from the endpoint domains read for probe.domain.verified.v1 (up to two per registration).",
+      "does_not_assert": [
+        "Which platform it is; the host is in the probe log, not in this figure."
+      ],
+      "source": "AFG-Pulse liveness probe",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "bc511901c7d25dfe3fd6e0a771afc65664c491d57f914509b9e6068088f55526",
+      "url": "https://agenticfinancegraph.com/def/probe.domain.tophost.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "probe.domain.verified.v1",
+      "title": "Endpoint-domain verified rate",
+      "unit": "ratio (0–1)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "most recent sweep",
+      "definition": "Of the registrations counted by probe.domain.checked.v1, the share whose off-domain endpoint domains (up to two per registration) all serve https://{domain}/.well-known/agent-registration.json with a registrations entry whose agentRegistry (eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432) and agentId match the on-chain agent.",
+      "method": "One guarded GET per domain per sweep (8 s timeout, at most 3 redirects, 256 KB body cap, private addresses refused, nothing executed); the file must parse as JSON and carry a registrations list. The criterion is the one the standard gives readers for treating an endpoint domain as verified.",
+      "excludes": [
+        "Endpoints that are not HTTPS (ENS names, DIDs, email, ipfs://).",
+        "Endpoints on the domain that serves the registration file."
+      ],
+      "does_not_assert": [
+        "That the agent behind a verified domain works or is honest; only that whoever controls the domain says this registration is theirs."
+      ],
+      "source": "AFG-Pulse liveness probe",
+      "since": "2026-10-12",
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "Same scope change as probe.domain.checked.v1, from the 22:16 UTC sweep on 12 October 2026. On the first sweep 271 of the 329 registrations had their endpoint on one platform's API host, which published no proof file; probe.domain.tophost.v1 now reports that concentration with every sweep."
+        }
+      ],
+      "body_sha256": "de3a53ff47ebfe265f023f1783cd88ef8c55a463239f3798e5116d725f43f30b",
+      "url": "https://agenticfinancegraph.com/def/probe.domain.verified.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5192,6 +5524,75 @@
       "revisions": [],
       "body_sha256": "a307373b102eedf09ae8f3bb828d07edab7032cf4f63d04f0fb914940deb1d0b",
       "url": "https://agenticfinancegraph.com/def/rep.feedback.total.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "rep.grounded.base.v1",
+      "title": "Reviewer-agent pairs checked for payment",
+      "unit": "pairs",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time observed",
+      "definition": "Distinct (reviewer address, agent) pairs in ERC-8004 feedback on Base where the agent is one whose income we read (ranked agents, read by the income scan). The base of rep.grounded.share.v1.",
+      "method": "reputation_feedback (chain 8453) grouped by lower-cased client address and agent, kept when the agent has any income row from the income scan.",
+      "excludes": [
+        "Feedback on agents whose income we do not read: there, no payer seen means not looked."
+      ],
+      "source": "AFG-Pulse reputation ingest and income scan",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "b978c6021d3840e8f43fa8ae50bd19b2ac9f21f41768e8df52fe86597744a8a6",
+      "url": "https://agenticfinancegraph.com/def/rep.grounded.base.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "rep.grounded.share.v1",
+      "title": "Payment-grounded feedback share (reviewer-agent pairs)",
+      "unit": "ratio (0–1)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time observed",
+      "definition": "Of the pairs in rep.grounded.base.v1, the share where the reviewer paid the agent, in a counted transfer, before its first rating: the share of feedback a payer filter (ERC-8004 getSummary with the payer set as clientAddresses) would keep.",
+      "method": "A payment is an income-scan transfer into the agent's bound wallets, or a counted payment from another registered agent's wallet to them; routing hops, transfers before registration and unread receipts are excluded, as in payers.set.v1. Counted per pair, not per entry: on 12 Oct 2026 one wallet's 85 ratings of one agent it pays were 85 of the 102 grounded entries, 1 of the 6 grounded pairs.",
+      "excludes": [
+        "Payments the scans did not observe (payers.set.v1 is a lower bound)."
+      ],
+      "does_not_assert": [
+        "That a grounded review is independent or honest.",
+        "That an ungrounded review is fake."
+      ],
+      "source": "AFG-Pulse reputation ingest, income scan and payment scan",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "799be75c53249c1846dd9760d7f0f66c1e531c9b615a88aab7698874c0b4ef97",
+      "url": "https://agenticfinancegraph.com/def/rep.grounded.share.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "rep.grounded.v1",
+      "title": "Payment-grounded feedback",
+      "unit": "feedback entries / share",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time observed",
+      "definition": "Of one agent's ERC-8004 feedback entries on Base, those whose client address is in the agent's payer set (payers.set.v1) with a first payment earlier than the feedback. Reported as a count and as a share of the agent's feedback entries.",
+      "method": "Feedback from the Reputation Registry (afg-reputation, NewFeedback events, chain 8453) joined to payers.set.v1 on the client address; the payment must precede the feedback block time.",
+      "excludes": [
+        "Feedback on other chains.",
+        "Payments the scans did not observe (see payers.set.v1)."
+      ],
+      "does_not_assert": [
+        "That grounded feedback is honest or independent: one operator can pay its own agent and rate it. On 12 Oct 2026 one agent's 85 feedback entries all came from a single wallet that had paid it 45 times.",
+        "That ungrounded feedback is fake: the reviewer may have paid through a route the scans do not read."
+      ],
+      "source": "AFG-Pulse reputation ingest, income scan and payment scan",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "2a24ccc51f3620a26ebf7570b6884f02e08752efc7d98f4ebc9c1e5caa66be6d",
+      "url": "https://agenticfinancegraph.com/def/rep.grounded.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"

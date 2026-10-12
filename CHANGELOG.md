@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6 — 12 October 2026, night
+
+303 definitions (15 new), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def), and 43 data checks.
+
+- **Address poisoning, rule v2** (`poison.events.24h.v2` and five more). A look-alike now also counts when it matches a payee on the first 3 and last 4 hex characters (Tsuchiya, Dong, Soska and Christin, USENIX Security 2025), measured against that paper first; see SPEC section 5. The v1 definitions are kept, superseded, each with a dated revision.
+- **Who paid an agent** (`payers.set.v1`) and **payment-grounded feedback** (`rep.grounded.v1`, `rep.grounded.base.v1`, `rep.grounded.share.v1`). These are the reviewer filter ERC-8004's `getSummary` asks for. Counted per reviewer-agent pair: on 12 October 2026, 6 of 619 pairs were grounded.
+- **Endpoint-domain verification** (`probe.domain.checked.v1`, `.verified.v1`, `.file.v1`, `.tophost.v1`). This is ERC-8004's optional `/.well-known/agent-registration.json` proof, read by the liveness sweep.
+- **The statement log** (`agent.statement.log.v1`): RFC 6962, with signed tree heads and consistency proofs; see SPEC section 7a.
+- **A data check for unexplained steps** in our own series (`unexplained_step`); see SPEC section 6. checks.json now lists all 43 checks.
+
 ## 0.5 — 12 October 2026
 
 288 definitions, exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def), each now with a dated `revisions` list and `body_sha256` (the hash of the frozen body, status fields excluded):

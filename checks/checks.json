@@ -1,7 +1,21 @@
 {
   "note": "The data-quality assertions behind every published figure: what each one checks, how severe a failure is, and its weight. Zero failing rows means pass. The queries themselves run on our own database and are not published.",
-  "count": 37,
+  "count": 43,
   "checks": [
+    {
+      "id": "chain_lag",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 1,
+      "what": "An other-chain registry watcher (Ethereum, Arbitrum, OP Mainnet, Polygon) is more than an hour of blocks behind the chain head, or has blocks it skipped and never scanned. Its mint and owner figures are partial until both are zero. Added 12 Oct 2026, when Arbitrum was about 113,000 blocks behind with a 1.2 million-block gap while health read 1.00."
+    },
+    {
+      "id": "unexplained_step",
+      "dimension": "consistency",
+      "severity": "warn",
+      "weight": 1,
+      "what": "One of our own archived series stepped in the last 14 days (a material move concentrated in one day that persisted) and neither a dated change of ours in /api/changepoints nor a checked note explains it. Either we changed something without registering it, or the world moved and the move needs a dated note. Found by afg-steps: PELT (Killick, Fearnhead & Eckley 2012) over each daily series, confirmed by a one-day jump test; the list is at /api/steps. Added 12 Oct 2026."
+    },
     {
       "id": "me_required_fields",
       "dimension": "completeness",
@@ -22,6 +36,34 @@
       "severity": "info",
       "weight": 1,
       "what": "Identical transfers inside one transaction. Usually a batch payment, not a duplicate: on 2026-09-24 all four counted groups were checked against their on-chain receipts and every one matched. Rows without a log position cannot be told apart from a double insert, which is why me_duplicate_log exists."
+    },
+    {
+      "id": "me_counted_without_log_index",
+      "dimension": "uniqueness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "Counted payments stored before log positions were recorded. me_duplicate_log cannot see them, so a double insert among them would reach the headline. Added 9 Oct 2026 (charter audit); the backfill re-reads their receipts."
+    },
+    {
+      "id": "registry_count_vs_daily",
+      "dimension": "consistency",
+      "severity": "warn",
+      "weight": 2,
+      "what": "The cited all-chain registration total (agenteconomy.to) did not move while the same source's all-chain daily series reported new mints: one of the two is stale. Seen 30 Sep to 3 Oct 2026; added 9 Oct (charter audit) so a registration rate is never published from a stale total. Until 9 Oct 2026 15:30 UTC this compared the Base-only total with the all-chain daily series and fired falsely."
+    },
+    {
+      "id": "base_registrations_two_ways",
+      "dimension": "consistency",
+      "severity": "warn",
+      "weight": 3,
+      "what": "Base registrations measured two ways: our dated registrations table counted at the exact end of a UTC day differs from The Graph's Agent0 subgraph total for that day. Added 12 Oct 2026, when 9, 10 and 11 Oct agreed to the registration; a gap means one of the two indexers missed or double-counted a mint."
+    },
+    {
+      "id": "base_registrations_cited_vs_own",
+      "dimension": "consistency",
+      "severity": "info",
+      "weight": 2,
+      "what": "The Base registration total cited from agenteconomy.to and our own count from the Identity Registry contract differ by more than 1%. Informational: the cited figure is labelled as cited and the headline uses our own count (registrations_minted_total). On 9 Oct 2026 the cited total was 100,119 while the chain's newest agent id at 11:00 UTC was 99,013 (99,014 registrations), read both from public RPC and from our live mint feed. Added 9 Oct 2026."
     },
     {
       "id": "me_missing_log_index",
@@ -126,7 +168,7 @@
       "dimension": "consistency",
       "severity": "block",
       "weight": 3,
-      "what": "An L9 agent does not have the three distinct counterparties in 30 days that L9 requires."
+      "what": "An L9 agent does not have the three distinct counterparties in 30 days that L9 requires, measured as of the last rank computation (afg-payer, every 3 h). Until 9 Oct 2026 the window ended now, so a counterparty ageing out between two rank runs failed the check until the next run demoted the agent."
     },
     {
       "id": "binding_orphan_actor",
