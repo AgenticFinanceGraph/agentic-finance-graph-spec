@@ -92,7 +92,7 @@ We measured the rule against the paper before adopting it:
 - of 82,132 plants either rule counts, our earlier first-4 + last-4 rule found 80,509 and the paper's 80,880;
 - a second, independent read of 300 sampled plants from the chain found every one sent by somebody other than the wallet, to an address without code.
 
-The one kind we do not read yet is the paper's incoming *tiny transfer* (look-alike to wallet, a real token, under 10 USD).
+The paper's third kind, the incoming *tiny transfer* (look-alike to wallet, a real token, under 10 USD), is read hourly from Base's public node since 12 October 2026 and published on its own (`poison.tiny.24h.v1`); in its first hours we saw none.
 
 A **loss** is a real payment to an address planted in that wallet's history first and never paid before. It is confirmed by a second source: Blockscout, or the transaction receipt from Base's public nodes.
 

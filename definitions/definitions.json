@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-12T22:26:57.813Z",
+  "exported_at": "2026-10-12T22:46:39.133Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 303,
+  "count": 304,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -4438,7 +4438,12 @@
       "source": "AFG-Pulse poisoning watch",
       "since": "2026-10-12",
       "validation": "Measured on 12 Oct 2026 against Tsuchiya, Dong, Soska & Christin, Blockchain Address Poisoning (USENIX Security 2025): of 82,132 plants either rule counts, rule v1 counted 80,509 and the paper's first-3 + last-4 rule 80,880; v2 counts all of them. A second, independent read from the chain on a random sample of 300 counted plants found every one sent by somebody other than the wallet (directly or through an ERC-4337 UserOperation) to an address without contract code; the same check on 50 zero-value plants that only the 3 + 4 rule catches found the same. Incoming tiny transfers (look-alike to wallet, a real token, under 10 USD), the paper's third kind, are not read by this watch.",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-10-12",
+          "what": "From the 22:44 UTC run on 12 October 2026 the watch also reads incoming tiny transfers (a look-alike sending the wallet under 10 USD of a real token), the third kind in Tsuchiya et al. They are published on their own as poison.tiny.24h.v1 and are not part of this count; the validation note's last sentence describes the watch before that run."
+        }
+      ],
       "body_sha256": "83cdc0a2212ac7e0d0b788d773b62712d849c83f505c3ea21c7739e8e7c778c5",
       "url": "https://agenticfinancegraph.com/def/poison.events.24h.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -4733,6 +4738,31 @@
       "revisions": [],
       "body_sha256": "3c6395ca979897d57e30dc26abfb46da7593b32c01901165d39813195ca4eb1f",
       "url": "https://agenticfinancegraph.com/def/poison.targeted.share.7d.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.tiny.24h.v1",
+      "title": "Incoming tiny transfers from look-alikes, last 24 hours",
+      "unit": "transfers",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours",
+      "definition": "Transfers of USDC, USDT, DAI, USDbC, EURC, WETH or cbBTC worth more than zero and less than 10 USD into a watched wallet, from an address that is not one of the wallet's payees but matches one on the first 3 (or 4) and last 4 hex characters: the tiny-transfer plant of Tsuchiya, Dong, Soska and Christin (USENIX Security 2025), which puts the look-alike into the wallet's history as a sender.",
+      "method": "Read every hour from Base's public node (eth_getLogs on the seven real tokens, recipient topic = the watched wallets, in 2,000-block windows) from a saved position. The node keeps recent blocks only: a window older than it keeps is skipped and logged, never back-filled. WETH and cbBTC are priced at the latest stored ETH and BTC price.",
+      "excludes": [
+        "Zero-value and fake-token plants (poison.events.24h.v2).",
+        "Transfers from the wallet's own payees."
+      ],
+      "does_not_assert": [
+        "That the wallet's operator noticed or paid the look-alike: payments to planted addresses are poison.losses.v2.",
+        "That this kind is counted in poison.events.24h.v2: it is not, until a release adds it."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-10-12",
+      "revisions": [],
+      "body_sha256": "31ccc8fd62ff653e5988d64b0e71799fe1918ab7a39e48f35758aacdd1fcf831",
+      "url": "https://agenticfinancegraph.com/def/poison.tiny.24h.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
