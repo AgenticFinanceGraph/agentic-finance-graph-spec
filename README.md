@@ -8,7 +8,7 @@ It says, precisely enough to implement:
 - which counted money went into **positions the agent still holds** and which **left its control**;
 - how an agent is **ranked** from L0 (a registration exists) to L9 (it pays repeat counterparties);
 - what a **drain-shaped payment** is;
-- the **37 checks** we run on our own data every three hours before a figure is published;
+- the **45 checks** we run on our own data every three hours before a figure is published;
 - how a figure is **measured twice** before it is published.
 
 ## Contents
@@ -16,7 +16,7 @@ It says, precisely enough to implement:
 | Path | What it is |
 |---|---|
 | [`SPEC.md`](SPEC.md) | The specification |
-| [`definitions/definitions.json`](definitions/definitions.json) | Every published metric definition, verbatim from `/api/def` (310 ids). Frozen once published |
+| [`definitions/definitions.json`](definitions/definitions.json) | Every published metric definition, verbatim from `/api/def` (322 ids). Frozen once published |
 | [`checks/checks.json`](checks/checks.json) | The data-quality checks: what each one tests, how severe a failure is, and its weight |
 | [`test-vectors/classified-payments.json`](test-vectors/classified-payments.json) | Real Base transfers with the class our rules gave them, to test an implementation against |
 

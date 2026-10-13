@@ -37,7 +37,7 @@ $$O = P \;\cup\; T \;\cup\; C, \qquad P \cap T = P \cap C = T \cap C = \varnothi
 
 1. **Pre-registration $P$** (`pay.excluded.preregistration.v1`). The payment's block time is earlier than the mint time of the registration its wallet is bound to. The wallet existed before the agent did.
 2. **Pass-through $T$** (`pay.excluded.passthrough.v1`). The payment forwards money the wallet received in the same transaction: the receipt shows approximately the same amount (within 2%) arriving at the wallet. It is a routing hop, not a purchase. A payment is only counted after this check has run on it.
-3. **Counted $C$** (`pay.usd.total.v1`, `rank.l7plus.v1`). Everything else, provided the recipient is a different address from the sender (self-transfers are excluded).
+3. **Counted $C$** (`pay.usd.total.v1`). Everything else, provided the recipient is a different address from the sender (self-transfers are excluded).
 
 The counted set is further split by reading each receipt:
 
@@ -57,15 +57,15 @@ Every excluded amount is published as its own metric, so each exclusion can be a
 | L2 | The URI answers with a 2xx response | `probe.l2.uri_2xx.v1` |
 | L3 | The document parses as an agent descriptor | `probe.l3.schema_valid.v1` |
 | L4 | It declares at least one service | `probe.l4.services_declared.v1` |
-| L5 | A declared endpoint answers a plain GET | `probe.l5.endpoint_live.v1` |
-| L6 | The endpoint speaks MCP or A2A | — |
-| **L7** | A bound wallet was observed paying a **different** address after registration (a counted payment) | `rank.l7plus.v1` |
-| L8 | L7, and the agent's bound wallet holds at least $10 in stablecoins (USDC, USDT, EURC at the day's rate, DAI) at the latest balance read | `rank.l8plus.v2` |
-| L9 | L8, and counted payments to three or more distinct counterparties in the last 30 days | `rank.l9.v2` |
+| L5 | A declared web endpoint (up to 8, in any order; never a shared hosting platform's submit URL) answers within 8 seconds: a 2xx or 402 to a GET, or a completed protocol handshake | `probe.l5.endpoint_live.v2` |
+| L6 | An endpoint completes a handshake: MCP (`initialize` returns a `protocolVersion`), A2A (an agent card with a `name` and a `skills` array), or x402 (a 402 with `accepts[]` naming a scheme, a network and a `payTo`) | `probe.l6.protocol.v1` |
+| **L7** | A bound wallet made a counted payment that **left the agent's control**: not into a lending or vault position the receipt shows it still holds, not to its own addresses (any wallet ever bound to it, its registration's owner, its minter), and not a bridge leg that came back to it | `rank.l7plus.v2` |
+| L8 | L7, and a bound wallet holds at least $10 in stablecoins (USDC, USDT, EURC at the day's rate, DAI) at the latest balance read | `rank.l8plus.v3` |
+| L9 | L8, and its payments that left control reached at least three **independent** counterparties in the last 30 days: an address with contract code, or one that at least two registered agents pay | `rank.l9.v3` |
 
-L0 to L5 are measured on a uniform random sample of registrations; L7 to L9 on every registration (a census). The public rank starts at L7, because it is the first level that a registry entry alone cannot claim.
+L0 to L6 are measured on a uniform random sample of registrations; L7 to L9 on every registration (a census). The public rank starts at L7, because it is the first level that a registry entry alone cannot claim. When a ranked agent loses its payment evidence, it falls to the level its last probe measured.
 
-`rank.l8plus.v1` and `rank.l9.v1` (USDC only) stay published as superseded: the counts have followed the four-stablecoin rule since 27 September 2026, and v2 states it.
+Version history, each kept published and marked superseded: `rank.l7plus.v1` counted any counted payment, including deposits into the agent's own positions and payments to its own addresses; `rank.l8plus.v1` and `rank.l9.v1` read USDC only, `rank.l8plus.v2` and `rank.l9.v2` the four stablecoins with any three counterparties; `probe.l5.endpoint_live.v1` read the first four listed entries in order. The dated changes are at [/api/changepoints](https://agenticfinancegraph.com/api/changepoints).
 
 The rank does not assert that the agent is autonomous, that the registrant controls the wallet, or anything about what a payment was for. Some ranked agents rest on less than a dollar; `rank.costtofake.v1` publishes what each level costs to fake.
 
@@ -93,6 +93,8 @@ We measured the rule against the paper before adopting it:
 - a second, independent read of 300 sampled plants from the chain found every one sent by somebody other than the wallet, to an address without code.
 
 The paper's third kind, the incoming *tiny transfer* (look-alike to wallet, a real token, under 10 USD), is read hourly from Base's public node since 12 October 2026 and published on its own (`poison.tiny.24h.v1`); in its first hours we saw none.
+
+**Drain, wallet abandoned** (`drain.abandoned.v1`, 13 October 2026) is published as candidates, never as detections. A dominant-share window opens when, in the 72 hours after an agent's first counted payment to a new payee, that payee takes at least 80% of everything the agent paid, at the drain thresholds above, with two or more payments of varying amounts. The window is a candidate when the payee is not a service (no label, paid by fewer than ten registered agents) and the agent has paid no one else from the end of the window until now, for at least 30 days. A person cashing out and a thief with a stolen key leave the same shape.
 
 A **loss** is a real payment to an address planted in that wallet's history first and never paid before. It is confirmed by a second source: Blockscout, or the transaction receipt from Base's public nodes.
 

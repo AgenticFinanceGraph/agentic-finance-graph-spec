@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7 — 13 October 2026
+
+322 definitions (12 new), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def), and 45 data checks (2 new).
+
+- **The liveness ladder, each rung as one test.** `rank.l7plus.v2`: a payment counts toward L7 only when it left the agent's control (not into its own lending or vault position, not to its own addresses, not a bridge leg that came back). `rank.l9.v3`: three independent counterparties (contract code, or paid by two or more agents). `rank.l8plus.v3` rests on the new L7. `probe.l5.endpoint_live.v2` reads up to 8 web endpoints in any order and counts a completed handshake; `probe.l6.protocol.v1` measures L6 (MCP, A2A or x402); `probe.hosted_sink.v2`. SPEC section 4 is rewritten to match. The earlier versions stay published, marked superseded.
+- **Drain, wallet abandoned** (`drain.abandoned.v1`), published as candidates, never detections, and the exit pack that lists one agent's windows (`check.exit.v1`); see SPEC section 5.
+- **Builder Codes in smart-wallet payments** (`pay.builder.attribution.v2`): the ERC-8021 suffix is also read inside a UserOperation's calldata, and schema 2 is decoded.
+- **Native ETH out of agent wallets** (`eth.out.wallets.30d.v1`, `eth.out.usd.30d.v1`, `eth.out.checked.v1`), published on its own; counted spending is unchanged.
+- **Two data checks**: `actor_rank_evidence_withdrawn` (a ranked agent whose payment evidence no longer meets its rank) and `actor_unmeasured_l6` (no agent sits at L6 without a measured handshake).
+
 ## 0.6 — 12 October 2026, night
 
 310 definitions (22 new), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def), and 43 data checks.

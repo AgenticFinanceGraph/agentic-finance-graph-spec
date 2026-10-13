@@ -1,6 +1,6 @@
 {
   "note": "The data-quality assertions behind every published figure: what each one checks, how severe a failure is, and its weight. Zero failing rows means pass. The queries themselves run on our own database and are not published.",
-  "count": 43,
+  "count": 45,
   "checks": [
     {
       "id": "chain_lag",
@@ -161,14 +161,28 @@
       "dimension": "consistency",
       "severity": "warn",
       "weight": 3,
-      "what": "An agent has a countable payment but is still ranked below L7: a promotion is pending."
+      "what": "An agent has a payment that qualifies for L7 under ladder v2 (counted, not inferred, left its control) but is still ranked below L7: a promotion is pending until the next rank run (afg-payer, every 3 h)."
+    },
+    {
+      "id": "actor_rank_evidence_withdrawn",
+      "dimension": "consistency",
+      "severity": "warn",
+      "weight": 2,
+      "what": "An agent ranked L7+ no longer has a payment that left its control (a position, own-address or bridged-back finding arrived after the last rank run). The next rank run (afg-payer, every 3 h) takes it down; a warning, so the gate does not stall publishing for up to three hours."
+    },
+    {
+      "id": "actor_unmeasured_l6",
+      "dimension": "consistency",
+      "severity": "block",
+      "weight": 2,
+      "what": "An agent shows L6 without a probe that measured L6. Ladder v1 parked withdrawn ranks at L6; v2 never does."
     },
     {
       "id": "actor_l9_counterparties",
       "dimension": "consistency",
       "severity": "block",
       "weight": 3,
-      "what": "An L9 agent does not have the three distinct counterparties in 30 days that L9 requires, measured as of the last rank computation (afg-payer, every 3 h). Until 9 Oct 2026 the window ended now, so a counterparty ageing out between two rank runs failed the check until the next run demoted the agent."
+      "what": "An L9 agent does not have even three distinct counterparties in 30 days, measured as of the last rank computation (afg-payer, every 3 h). Ladder v2 (13 Oct 2026) asks more (three independent ones among payments that left its control), so this is a necessary condition that a correct rank always passes. Until 9 Oct 2026 the window ended now, so a counterparty ageing out between two rank runs failed the check until the next run demoted the agent."
     },
     {
       "id": "binding_orphan_actor",

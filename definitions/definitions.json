@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-12T23:12:06.343Z",
+  "exported_at": "2026-10-13T15:17:11.589Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 310,
+  "count": 322,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -1351,6 +1351,31 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "check.exit.v1",
+      "title": "Exit pack: did this agent's wallet empty out",
+      "unit": "windows",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "the agent's whole counted-payment record",
+      "definition": "Every dominant-share window the agent opened (drain.abandoned.v1), largest first, up to ten, each with: the payee, its label, contract or plain key, how many registered agents ever paid it, how many counted payments the agent made to others in the 30 days after and since, its status under drain.abandoned.v1, and, for up to three windows, the second hop: the payee's first stablecoin transfers out in the 7 days after the agent's last payment to it, with the receiving address's label, kind and agent payer count.",
+      "method": "Windows and statuses from the ledger. The second hop is read live when the pack is built (alchemy_getAssetTransfers from the payee, from the block of the agent's last payment; USDC, USDT and EURC), at most three reads per pack and a daily cap; a read that fails or hits the cap says so and the rest of the pack stands.",
+      "excludes": [
+        "Native ETH and other tokens on the second hop.",
+        "Windows of agents with fewer than three earlier counted payments."
+      ],
+      "does_not_assert": [
+        "Who controls the payee or the second hop.",
+        "That a candidate window was a theft; see drain.abandoned.v1."
+      ],
+      "source": "AFG-Pulse intake (/exit), the payment ledger and a live transfer read",
+      "since": "2026-10-13",
+      "revisions": [],
+      "body_sha256": "f8ab3e67766f2f1a14bfa1e4b7e4b258861dc0208101f166929c85ddab9bd7e2",
+      "url": "https://agenticfinancegraph.com/def/check.exit.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "controller.kind.v1",
       "title": "Counted agent money by the paying wallet's account type",
       "unit": "ratio / wallets",
@@ -2585,6 +2610,30 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "drain.abandoned.v1",
+      "title": "Drain, wallet abandoned (candidates)",
+      "unit": "windows",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "every dominant-share window in the ledger",
+      "definition": "A dominant-share window is opened when, in the 72 hours after an agent's first counted payment to a new payee, that payee takes at least 80% of everything the agent paid, the window's sum is at least five times the agent's previous largest payment and at least $250, after at least three earlier payments, with two or more payments of varying amounts. The window is a candidate when the payee is not a service (no label in our book, paid by fewer than ten registered agents) and the agent has made no counted payment to anyone else from the end of the 72 hours until now, with at least 30 days of that silence observed. Statuses: service, resumed (it paid others later), pending (silent, fewer than 30 days observed), candidate.",
+      "method": "The ledger only (counted payments: routing hops and pre-registration transfers excluded); no chain read. One fix on 13 October 2026 before publication: the first version asked for 30 silent days after the window and kept three agents that resumed paying later, which the 11 October human reading of the same 44 windows had marked ambiguous. With silence until now, the rule keeps no window the reading did not pick.",
+      "excludes": [
+        "Payees with a label in our book or paid by ten or more registered agents.",
+        "Agents that paid anyone else after the window, at any time since."
+      ],
+      "does_not_assert": [
+        "A theft. A person cashing out and a thief with a stolen key leave the same shape: a fresh address takes most of the money, then silence. Candidates are published for reading, never in the incident log, and the exit pack adds where the money went next."
+      ],
+      "source": "AFG-Pulse incident detectors (lib/detectors.mjs, abandonFacts)",
+      "since": "2026-10-13",
+      "revisions": [],
+      "body_sha256": "932ec3db613d28f2427edc5bbe66930fce900adf7eadb285fa14836e3d265510",
+      "url": "https://agenticfinancegraph.com/def/drain.abandoned.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "erc8004.chain.base.v1",
       "title": "ERC-8004 registrations on Base",
       "unit": "registrations",
@@ -2763,6 +2812,74 @@
       "revisions": [],
       "body_sha256": "2556ccc5de3af4c1d29839c431b44bd2fb6fff10808c9647fa1f263f2443d1c9",
       "url": "https://agenticfinancegraph.com/def/erc8004.source.gap.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "eth.out.checked.v1",
+      "title": "Paying agent wallets read for native ETH",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "as of the latest run",
+      "definition": "Bound wallets of L7+ agents whose native ETH sends have been read up to the latest run. Smart-contract wallets and keys that never sent a transaction count as read. The coverage behind eth.out.wallets.30d.v1 and eth.out.usd.30d.v1.",
+      "method": "As eth.out.wallets.30d.v1.",
+      "excludes": [],
+      "does_not_assert": [],
+      "source": "AFG-Pulse ethout",
+      "since": "2026-10-13",
+      "revisions": [],
+      "body_sha256": "d28c60cf7da166043558438474751a9257ae64e3cfba5bf1bcd25583ed354087",
+      "url": "https://agenticfinancegraph.com/def/eth.out.checked.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "eth.out.usd.30d.v1",
+      "title": "Native ETH sent by paying agent wallets, last 30 days (USD)",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "sends in the last 30 days; read every 6 hours",
+      "definition": "USD value of the native ETH counted in eth.out.wallets.30d.v1, each send priced at the hour it was sent.",
+      "method": "As eth.out.wallets.30d.v1. Each send is priced with our own ETH/USD series (CoinGecko) at the nearest earlier hour, or the latest price if the series has no point in the 72 hours before it.",
+      "excludes": [
+        "As eth.out.wallets.30d.v1.",
+        "Not part of counted spending (pay.usd.total.v1), which stays the four stablecoins until a dated method change says otherwise."
+      ],
+      "does_not_assert": [
+        "That the ETH was spending."
+      ],
+      "source": "AFG-Pulse ethout",
+      "since": "2026-10-13",
+      "revisions": [],
+      "body_sha256": "e3cc8c8d7cefdfa2ef543131b48920dd5c6213b1d24885eb80700cdf5010c282",
+      "url": "https://agenticfinancegraph.com/def/eth.out.usd.30d.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "eth.out.wallets.30d.v1",
+      "title": "Paying agent wallets that sent native ETH, last 30 days",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "sends in the last 30 days; read every 6 hours",
+      "definition": "Distinct bound wallets of agents ranked L7 or above that sent native ETH to another address in the last 30 days, in a transaction the wallet itself signed.",
+      "method": "alchemy_getAssetTransfers (category external, fromAddress = the bound wallet). A wallet is read again only when its transaction count has moved since the last run (read from Base's public node), and the first read reaches back 30 days. A smart-contract wallet cannot sign a transaction, so it never sends ETH this way; it is covered without a read. EIP-7702-delegated keys still sign and are read. The figure is published only once the read covers 95% of the wallets.",
+      "excludes": [
+        "ETH a smart-contract wallet sends through an internal call (Alchemy does not serve internal transfers on Base).",
+        "WETH, which is an ERC-20.",
+        "Sends from a wallet to itself."
+      ],
+      "does_not_assert": [
+        "That the ETH was spending. It can be gas top-ups for other wallets, transfers between one operator's own wallets, or a drain."
+      ],
+      "source": "AFG-Pulse ethout",
+      "since": "2026-10-13",
+      "revisions": [],
+      "body_sha256": "ac0f1ecbf570011b042f878697f04544fc9aca075742e75f2a70f7f089526741",
+      "url": "https://agenticfinancegraph.com/def/eth.out.wallets.30d.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -4126,9 +4243,38 @@
       ],
       "source": "AFG-Pulse investigations (transaction input)",
       "since": "2026-09-27",
+      "valid_until": "2026-10-13",
+      "superseded_by": "pay.builder.attribution.v2",
       "revisions": [],
       "body_sha256": "532ffa12a958fd1711cedc2b046adaab71fee25f640185cd69ff02fb2e106e30",
       "url": "https://agenticfinancegraph.com/def/pay.builder.attribution.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "pay.builder.attribution.v2",
+      "title": "Counted payments carrying an app's Builder Code",
+      "unit": "USD / codes / share",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time; transactions are read once",
+      "definition": "Counted payments whose transaction carries an ERC-8021 Builder Code: a suffix appended to the calldata by the app, wallet or agent framework that built the transaction. Reported as the USD attributed, the number of distinct codes, and the largest code's share of attributed USD.",
+      "method": "The transaction input is read from the public Base RPC and its ERC-8021 suffix parsed. Schema 0 carries comma-separated ASCII codes; schema 1 adds a custom registry; schema 2 is a CBOR map, shown as the app code followed by \"w:<wallet code>\" and \"s:<service code>\" (x402 payments settled by Coinbase's facilitator carry the wallet code cdp_facil1). A smart account (ERC-4337) carries the suffix at the end of its user operation's calldata, inside the bundle, and is read there. Codes are registered in the Base Builder Codes registry (0x000000BC7E6457e610fe52Dcc0ca5b3ce59C8E80).",
+      "excludes": [
+        "Transactions not yet read (reported as pending in the note).",
+        "Suffixes whose schema the ERC does not define, which are counted as \"schema:N\" but not decoded."
+      ],
+      "does_not_assert": [
+        "Who operates an app: a code names an app that attributed itself, and its registered metadata is usually private.",
+        "That payments without a code were not made through an app."
+      ],
+      "source": "AFG-Pulse investigations (transaction input)",
+      "since": "2026-10-13",
+      "supersedes": "pay.builder.attribution.v1",
+      "note": "Every counted payment read under v1 was read again with this parser on 13 October 2026; see /api/changepoints cp-2026-10-13-builder-parser for the counts before and after.",
+      "revisions": [],
+      "body_sha256": "b18563a409a345d6ce4320590bea4df6eb47dcfdf714c60b2e1c20b355a6bf45",
+      "url": "https://agenticfinancegraph.com/def/pay.builder.attribution.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5008,9 +5154,33 @@
       ],
       "source": "AFG-Pulse probe sweep",
       "since": "2026-09-05",
+      "valid_until": "2026-10-13",
+      "superseded_by": "probe.hosted_sink.v2",
       "revisions": [],
       "body_sha256": "94904d5037fb7916f65d00541892a76f16f8fda500337df48b26d29e43027254",
       "url": "https://agenticfinancegraph.com/def/probe.hosted_sink.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "probe.hosted_sink.v2",
+      "title": "Registrations listing a shared hosting sink",
+      "unit": "ratio (0–1)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "most recent sweep",
+      "definition": "Share of the probe sample whose registration lists, among its first 8 web endpoints, a shared hosting platform's submit URL (agentverse.ai/v1/hosting/submit or /v1/submit).",
+      "method": "Read from the registration file, in any order; the sink itself is never requested.",
+      "excludes": [],
+      "does_not_assert": [
+        "That the agent is fake. Hosted agents may be real; the sink just cannot show it."
+      ],
+      "source": "AFG-Pulse liveness probe",
+      "since": "2026-10-13",
+      "supersedes": "probe.hosted_sink.v1",
+      "revisions": [],
+      "body_sha256": "2de4334624bf892dca19ee9db367cb2c7e881f3d4e65c194346caebadfad5ab4",
+      "url": "https://agenticfinancegraph.com/def/probe.hosted_sink.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5123,9 +5293,64 @@
       ],
       "source": "AFG-Pulse liveness probe",
       "since": "2026-09-05",
-      "revisions": [],
+      "valid_until": "2026-10-13",
+      "superseded_by": "probe.l5.endpoint_live.v2",
+      "revisions": [
+        {
+          "date": "2026-10-13",
+          "what": "Superseded by probe.l5.endpoint_live.v2. This text said at most 2 redirects and that sink-only registrations cap at L4; the code followed 3 redirects, read only the first 4 listed entries, stopped at the first live one, and applied the sink cap only when the sink came before a live endpoint. v2 reads up to 8 web endpoints in any order, never probes a sink, and counts a completed protocol handshake as live."
+        }
+      ],
       "body_sha256": "02889bac1e2e80a22771061dfed9385b2c54cc2a7bce51526af1f3e0b8d5a778",
       "url": "https://agenticfinancegraph.com/def/probe.l5.endpoint_live.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "probe.l5.endpoint_live.v2",
+      "title": "Live endpoint rate",
+      "unit": "ratio (0–1)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "most recent sweep",
+      "definition": "Share of a uniform random sample of registrations with a readable registration file (L2), parseable fields (L3) and at least one declared entry (L4), of which at least one declared web endpoint, other than a shared hosting platform's submit URL, answers within 8 seconds: a 2xx or 402 to a GET, or a completed protocol handshake (probe.l6.protocol.v1).",
+      "method": "Uniform random sample of 1,024 over the registry's token id space every six hours. Up to 8 web endpoints per registration (http, https or ipfs; ENS names, DIDs and emails are skipped), in any order. Every request goes through one sandbox: 8 s for the whole request, at most 3 redirects each re-checked, no private or reserved addresses, a 256 KB body cap, nothing returned is executed.",
+      "excludes": [
+        "Shared hosting platforms' submit URLs (agentverse.ai/v1/hosting/submit and /v1/submit): they are never probed, because an answer proves the platform is up and nothing about the agent. A registration whose only web endpoints are those stays at L4."
+      ],
+      "does_not_assert": [
+        "That the agent behind the endpoint works, only that something answered."
+      ],
+      "source": "AFG-Pulse liveness probe",
+      "since": "2026-10-13",
+      "supersedes": "probe.l5.endpoint_live.v1",
+      "revisions": [],
+      "body_sha256": "0b68a69a03147a9b15c1ee891d77581645f7a00416995e932a9a98f5ce85fac5",
+      "url": "https://agenticfinancegraph.com/def/probe.l5.endpoint_live.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "probe.l6.protocol.v1",
+      "title": "Endpoints that speak an agent protocol",
+      "unit": "ratio (0–1)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "most recent sweep",
+      "definition": "Share of the same sample whose registration reached L5 and at least one endpoint completed one of three handshakes: MCP (a POSTed initialize returns a JSON-RPC result with a protocolVersion string, as JSON or as one server-sent-event data line), A2A (an agent card, at the declared card URL or at /.well-known/agent-card.json or agent.json on the endpoint's host, that is a JSON object with a string name and a skills array), or x402 (a 402 whose body, or base64 PAYMENT-REQUIRED header, holds accepts[] with an entry naming a scheme, a network and a payTo address).",
+      "method": "The MCP handshake is sent only to endpoints the registration declares as MCP or whose path ends in /mcp or /sse; the A2A card is read only for endpoints declared as A2A or whose URL is a card; the x402 test reads the L5 response and sends nothing extra. Same sandbox as probe.l5.endpoint_live.v2. The first handshake that passes ends the check for that registration.",
+      "excludes": [
+        "Protocols other than these three.",
+        "Endpoints on shared hosting platforms' submit URLs."
+      ],
+      "does_not_assert": [
+        "That the tools, skills or paid resources do anything useful. A handshake shows the endpoint speaks the protocol, not that its service works or is safe."
+      ],
+      "source": "AFG-Pulse liveness probe",
+      "since": "2026-10-13",
+      "revisions": [],
+      "body_sha256": "68ee6f64cbfe90a7234d3cadd2520f956e10185995b01ea315af254853697df0",
+      "url": "https://agenticfinancegraph.com/def/probe.l6.protocol.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5197,14 +5422,49 @@
       ],
       "source": "AFG-Pulse payment scan",
       "since": "2026-09-06",
+      "valid_until": "2026-10-13",
+      "superseded_by": "rank.l7plus.v2",
       "revisions": [
         {
           "date": "2026-09-27",
           "what": "The method was extended from USDC to USDT, EURC and DAI, written into the method text. Counts rose as more history became visible; see the changepoint cp-2026-09-27-sweep at /api/changepoints."
+        },
+        {
+          "date": "2026-10-13",
+          "what": "Superseded by rank.l7plus.v2 (ladder v2): L7 now needs a payment that left the agent's control, not one into its own position, to its own address, or bridged back to itself. On the switch at 12:54 UTC, 7,866 agents were L7+ under this definition and 7,525 under v2; see /api/changepoints cp-2026-10-13-ladder-v2."
         }
       ],
       "body_sha256": "011fef710db8e9bbc1c4eddf6e180d96c05b2f99df51a4b443274beebf17ee1b",
       "url": "https://agenticfinancegraph.com/def/rank.l7plus.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "rank.l7plus.v2",
+      "title": "Actor at liveness 7 or above (money left its control)",
+      "unit": "count of actors",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time since the registration's mint block",
+      "definition": "An ERC-8004 registration with at least one counted, non-inferred stablecoin payment from a wallet bound to it that LEFT the agent's control: the receiver is not a lending or vault position the transaction receipt shows the agent still holds, not one of the agent's own addresses (any wallet ever bound to it, the registration's current owner, the address it was minted to), and the payment is not a bridge leg that arrived back at the payer (the same address on the other chain, or followed to the payer).",
+      "method": "Payments: alchemy_getAssetTransfers over USDC, USDT, EURC and DAI on Base out of every bound wallet, every three hours; 519 wallets ranked before the 27 September 2026 census are also pushed in real time by an address-activity webhook. Counted means the receipt was read, the transfer is not a routing hop inside a larger transaction, and it happened after the registration was minted. Own positions: receipts show a claim token minted or a market token returned to the payer in the same transaction (pay.usd.ownpositions.v1). Bridges: legs followed by the bridge-status worker (pay.usd.leftcontrol.netbridge.v1). Recomputed for every actor after each payment scan, every three hours, by one set-based statement; the publish gate runs the same SQL.",
+      "excludes": [
+        "Payments into the agent's own lending or vault position, proven from the receipt.",
+        "Payments to the agent's own addresses: wallets bound to it at any time, its registration's owner, its minter.",
+        "Bridge legs that arrived back at the paying wallet.",
+        "Everything rank.l7plus.v1 excluded: payments before the mint block, routing hops, inferred payments."
+      ],
+      "does_not_assert": [
+        "That the agent is autonomous. We cannot see whether a human approved the payment.",
+        "That the receiver is unrelated to the operator. An operator can pay a fresh address of its own that nothing links to the agent; rank.l9.v3 adds the independence test, and rank.costtofake.v1 publishes what the ranks cost to reach.",
+        "Anything about what the payment was for."
+      ],
+      "source": "AFG-Pulse payment scan, investigations and bridge follow",
+      "since": "2026-10-13",
+      "supersedes": "rank.l7plus.v1",
+      "revisions": [],
+      "body_sha256": "43658626cec08f63da8c2d1f527b4ae66672fedf63ada017ae6a13eff62078fd",
+      "url": "https://agenticfinancegraph.com/def/rank.l7plus.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5260,9 +5520,42 @@
       "since": "2026-09-27",
       "supersedes": "rank.l8plus.v1",
       "note": "Published 12 October 2026. From 27 September 2026 the L8 line read the four-stablecoin float while rank.l8plus.v1 still said USDC; this version states the rule the counts have followed since then. The counts did not change on 12 October.",
-      "revisions": [],
+      "valid_until": "2026-10-13",
+      "superseded_by": "rank.l8plus.v3",
+      "revisions": [
+        {
+          "date": "2026-10-13",
+          "what": "Superseded by rank.l8plus.v3, which rests on rank.l7plus.v2. 562 agents were L8+ under this definition at 12:53 UTC on 13 October 2026, 557 under v3; see /api/changepoints cp-2026-10-13-ladder-v2."
+        }
+      ],
       "body_sha256": "42149939071f1788bffee8e0d7fb883ad1cf8a9f798ab861830d01ddc28ed861",
       "url": "https://agenticfinancegraph.com/def/rank.l8plus.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "rank.l8plus.v3",
+      "title": "Actor at liveness 8 or above",
+      "unit": "count of actors",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time",
+      "definition": "Everything rank.l7plus.v2 requires, and a bound wallet holds at least $10 in stablecoins (USDC, USDT, EURC at the day's EUR/USD rate, and DAI) at our most recent balance read. An agent with more than one bound wallet counts its largest float.",
+      "method": "As rank.l8plus.v2: balanceOf for the four stablecoins via Multicall3 over every ranked wallet, every six hours, and again when an evidence pack is bought.",
+      "excludes": [
+        "Wallets whose balance we have not read.",
+        "Other tokens: ETH, wrapped ETH, LP and vault shares do not count toward the $10."
+      ],
+      "does_not_assert": [
+        "That the balance is the agent's operating budget, or that anyone intends to spend it.",
+        "That an L8 agent is independent. Fleets top many wallets up to just over $10; rank.l9.v3 is the steadier measure."
+      ],
+      "source": "AFG-Pulse payment scan + balance read",
+      "since": "2026-10-13",
+      "supersedes": "rank.l8plus.v2",
+      "revisions": [],
+      "body_sha256": "f4fd48c7f53ea8b0677a8ae025c1107ede0034be832f46182e14be779a43ebca",
+      "url": "https://agenticfinancegraph.com/def/rank.l8plus.v3",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5284,7 +5577,14 @@
       ],
       "source": "AFG-Pulse payment scan",
       "since": "2026-10-12",
-      "revisions": [],
+      "valid_until": "2026-10-13",
+      "superseded_by": "rank.l9.v3",
+      "revisions": [
+        {
+          "date": "2026-10-13",
+          "what": "Folded into the rank itself: rank.l9.v3 requires three independent counterparties, so from 13 October 2026 actors_l9_independent carries the L9 count under rank.l9.v3."
+        }
+      ],
       "body_sha256": "52eb7db9340f9a9dbe01cf2a1d9a02406bb18e0a73e78b97e557a4fc73f77a0a",
       "url": "https://agenticfinancegraph.com/def/rank.l9.independent.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -5339,9 +5639,45 @@
       "since": "2026-09-27",
       "supersedes": "rank.l9.v1",
       "note": "Published 12 October 2026 with rank.l8plus.v2, which it rests on. The counts did not change on 12 October.",
-      "revisions": [],
+      "valid_until": "2026-10-13",
+      "superseded_by": "rank.l9.v3",
+      "revisions": [
+        {
+          "date": "2026-10-13",
+          "what": "Superseded by rank.l9.v3: the three counterparties must be independent (contract code, or paid by two or more agents) and paid with money that left the agent's control. 118 agents were L9 under this definition at 12:53 UTC on 13 October 2026, 74 under v3; see /api/changepoints cp-2026-10-13-ladder-v2."
+        }
+      ],
       "body_sha256": "e86234272c37da2c63bb85dad46f647a12126bdc12ab2d445745f21b2ee433c2",
       "url": "https://agenticfinancegraph.com/def/rank.l9.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "rank.l9.v3",
+      "title": "Actor at liveness 9 (independent counterparties)",
+      "unit": "count of actors",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 30 days for the counterparty count",
+      "definition": "Everything rank.l8plus.v3 requires, and its payments that left its control (rank.l7plus.v2) reached at least three INDEPENDENT counterparties within the last 30 days. A counterparty is independent when it has contract code (a venue, protocol or escrow) or when at least two different registered agents pay it in counted payments.",
+      "method": "Distinct receiving addresses over the window among the payments rank.l7plus.v2 counts; contract code from the counterparty table (eth_getCode); the number of distinct paying agents per address over all counted payments. This is the test published beside L9 as rank.l9.independent.v1 from 12 October 2026, now the rule itself.",
+      "excludes": [
+        "Repeat payments to the same address, which count once however often they recur.",
+        "An address only this agent pays: it may be the operator's own."
+      ],
+      "does_not_assert": [
+        "That an excluded counterparty belongs to the operator: only that nothing in our data shows anyone else pays it.",
+        "That a contract counterparty is independent of the operator: a fleet can pay its own contract."
+      ],
+      "source": "AFG-Pulse payment scan",
+      "since": "2026-10-13",
+      "supersedes": [
+        "rank.l9.v2",
+        "rank.l9.independent.v1"
+      ],
+      "revisions": [],
+      "body_sha256": "764491545215077080c1f9e487faa859c6e625fee378153f07123331e6f184d2",
+      "url": "https://agenticfinancegraph.com/def/rank.l9.v3",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"

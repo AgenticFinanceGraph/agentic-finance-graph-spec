@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this specification or its data, please cite it as below."
 title: "Accounting specification for machine money"
-version: "0.6"
-date-released: "2026-10-12"
+version: "0.7"
+date-released: "2026-10-13"
 authors:
   - name: "Agentic Finance Graph"
 url: "https://agenticfinancegraph.com"
