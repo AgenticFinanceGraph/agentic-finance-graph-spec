@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- **Fixtures** (`fixtures/`): the first data set, ERC-8004 feedback on Base that follows a payment from the rater (14 October 2026, 728 rows, CC BY 4.0), with notes. Context: [erc-8004/erc-8004-contracts#99](https://github.com/erc-8004/erc-8004-contracts/issues/99).
+- **`fixtures/check-fixture.mjs`**: recounts a fixture's published figures from its CSV and checks every row (payment before rating, Base CAIP-10 payee, known rail, positive amount). Exit code 1 on any failure.
+
 ## 0.7 — 13 October 2026
 
 322 definitions (12 new), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def), and 45 data checks (2 new).

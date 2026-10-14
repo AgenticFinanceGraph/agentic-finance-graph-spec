@@ -21,6 +21,14 @@ On 11 Oct the same join gave 697 entries; the log has grown since.
 | `rail` | `x402` when the transfer was an x402 settlement we identified, else `usdc_transfer` |
 | `payment_event_id` | our ledger id for the payment |
 
+## Check it yourself
+
+```
+node fixtures/check-fixture.mjs fixtures/erc8004-base-grounded-feedback-2026-10-14.csv
+```
+
+It recounts the figures above from the CSV (rows, raters, agents, payment transactions, the rail split, the median payment, entries with a URI) and checks that every row has its payment before its rating, a Base CAIP-10 payee, a known rail and a positive amount. Node 18 or later, no dependencies.
+
 ## What it does and does not show
 
 - "Paid" means a stablecoin transfer on Base from the rater address to a wallet bound to the rated agent (owner, or a declared agent wallet). A payment to a separate x402 `payTo` that is not a bound wallet is not in this join, nor are payments on other chains. So 728 is a lower bound.
