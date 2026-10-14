@@ -4,6 +4,7 @@
 
 - **Fixtures** (`fixtures/`): the first data set, ERC-8004 feedback on Base that follows a payment from the rater (14 October 2026, 728 rows, CC BY 4.0), with notes. Context: [erc-8004/erc-8004-contracts#99](https://github.com/erc-8004/erc-8004-contracts/issues/99).
 - **`fixtures/check-fixture.mjs`**: recounts a fixture's published figures from its CSV and checks every row (payment before rating, Base CAIP-10 payee, known rail, positive amount). Exit code 1 on any failure.
+- **Automatic checks** (`.github/workflows/check.yml`): on every push and pull request, the JSON files must parse, every fixture must recount and pass `check-fixture.mjs`, and every relative link in README, SPEC, CHANGELOG and CONTRIBUTING must resolve (`scripts/check-links.mjs`).
 
 ## 0.7 — 13 October 2026
 
