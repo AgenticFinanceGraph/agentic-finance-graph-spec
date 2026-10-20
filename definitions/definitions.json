@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-16T12:59:00.933Z",
+  "exported_at": "2026-10-20T17:24:31.333Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 346,
+  "count": 347,
   "definitions": {
     "acp.completed.v1": {
       "id": "acp.completed.v1",
@@ -6527,7 +6527,31 @@
       "source": "AFG-Pulse x402 submitters",
       "since": "2026-10-13",
       "revisions": [],
-      "body_sha256": "c8dfffaae9530968b02e4d0963588060cc8f43bbd19304e574bfb39fd09ef307"
+      "body_sha256": "c8dfffaae9530968b02e4d0963588060cc8f43bbd19304e574bfb39fd09ef307",
+      "valid_until": "2026-10-20",
+      "superseded_by": "x402.settle.submitter.v2"
+    },
+    "x402.settle.submitter.v2": {
+      "id": "x402.settle.submitter.v2",
+      "title": "Who submits x402 settlements",
+      "unit": "shares of settlements in the last 24 hours",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours, up to 2,500 transactions read per run",
+      "definition": "Stablecoin transfers into the payTo addresses listed in the x402 Bazaar, each transaction read for its sender and function. An authorisation (transferWithAuthorization or receiveWithAuthorization, EIP-3009) counts whether it is called directly or inside a batch: when the outer call is not one of the known functions, the receipt is read, and an AuthorizationUsed on the token with the payer as authorizer makes it a batched authorisation. An authorisation submitted by the payer itself is self; by a sender that landed authorisations for at least 5 different sellers in the window is facilitator; by anyone else is third_party. A plain transfer by the payer is payer_transfer; a 4337 bundle or a smart-account execute is bundler_or_smart_account. receive_share is the share of authorisations in the closed form, which binds the submitter to the payee; batched authorisations are not counted in it because the receipt does not say which of the two functions was called.",
+      "method": "afg-x402submit, daily at 04:40 UTC: eth_getLogs for the transfers, then each transaction from free public nodes, and the receipt for a transaction whose outer function is not known. third_party is the replacement front-run surface Bartoletti & Zunino (2023) and Materwala et al. (2024) describe: an authorisation the payer signed, landed by a sender that is neither the payer nor a facilitator; it is also what a seller's own relayer, or a small facilitator below the 5-seller threshold, looks like.",
+      "excludes": [
+        "Sellers not listed in the Bazaar.",
+        "Transfers beyond the per-run cap (the document says how many were found and how many read)."
+      ],
+      "does_not_assert": [
+        "That a third-party submission was hostile: the list is transactions to read, not a verdict.",
+        "That a sender below the 5-seller threshold is not a facilitator: the threshold is per window, and a facilitator serving few sellers that day is counted as third_party."
+      ],
+      "source": "AFG-Pulse x402 submitters",
+      "since": "2026-10-20",
+      "revisions": [],
+      "body_sha256": "fe2ecfeffc4e62de9909c836e6b27bcbfd1b784a26800fc8de836fa591de8255",
+      "supersedes": "x402.settle.submitter.v1"
     },
     "x402.solana.settlements.24h.v1": {
       "id": "x402.solana.settlements.24h.v1",
