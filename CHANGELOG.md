@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **`x402.settle.submitter.v2`** (20 October 2026): an EIP-3009 authorisation submitted inside a batch (Multicall3 `aggregate3` and the like) now counts as an authorisation, read from the receipt's `AuthorizationUsed`. v1 stays published, marked superseded. Measured on the 20,000 stored settlements of 12 to 19 October: 128 of 173 "other" were batched authorisations; third_party 61 → 125. Context: [erc-8004/erc-8004-contracts#99](https://github.com/erc-8004/erc-8004-contracts/issues/99#issuecomment-6296802380).
 - **Fixtures** (`fixtures/`): the first data set, ERC-8004 feedback on Base that follows a payment from the rater (14 October 2026, 728 rows, CC BY 4.0), with notes. Context: [erc-8004/erc-8004-contracts#99](https://github.com/erc-8004/erc-8004-contracts/issues/99).
 - **`fixtures/check-fixture.mjs`**: recounts a fixture's published figures from its CSV and checks every row (payment before rating, Base CAIP-10 payee, known rail, positive amount). Exit code 1 on any failure.
 - **Automatic checks** (`.github/workflows/check.yml`): on every push and pull request, the JSON files must parse, every fixture must recount and pass `check-fixture.mjs`, and every relative link in README, SPEC, CHANGELOG and CONTRIBUTING must resolve (`scripts/check-links.mjs`).
