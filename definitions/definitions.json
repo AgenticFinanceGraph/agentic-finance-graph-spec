@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-21T00:06:25.244Z",
+  "exported_at": "2026-10-21T20:00:14.935Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 351,
+  "count": 358,
   "definitions": {
     "acp.completed.v1": {
       "id": "acp.completed.v1",
@@ -3057,6 +3057,8 @@
       "source": "AFG-Pulse detectors",
       "since": "2026-09-11",
       "supersedes": "incident.open.v1",
+      "valid_until": "2026-10-21",
+      "superseded_by": "incident.live.v3",
       "revisions": [],
       "body_sha256": "bcbca0747ffc2817ee8c6c3d36993d86f8abf6a25e6864214cef57d81460c936"
     },
@@ -6616,10 +6618,10 @@
       ],
       "source": "AFG-Pulse x402 submitters",
       "since": "2026-10-13",
-      "revisions": [],
-      "body_sha256": "c8dfffaae9530968b02e4d0963588060cc8f43bbd19304e574bfb39fd09ef307",
       "valid_until": "2026-10-20",
-      "superseded_by": "x402.settle.submitter.v2"
+      "superseded_by": "x402.settle.submitter.v2",
+      "revisions": [],
+      "body_sha256": "c8dfffaae9530968b02e4d0963588060cc8f43bbd19304e574bfb39fd09ef307"
     },
     "x402.settle.submitter.v2": {
       "id": "x402.settle.submitter.v2",
@@ -6637,11 +6639,13 @@
         "That a third-party submission was hostile: the list is transactions to read, not a verdict.",
         "That a sender below the 5-seller threshold is not a facilitator: the threshold is per window, and a facilitator serving few sellers that day is counted as third_party."
       ],
+      "supersedes": "x402.settle.submitter.v1",
       "source": "AFG-Pulse x402 submitters",
       "since": "2026-10-20",
+      "valid_until": "2026-10-21",
+      "superseded_by": "x402.settle.submitter.v3",
       "revisions": [],
-      "body_sha256": "fe2ecfeffc4e62de9909c836e6b27bcbfd1b784a26800fc8de836fa591de8255",
-      "supersedes": "x402.settle.submitter.v1"
+      "body_sha256": "fe2ecfeffc4e62de9909c836e6b27bcbfd1b784a26800fc8de836fa591de8255"
     },
     "x402.solana.settlements.24h.v1": {
       "id": "x402.solana.settlements.24h.v1",
@@ -7199,6 +7203,149 @@
       "since": "2026-09-27",
       "revisions": [],
       "body_sha256": "69c515bcc8df97cd04661bdcda1b7b8a4b2ddd4023071e7f6641bace6e258d9c"
+    },
+    "eip3009.base.agentpayers.24h.v1": {
+      "id": "eip3009.base.agentpayers.24h.v1",
+      "title": "Payers on the EIP-3009 rail that are registered agents' wallets, last 24 hours",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours",
+      "definition": "Distinct authorizers in eip3009.base.payers.24h.v1 that are wallets bound to an ERC-8004 agent registration in our ledger (census.bound.wallets.v2).",
+      "method": "Join of the window's authorizers with open bindings. First full day 20-21 Oct 2026: 653 of 8,572 payers.",
+      "excludes": [
+        "Agents whose wallets we have not bound."
+      ],
+      "does_not_assert": [
+        "That the other payers are not agents: an agent without an ERC-8004 registration we can bind is invisible to this join."
+      ],
+      "source": "AFG-Pulse EIP-3009 rail",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "6b2f4bf2536f9b62588306c3bfe32e9abe80a4a9c324dc80cf946646bd4c109d"
+    },
+    "eip3009.base.auths.24h.v1": {
+      "id": "eip3009.base.auths.24h.v1",
+      "title": "EIP-3009 authorisations on Base USDC, last 24 hours",
+      "unit": "authorisations",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours, ending at the newest block read",
+      "definition": "Every AuthorizationUsed event emitted by Base USDC in the window: each one is a payment the payer signed off-chain (transferWithAuthorization or receiveWithAuthorization) that someone else submitted. x402's exact scheme settles this way, and so do other gasless payments.",
+      "method": "afg-eip3009, hourly: eth_getLogs for AuthorizationUsed on the USDC contract, one hour of blocks per call, from a cursor; each authorisation is paired with the USDC Transfer that follows it in the same transaction (payer-filtered eth_getLogs over the same blocks). First full day 20-21 Oct 2026: 300,164 authorisations, every one paired.",
+      "excludes": [
+        "Other tokens and other chains.",
+        "Payments that do not use EIP-3009 (plain transfers, Permit2, smart-account calls)."
+      ],
+      "does_not_assert": [
+        "That every authorisation is an x402 payment: see x402.base.facilitated.share.24h.v1 for the part submitted by listed x402 facilitators.",
+        "Who the payers or payees are."
+      ],
+      "source": "AFG-Pulse EIP-3009 rail",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "9b78d9417577ea2db5f589d4ca96bb08f73d24e4a2c10506db78253cbd21966c"
+    },
+    "eip3009.base.payers.24h.v1": {
+      "id": "eip3009.base.payers.24h.v1",
+      "title": "Distinct payers on the EIP-3009 rail on Base USDC, last 24 hours",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours",
+      "definition": "Distinct authorizer addresses of the window's AuthorizationUsed events.",
+      "method": "Count of distinct authorizers (topic 1 of AuthorizationUsed).",
+      "excludes": [],
+      "does_not_assert": [
+        "That one address is one person or one agent."
+      ],
+      "source": "AFG-Pulse EIP-3009 rail",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "3c26f10fc6bcb62a6cd64c8b42a0d4db42e00b9ef7bbad6696939a2d1759fcb3"
+    },
+    "eip3009.base.usd.24h.v1": {
+      "id": "eip3009.base.usd.24h.v1",
+      "title": "USD moved by EIP-3009 authorisations on Base USDC, last 24 hours",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours",
+      "definition": "The summed USDC amount of the transfers paired with the window's AuthorizationUsed events (eip3009.base.auths.24h.v1).",
+      "method": "Sum of the paired Transfer amounts (USDC, 6 decimals, 1 USDC = 1 USD).",
+      "excludes": [
+        "Authorisations whose transfer could not be paired (published as a count in partners/eip3009.json)."
+      ],
+      "does_not_assert": [
+        "That this is x402 volume: most of the dollars on this rail are not submitted by listed x402 facilitators (see the document's usd_share)."
+      ],
+      "source": "AFG-Pulse EIP-3009 rail",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "c0a27cf75b3d351766565862b643a979983f85cf4e646c1710e7b157856386e2"
+    },
+    "incident.live.v3": {
+      "id": "incident.live.v3",
+      "title": "Live incidents",
+      "unit": "incidents",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "last 72 hours",
+      "definition": "Detections that are a harm AND recent: a retry loop burning an agent's money, a registration changing owner under a binding somebody relies on, or signing delegated to an implementation outside the curated allowlist, with an event time inside the last 72 hours. A registration that changes owner within 24 hours of its mint is not a live incident.",
+      "method": "Each hourly detector run closes any row that is not a harm kind, has aged out of the window, or is an onboarding move, so the open flag means exactly this rule and nothing else. An onboarding move is an owner change whose block time is at most 24 hours after the registration's mint: a platform minting a registration to one account and handing it to its holder. It is still logged as a detection (severity info, evidence.onboarding_move = true) and the binding to the old owner still closes. Mint bursts are never incidents.",
+      "excludes": [
+        "Mint bursts, of any size. They measure a shape, not a harm.",
+        "Endpoints that never answer. That is a statement about our attempts, not damage done to anyone.",
+        "Owner changes within 24 hours of mint. No history exists yet for anyone to rely on; from 14 to 21 October 2026 they were 2,757 of 2,759 transfer detections, almost all from one platform's onboarding.",
+        "Anything older than 72 hours, which stays in the detection log."
+      ],
+      "does_not_assert": [
+        "That zero means nothing bad is happening anywhere. It means none of these detectors has fired on a harm in what we measure.",
+        "That an incident is malicious. An identity changing owner can be a legitimate sale; it is an incident because anyone relying on the old owner is now exposed.",
+        "That an onboarding move is safe. It is not an incident because nothing was relied on yet; what the new holder does next is measured like any other agent."
+      ],
+      "source": "AFG-Pulse detectors (incidents.mjs, regdates.mjs)",
+      "since": "2026-10-21",
+      "supersedes": "incident.live.v2",
+      "revisions": [],
+      "body_sha256": "270d5d01ed1b87532e5481c021488ad4215aa5122b91461cf6a7c8a8c5ee8dcb"
+    },
+    "x402.base.facilitated.share.24h.v1": {
+      "id": "x402.base.facilitated.share.24h.v1",
+      "title": "Share of EIP-3009 settlement transactions on Base submitted by listed x402 facilitators",
+      "unit": "share of transactions (sample)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "transactions of the last 24 hours",
+      "definition": "Of a random sample of the window's transactions carrying EIP-3009 authorisations on Base USDC, the share whose sender is on the public x402 facilitator list (a dated snapshot of DefiLlama's list, which credits x402scan and x402-list.com), with a 95% interval and the breakdown by facilitator name.",
+      "method": "afg-eip3009 samples up to 300 not-yet-sampled transactions each hour and reads their sender from a free public node; published once the day's sample holds at least 200 transactions. First full day 20-21 Oct 2026: 256 of 300 (85.3%, interval 81.3-89.3%): Central City 161, Coinbase 95, not on the list 44; by USD 19.1%.",
+      "excludes": [
+        "Senders missing from the list: counted as not x402, so the share is a floor."
+      ],
+      "does_not_assert": [
+        "That a listed facilitator's transaction is always an x402 payment, or that an unlisted sender's never is.",
+        "A census: it is a sample with its interval."
+      ],
+      "source": "AFG-Pulse EIP-3009 rail",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "0d26f98efcffc50282167fa2495a2fc298b1089e8a7347715fd421ec643239a1"
+    },
+    "x402.settle.submitter.v3": {
+      "id": "x402.settle.submitter.v3",
+      "title": "Who submits x402 settlements",
+      "unit": "shares of settlements in the last 24 hours",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "rolling 24 hours, up to 2,500 transactions read per run",
+      "definition": "Stablecoin transfers into the payTo addresses listed in the x402 Bazaar, each transaction read for its sender and function. An authorisation (transferWithAuthorization or receiveWithAuthorization, EIP-3009) counts whether it is called directly or inside a batch, the batched ones read from the receipt's AuthorizationUsed with the payer as authorizer. An authorisation submitted by the payer itself is self; by a sender on the public facilitator list, or by one that landed authorisations for at least 5 different sellers in the window, is facilitator, reported by name when the list names it; by anyone else is third_party. A plain transfer by the payer is payer_transfer; a 4337 bundle or a smart-account execute is bundler_or_smart_account.",
+      "method": "afg-x402submit, daily at 04:40 UTC. The facilitator list is a dated snapshot of DefiLlama dimension-adapters dexs/x402/facilitators.ts (which credits x402scan and x402-list.com), kept in config/x402-facilitators.json with its commit; first snapshot 21 Oct 2026, 123 addresses under 31 names. third_party is the replacement front-run surface Bartoletti & Zunino (2023) and Materwala et al. (2024) describe; it is also what a seller's own relayer, or a facilitator missing from the list and below the 5-seller rule, looks like.",
+      "excludes": [
+        "Sellers not listed in the Bazaar.",
+        "Transfers beyond the per-run cap (the document says how many were found and how many read)."
+      ],
+      "does_not_assert": [
+        "That a third-party submission was hostile: the list is transactions to read, not a verdict.",
+        "That the public list is complete or correct: a name is the list's attribution, cited with its commit."
+      ],
+      "supersedes": "x402.settle.submitter.v2",
+      "source": "AFG-Pulse x402 submitters",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "1c64e068fccabd4f04e82fa10f76cff9808bf9244fde4583f4019433a6435010"
     }
   }
 }
