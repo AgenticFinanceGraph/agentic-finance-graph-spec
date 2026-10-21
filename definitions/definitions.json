@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-20T17:24:31.333Z",
+  "exported_at": "2026-10-21T00:06:25.244Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 347,
+  "count": 351,
   "definitions": {
     "acp.completed.v1": {
       "id": "acp.completed.v1",
@@ -1275,8 +1275,52 @@
       ],
       "source": "AFG-Pulse registry census",
       "since": "2026-09-27",
+      "valid_until": "2026-10-21",
+      "superseded_by": "census.bound.wallets.v2",
       "revisions": [],
       "body_sha256": "58f872f2caefc5b908a64839073f23d807aac4cb1903b2a22b8d1050797efcf1"
+    },
+    "census.bound.wallets.v2": {
+      "id": "census.bound.wallets.v2",
+      "title": "Bound wallets",
+      "unit": "wallets",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "current",
+      "definition": "Distinct wallets with an open binding to a registration: its owner (ownerOf), its declared agent wallet, a wallet proven by signature, or, since 21 Oct 2026, the account it was minted to when that account keeps paying for the agent after the registration moved (binding.minter.v1).",
+      "method": "Distinct wallet over bindings with no valid_to.",
+      "excludes": [
+        "Closed bindings (kept as an audit trail)."
+      ],
+      "does_not_assert": [
+        "Who operates the wallet. One wallet can own many registrations, and an owner key is evidence of control, not identity."
+      ],
+      "supersedes": "census.bound.wallets.v1",
+      "source": "AFG-Pulse registry census",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "4b758eb82e7e3842eb602de82c00eb6305b740e17e8f8c9be07e3937eb8b7cac"
+    },
+    "binding.minter.v1": {
+      "id": "binding.minter.v1",
+      "title": "The minting account as an agent's second wallet",
+      "unit": "bindings",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "current",
+      "definition": "The account a registration was minted to is bound to that agent (bind_method 6) when it minted no other registration, the registration moved to another holder within 24 hours of the mint, it is not the current holder, and it was seen paying after the move.",
+      "method": "afg-mintbind, hourly. Some platforms run each agent through two accounts: the registration is minted to one and moved within minutes to the other, and ERC-8004 clears agentWallet on the move, so nothing on chain ties the paying account to the agent any more. 'Seen paying' is read today from the FeeCharged events of the fee routers we index (Central City's three routers on Base). The binding starts at the mint; newly bound wallets are read by the payment reader at its normal pace. First run 21 Oct 2026 00:15 UTC: 7,201 accounts bound.",
+      "excludes": [
+        "Minting accounts that minted more than one registration (launchpads and platforms minting for others).",
+        "Registrations that moved more than 24 hours after the mint (a later sale is not this layout).",
+        "Minting accounts that pay only outside the fee routers we index: not bound until another source shows them."
+      ],
+      "does_not_assert": [
+        "Who controls either account.",
+        "That the money the account spends came from outside the platform: see the platform circulation measures."
+      ],
+      "source": "AFG-Pulse mintbind",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "a83aebea2a6a2b4a0a152cb274fa923694fb72df4e8bea51d35cc212745623a5"
     },
     "census.scan.backlog.v1": {
       "id": "census.scan.backlog.v1",
@@ -4172,8 +4216,54 @@
       ],
       "source": "AFG-Pulse payment scan",
       "since": "2026-09-06",
+      "valid_until": "2026-10-21",
+      "superseded_by": "pay.usd.total.v2",
       "revisions": [],
       "body_sha256": "3982897177ed5a7204ddac8d2acac281cbc88944489533d0a0ec142feb2dcfc0"
+    },
+    "pay.usd.total.v2": {
+      "id": "pay.usd.total.v2",
+      "title": "Counted payment value",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time since each registration's mint block",
+      "definition": "The summed USD value of every counted payment out of a wallet bound to a registered agent: a stablecoin transfer whose receipt was read, made after the registration existed, that was not a routing hop and did not go to one of the agent's own addresses.",
+      "method": "Sum of amount_usd over money_events of kind PAY with pre_registration false, pass_checked_at set and pass_through false. Since 21 Oct 2026 a transfer to one of the agent's own addresses (any wallet ever bound to it, its registration's current owner, the address it was minted to) is recorded in own_transfers and excluded the same way a routing hop is; the excluded amount is published as pay.excluded.ownaddress.v1. v1's text described only the pre-registration exclusion; the routing-hop and receipt-check rules had been applied since September without being written into it.",
+      "excludes": [
+        "Pre-registration payments (pay.excluded.preregistration.v1).",
+        "Routing hops: money that arrived and left again on its way somewhere else (pay.excluded.passthrough.v1).",
+        "Transfers to the agent's own addresses: a payment is a change of who is entitled to the money, and moving it between one's own addresses is not one (pay.excluded.ownaddress.v1).",
+        "Payments whose receipt has not been read yet: held out until checked, never assumed."
+      ],
+      "does_not_assert": [
+        "That this is the size of the agent economy. It is what we watched, from the wallets we have bound, on one chain, in stablecoins.",
+        "That the total is typical of its members: read pay.topactor.share.v1 and pay.usd.median.v1 beside it.",
+        "That the money was spent on goods or services: about half goes into positions the agent still holds (pay.composition.v1)."
+      ],
+      "supersedes": "pay.usd.total.v1",
+      "source": "AFG-Pulse payment scan",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "e072a0555e1f8e68a54123d3125f405db63ca2f595488041e0730b29f36411f8"
+    },
+    "pay.excluded.ownaddress.v1": {
+      "id": "pay.excluded.ownaddress.v1",
+      "title": "Transfers to an agent's own addresses, excluded from counted payments",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time",
+      "definition": "USD value of stablecoin transfers from a wallet bound to an agent to another of that agent's own addresses: any wallet ever bound to it, its registration's current owner, or the address it was minted to.",
+      "method": "After the receipt check, each counted payment whose recipient is one of the agent's own addresses is recorded in own_transfers and excluded from every total. Published so the exclusion can be audited. First applied on 21 Oct 2026: 4,061 transfers, $688.05.",
+      "excludes": [
+        "Transfers that never reached the counted set (pre-registration, routing hops, unchecked receipts)."
+      ],
+      "does_not_assert": [
+        "That the agent did anything wrong: moving money between one's own wallets is normal; it is just not paying someone."
+      ],
+      "source": "AFG-Pulse payment scan",
+      "since": "2026-10-21",
+      "revisions": [],
+      "body_sha256": "fb80b52f9e94081299667d8c5d45f8ac477d8142540dbed32ec8f64f155d6fe0"
     },
     "pay.usd.ownpositions.v1": {
       "id": "pay.usd.ownpositions.v1",
