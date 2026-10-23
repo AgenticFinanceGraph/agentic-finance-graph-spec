@@ -1,0 +1,174 @@
+{
+ "name": "Agentic Finance Graph — answers to the manifesto research questions",
+ "published": "2026-10-23",
+ "method_fixed_at": "2026-10-23T09:13:00Z",
+ "note": "Both questions were published in the manifesto with our expectation. The rules were written down before either query ran; both results are published as they fell. Drafted with AI assistance; every figure is from the queries in this folder.",
+ "q1": {
+  "question": "Of all USDC that left agent-bound wallets on Base since 3 February 2026, how much does the spending share move when each exclusion rule is removed on its own?",
+  "expectation": "The pre-registration rule moves it most.",
+  "definition_id": "research.exclusion_sensitivity.v1",
+  "cutoff": "2026-10-23T09:00:00Z",
+  "window_start": "2026-02-03T00:00:00Z",
+  "universe": {
+   "payments": 642172,
+   "usd": 307980849.83
+  },
+  "counted": {
+   "payments": 436003,
+   "usd": 38479822.89,
+   "share_usd_pct": 12.494,
+   "share_count_pct": 67.895
+  },
+  "receipt_not_read_yet": {
+   "payments": 137392,
+   "usd": 12335464.17,
+   "of_which_pre_registration_usd": 12335413.81
+  },
+  "rules": [
+   {
+    "rule": "routing hop",
+    "definition_id": "pay.excluded.passthrough.v1",
+    "excludes_usd": 236387395.26,
+    "excludes_payments": 47847,
+    "counted_if_removed_usd": 151164047.25,
+    "share_if_removed_usd_pct": 49.082,
+    "move_pp_usd": 36.588,
+    "share_if_removed_count_pct": 73.329,
+    "move_pp_count": 5.434
+   },
+   {
+    "rule": "pre-registration",
+    "definition_id": "pay.excluded.preregistration.v1",
+    "excludes_usd": 156814438.21,
+    "excludes_payments": 158626,
+    "also_routing_hop_usd": 123703170.9,
+    "counted_if_removed_usd": 59255676.39,
+    "share_if_removed_usd_pct": 19.24,
+    "move_pp_usd": 6.746,
+    "share_if_removed_count_pct": 69.185,
+    "move_pp_count": 1.29
+   },
+   {
+    "rule": "own address",
+    "definition_id": "pay.excluded.ownaddress.v1",
+    "excludes_usd": 2314.01,
+    "excludes_payments": 12646,
+    "counted_if_removed_usd": 38482136.9,
+    "share_if_removed_usd_pct": 12.495,
+    "move_pp_usd": 0.00075,
+    "share_if_removed_count_pct": 69.864,
+    "move_pp_count": 1.969
+   }
+  ],
+  "answer": "The routing-hop rule moves the spending share most (+36.6 points by value), not the pre-registration rule (+6.7). Most pre-registration money (123.7M of 156.8M USD) was also a routing hop, so removing the pre-registration rule alone leaves it excluded. Our expectation was wrong.",
+  "checks": {
+   "pre_registration_recomputed_from_mint_time": {
+    "payments": 158626,
+    "usd": 156814438.21,
+    "disagreements": 0
+   },
+   "reconciles_to_published": {
+    "observed_pay_usd_total": 38691484.08,
+    "pre_registration_pay_usd_excluded": 551881376.15,
+    "note": "the same SQL without the USDC and date filters reproduces both published metrics to the cent (snapshots of 2026-10-23 08:27 and 06:59 UTC)"
+   }
+  },
+  "context": {
+   "counted_into_own_positions_usd": 18461511.75,
+   "left_control_share_pct": 6.5
+  }
+ },
+ "q2": {
+  "question": "Does the volume of on-chain reputation feedback predict whether an agent later pays anyone, once the ten most active raters are set aside?",
+  "expectation": "No better than chance.",
+  "definition_id": "research.feedback_predicts_paying.v1",
+  "main": {
+   "t0": "2026-09-15T00:00:00Z",
+   "window_days": 30,
+   "cohort": 24727,
+   "paid_within_30d": 131,
+   "base_rate_pct": 0.53,
+   "auc_top10_aside": 0.4524,
+   "ci95": [
+    0.4218,
+    0.4866
+   ],
+   "auc_top10_included": 0.4227,
+   "verdict": "worse than chance",
+   "rate_by_feedback_bin_pct": {
+    "0": {
+     "agents": 18140,
+     "paid": 108,
+     "rate": 0.595
+    },
+    "1": {
+     "agents": 3402,
+     "paid": 13,
+     "rate": 0.382
+    },
+    "2-4": {
+     "agents": 1822,
+     "paid": 9,
+     "rate": 0.494
+    },
+    "5+": {
+     "agents": 1363,
+     "paid": 1,
+     "rate": 0.073
+    }
+   },
+   "never_read_wallet_agents": 912,
+   "feedback_before_t0": {
+    "entries": 437513,
+    "from_ten_set_aside": 227913,
+    "raters": 11769
+   }
+  },
+  "preregistered_robustness": {
+   "t0": "2026-08-15T00:00:00Z",
+   "result": "not computable: binding records begin 2026-09-06, so no agent had a binding valid at this T0"
+  },
+  "added_after_main_result": {
+   "label": "not pre-registered",
+   "t0": "2026-09-22T00:00:00Z",
+   "window_days": 30,
+   "cohort": 38844,
+   "paid_within_30d": 163,
+   "base_rate_pct": 0.42,
+   "auc_top10_aside": 0.5344,
+   "ci95": [
+    0.4985,
+    0.5722
+   ],
+   "auc_top10_included": 0.5014,
+   "verdict": "no better than chance",
+   "never_read_wallet_agents": 1446
+  },
+  "answer": "Feedback volume does not predict later paying in a usable way. On the pre-registered cohort it came out worse than chance: agents with more feedback were less likely to start paying (0.60% with none, 0.07% with five or more). A cohort one week later, added after we saw that and not pre-registered, sits within chance and leans the other way. Our expectation (no better than chance) was wrong on the pre-registered test, on the low side.",
+  "ten_set_aside_main": [
+   "0x561f2fc3d5b219cda53b4753b8c37be78c7383e1",
+   "0x375cf1f4261045feb601b480ae12afb1efda761b",
+   "0x45723ffa4491cf9b1a36e4e4156d47566a068b3e",
+   "0x39484e5fdeedaf0916c53d9c3bf380d3f307eb5d",
+   "0x6b661b7cc836c3a4df6b6e8c1e64833e164d74d0",
+   "0xf653068677a9a26d5911da8abd1500d043ec807e",
+   "0x071a8232eda92ef91989af3ae344a0a04c5b3023",
+   "0x7b3d901abedc45c7052c62d1c8eb12996509a007",
+   "0xafd44fff32b411969be461e47254c5612655a008",
+   "0x031e51875a1632381964bbc5afa287d9621ae409"
+  ],
+  "does_not_assert": [
+   "That feedback causes or prevents paying.",
+   "That any rater is fake or any agent bad.",
+   "That paying is quality."
+  ]
+ },
+ "files": [
+  "q1-exclusion-sensitivity.sql",
+  "q2-feedback-predicts-paying.sql",
+  "q2-auc.mjs",
+  "q2-agents.csv"
+ ],
+ "license": "https://creativecommons.org/licenses/by/4.0/",
+ "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+}
