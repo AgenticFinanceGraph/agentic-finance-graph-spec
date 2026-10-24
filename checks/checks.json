@@ -1,321 +1,468 @@
 {
-  "note": "The data-quality assertions behind every published figure: what each one checks, how severe a failure is, and its weight. Zero failing rows means pass. The queries themselves run on our own database and are not published.",
-  "count": 45,
+  "note": "Assertion checks run against our own tables every three hours. A check passes when its query returns no rows (or, for count checks, zero). Failing rows are published on the data-health page.",
+  "parameters": {
+    "max_single_payment_usd": 5000000,
+    "pass_backlog_hours": 24,
+    "money_fresh_hours": 48,
+    "volume_ratio": 4,
+    "shared_wallet_min": 3,
+    "fee_split_tolerance": 0.02,
+    "acp_paid_tolerance": 1.01,
+    "cursor_stall_cycles": 4,
+    "full_pass_hours": 48,
+    "sample": 5
+  },
+  "count": 50,
   "checks": [
     {
       "id": "chain_lag",
+      "table": "partner_cursors",
       "dimension": "timeliness",
       "severity": "warn",
       "weight": 1,
-      "what": "An other-chain registry watcher (Ethereum, Arbitrum, OP Mainnet, Polygon) is more than an hour of blocks behind the chain head, or has blocks it skipped and never scanned. Its mint and owner figures are partial until both are zero. Added 12 Oct 2026, when Arbitrum was about 113,000 blocks behind with a 1.2 million-block gap while health read 1.00."
+      "what": "An other-chain registry watcher (Ethereum, Arbitrum, OP Mainnet, Polygon) is more than an hour of blocks behind the chain head, or has blocks it skipped and never scanned. Its mint and owner figures are partial until both are zero. Added 12 Oct 2026, when Arbitrum was about 113,000 blocks behind with a 1.2 million-block gap while health read 1.00.",
+      "sql": "WITH c AS (SELECT replace(name, 'chain_scan_', '') AS chain, value::numeric AS scanned FROM partner_cursors WHERE name LIKE 'chain_scan_%'), h AS (SELECT replace(name, 'chain_head_', '') AS chain, value::numeric AS head FROM partner_cursors WHERE name LIKE 'chain_head_%'), g AS (SELECT replace(name, 'chain_gap_', '') AS chain, value::numeric AS gap FROM partner_cursors WHERE name LIKE 'chain_gap_%'), b(chain, per_day) AS (VALUES ('ethereum', 7200), ('arbitrum', 345000), ('optimism', 43200), ('polygon', 43200)) SELECT c.chain, (h.head - c.scanned)::bigint AS blocks_behind, round((h.head - c.scanned) / (b.per_day / 24.0), 1) AS hours_behind, coalesce(g.gap, 0)::bigint AS unscanned_gap_blocks FROM c JOIN h USING (chain) JOIN b USING (chain) LEFT JOIN g USING (chain) WHERE h.head - c.scanned > b.per_day / 24 OR coalesce(g.gap, 0) > 0"
+    },
+    {
+      "id": "sweep_lag",
+      "table": "partner_cursors",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "The sweep's live pass, which flags every bound wallet that moved a stablecoin for the payment scan, has not advanced in six hours. Payments made since then are not being read. Added 23 Oct 2026.",
+      "sql": "SELECT name, value AS block, updated_at::text AS updated_at, round(extract(epoch FROM now() - updated_at) / 3600, 1) AS hours_since FROM partner_cursors WHERE name = 'sweep_base_block' AND updated_at < now() - interval '6 hours'"
+    },
+    {
+      "id": "census_gap",
+      "table": "registrations",
+      "dimension": "completeness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "More than 100 Base registrations older than 36 hours have no actor yet, so they cannot be bound or ranked. The census runs daily; burned tokens account for a few dozen permanent gaps. Added 23 Oct 2026.",
+      "sql": "SELECT count(*) AS registrations_without_actor, min(r.token_id) AS lowest_token, max(r.minted_at)::text AS newest_mint FROM registrations r LEFT JOIN actors a ON a.actor_id = 'act_8453_' || r.token_id WHERE r.chain_id = 8453 AND r.minted_at < now() - interval '36 hours' AND a.actor_id IS NULL HAVING count(*) > 100"
+    },
+    {
+      "id": "payer_queue_age",
+      "table": "wallets",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 1,
+      "what": "Bound wallets the sweep saw move a stablecoin have waited more than three days for their first read by the payment scan. Their payments are missing from every count until then. Added 23 Oct 2026.",
+      "sql": "SELECT count(*) AS waiting_over_3_days, min(pay_dirty_at)::text AS oldest_flag FROM wallets WHERE last_pay_check IS NULL AND pay_dirty_at < now() - interval '3 days' HAVING count(*) > 0"
+    },
+    {
+      "id": "payer_vs_logs",
+      "table": "logreader_compare",
+      "dimension": "completeness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "Payments measured two ways disagree: for a one-in-five sample of bound wallets, the stablecoin Transfer logs read straight from the chain (afg-logreader) hold more than 10% transfers that the payment reader has not stored, for a window that closed 24 hours earlier. It showed 52,933 of 52,968 on 23 Oct 2026 (the starved payment queue) and had shown a gap since 22 Oct 03:41 UTC without any alarm. Added 23 Oct 2026.",
+      "sql": "SELECT run_at::text, win_from::text, win_to::text, log_rows, payer_rows, only_in_logs, round(only_in_logs::numeric / NULLIF(log_rows, 0), 4) AS gap_share FROM logreader_compare WHERE run_at = (SELECT max(run_at) FROM logreader_compare) AND log_rows > 500 AND only_in_logs > log_rows * 0.10"
+    },
+    {
+      "id": "offsite_backup_stale",
+      "table": "partner_cursors",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "The nightly database dump has not been copied to the off-site Storage Box and verified there for more than 36 hours (afg-offsite, daily at 04:10 UTC; the copy is checked with the box's own sha256sum). Until 24 Oct 2026 every backup lived on the same disk as the database. Added 24 Oct 2026.",
+      "sql": "SELECT name, value AS last_success, updated_at::text, round(extract(epoch FROM now() - updated_at) / 3600, 1) AS hours_since FROM partner_cursors WHERE name = 'offsite_backup_at' AND updated_at < now() - interval '36 hours' UNION ALL SELECT 'offsite_backup_at', 'never', NULL, NULL WHERE NOT EXISTS (SELECT 1 FROM partner_cursors WHERE name = 'offsite_backup_at')"
     },
     {
       "id": "unexplained_step",
+      "table": "series_steps",
       "dimension": "consistency",
       "severity": "warn",
       "weight": 1,
-      "what": "One of our own archived series stepped in the last 14 days (a material move concentrated in one day that persisted) and neither a dated change of ours in /api/changepoints nor a checked note explains it. Either we changed something without registering it, or the world moved and the move needs a dated note. Found by afg-steps: PELT (Killick, Fearnhead & Eckley 2012) over each daily series, confirmed by a one-day jump test; the list is at /api/steps. Added 12 Oct 2026."
+      "what": "One of our own archived series stepped in the last 14 days (a material move concentrated in one day that persisted) and neither a dated change of ours in /api/changepoints nor a checked note explains it. Either we changed something without registering it, or the world moved and the move needs a dated note. Found by afg-steps: PELT (Killick, Fearnhead & Eckley 2012) over each daily series, confirmed by a one-day jump test; the list is at /api/steps. Added 12 Oct 2026.",
+      "sql": "SELECT metric, step_day::text AS step_day, round(before::numeric, 4) AS before, round(after::numeric, 4) AS after, round(z::numeric, 1) AS z FROM series_steps WHERE status = 'open' AND step_day >= current_date - 14 AND last_seen > now() - interval '13 hours'"
     },
     {
       "id": "me_required_fields",
+      "table": "money_events",
       "dimension": "completeness",
       "severity": "block",
       "weight": 3,
-      "what": "A payment row is missing a field every downstream figure needs."
+      "what": "A payment row is missing a field every downstream figure needs.",
+      "sql": "SELECT event_id FROM money_events WHERE kind = 'PAY' AND (actor_id IS NULL OR amount_usd IS NULL OR block_time IS NULL OR from_caip10 IS NULL OR to_id IS NULL OR tx IS NULL)"
     },
     {
       "id": "me_duplicate_log",
+      "table": "money_events",
       "dimension": "uniqueness",
       "severity": "block",
       "weight": 3,
-      "what": "The same on-chain log (transaction + log position) is stored twice, which double-counts it."
+      "what": "The same on-chain log (transaction + log position) is stored twice, which double-counts it.",
+      "sql": "SELECT tx, log_index, count(*)::int AS copies FROM money_events WHERE kind = 'PAY' AND log_index IS NOT NULL GROUP BY 1, 2 HAVING count(*) > 1"
     },
     {
       "id": "me_identical_in_one_tx",
+      "table": "money_events",
       "dimension": "uniqueness",
       "severity": "info",
       "weight": 1,
-      "what": "Identical transfers inside one transaction. Usually a batch payment, not a duplicate: on 2026-09-24 all four counted groups were checked against their on-chain receipts and every one matched. Rows without a log position cannot be told apart from a double insert, which is why me_duplicate_log exists."
+      "what": "Identical transfers inside one transaction. Usually a batch payment, not a duplicate: on 2026-09-24 all four counted groups were checked against their on-chain receipts and every one matched. Rows without a log position cannot be told apart from a double insert, which is why me_duplicate_log exists.",
+      "sql": "SELECT tx, from_caip10, to_id, amount_usd, count(*)::int AS copies FROM money_events WHERE kind = 'PAY' GROUP BY 1, 2, 3, 4 HAVING count(*) > 1"
     },
     {
       "id": "me_counted_without_log_index",
+      "table": "money_events",
       "dimension": "uniqueness",
       "severity": "warn",
       "weight": 2,
-      "what": "Counted payments stored before log positions were recorded. me_duplicate_log cannot see them, so a double insert among them would reach the headline. Added 9 Oct 2026 (charter audit); the backfill re-reads their receipts."
+      "what": "Counted payments stored before log positions were recorded. me_duplicate_log cannot see them, so a double insert among them would reach the headline. Added 9 Oct 2026 (charter audit); the backfill re-reads their receipts.",
+      "sql": "SELECT count(*)::int AS rows, round(sum(amount_usd)::numeric, 2) AS usd FROM money_events WHERE kind = 'PAY' AND NOT pass_through AND NOT pre_registration AND pass_checked_at IS NOT NULL AND log_index IS NULL HAVING count(*) > 0"
     },
     {
       "id": "registry_count_vs_daily",
+      "table": "snapshots",
       "dimension": "consistency",
       "severity": "warn",
       "weight": 2,
-      "what": "The cited all-chain registration total (agenteconomy.to) did not move while the same source's all-chain daily series reported new mints: one of the two is stale. Seen 30 Sep to 3 Oct 2026; added 9 Oct (charter audit) so a registration rate is never published from a stale total. Until 9 Oct 2026 15:30 UTC this compared the Base-only total with the all-chain daily series and fired falsely."
+      "what": "The cited all-chain registration total (agenteconomy.to) did not move while the same source's all-chain daily series reported new mints: one of the two is stale. Seen 30 Sep to 3 Oct 2026; added 9 Oct (charter audit) so a registration rate is never published from a stale total. Until 9 Oct 2026 15:30 UTC this compared the Base-only total with the all-chain daily series and fired falsely.",
+      "sql": "WITH a AS (SELECT (SELECT value FROM series WHERE metric = 'erc8004_registrations_agenteconomy' ORDER BY ts DESC LIMIT 1) - (SELECT value FROM series WHERE metric = 'erc8004_registrations_agenteconomy' AND ts < now() - interval '48 hours' ORDER BY ts DESC LIMIT 1) AS moved), d AS (SELECT sum(value) AS daily FROM (SELECT DISTINCT ON (date_trunc('day', ts)) value FROM series WHERE metric = 'erc8004_new_registrations_daily' AND ts > now() - interval '48 hours' ORDER BY date_trunc('day', ts), ts DESC) z) SELECT a.moved, d.daily FROM a, d WHERE d.daily > 500 AND coalesce(a.moved, 0) < d.daily * 0.25"
     },
     {
       "id": "base_registrations_two_ways",
+      "table": "registrations",
       "dimension": "consistency",
       "severity": "warn",
       "weight": 3,
-      "what": "Base registrations measured two ways: our dated registrations table counted at the exact end of a UTC day differs from The Graph's Agent0 subgraph total for that day. Added 12 Oct 2026, when 9, 10 and 11 Oct agreed to the registration; a gap means one of the two indexers missed or double-counted a mint."
+      "what": "Base registrations measured two ways: our dated registrations table counted at the exact end of a UTC day differs from The Graph's Agent0 subgraph total for that day. Added 12 Oct 2026, when 9, 10 and 11 Oct agreed to the registration; a gap means one of the two indexers missed or double-counted a mint.",
+      "sql": "SELECT day, subgraph_count, our_exact, gap_exact FROM graph_crosscheck WHERE chain = 'eip155:8453' AND day > current_date - 7 AND our_exact IS NOT NULL AND gap_exact <> 0"
     },
     {
       "id": "base_registrations_cited_vs_own",
+      "table": "snapshots",
       "dimension": "consistency",
       "severity": "info",
       "weight": 2,
-      "what": "The Base registration total cited from agenteconomy.to and our own count from the Identity Registry contract differ by more than 1%. Informational: the cited figure is labelled as cited and the headline uses our own count (registrations_minted_total). On 9 Oct 2026 the cited total was 100,119 while the chain's newest agent id at 11:00 UTC was 99,013 (99,014 registrations), read both from public RPC and from our live mint feed. Added 9 Oct 2026."
+      "what": "The Base registration total cited from agenteconomy.to and our own count from the Identity Registry contract differ by more than 1%. Informational: the cited figure is labelled as cited and the headline uses our own count (registrations_minted_total). On 9 Oct 2026 the cited total was 100,119 while the chain's newest agent id at 11:00 UTC was 99,013 (99,014 registrations), read both from public RPC and from our live mint feed. Added 9 Oct 2026.",
+      "sql": "WITH c AS (SELECT value FROM series WHERE metric = 'erc8004_agents_base' ORDER BY ts DESC LIMIT 1), o AS (SELECT value FROM series WHERE metric = 'registrations_minted_total' ORDER BY ts DESC LIMIT 1) SELECT c.value AS cited, o.value AS own, round(((c.value - o.value) / o.value * 100)::numeric, 2) AS gap_pct FROM c, o WHERE abs(c.value - o.value) > o.value * 0.01"
     },
     {
       "id": "me_missing_log_index",
+      "table": "money_events",
       "dimension": "completeness",
       "severity": "info",
       "weight": 1,
-      "what": "Payments stored before log positions were recorded. They fill in as the payment scan re-reads each wallet; until then me_duplicate_log cannot see them."
+      "what": "Payments stored before log positions were recorded. They fill in as the payment scan re-reads each wallet; until then me_duplicate_log cannot see them.",
+      "sql": "SELECT count(*)::int AS without_log_index FROM money_events WHERE kind = 'PAY' AND log_index IS NULL HAVING count(*) > 0"
     },
     {
       "id": "me_amount_range",
+      "table": "money_events",
       "dimension": "validity",
       "severity": "block",
       "weight": 3,
-      "what": "A payment amount is negative or implausibly large for a single agent transfer."
+      "what": "A payment amount is negative or implausibly large for a single agent transfer.",
+      "sql": "SELECT event_id, amount_usd FROM money_events WHERE amount_usd < 0 OR amount_usd > 5000000"
     },
     {
       "id": "me_known_values",
+      "table": "money_events",
       "dimension": "validity",
       "severity": "block",
       "weight": 3,
-      "what": "A kind, rail, asset or confidence value appeared that no downstream code knows how to treat. Since 27 Sep 2026: PAY and EARN (income), four stablecoins."
+      "what": "A kind, rail, asset or confidence value appeared that no downstream code knows how to treat. Since 27 Sep 2026: PAY and EARN (income), four stablecoins.",
+      "sql": "SELECT event_id, kind, rail, asset, confidence FROM money_events WHERE kind NOT IN ('PAY', 'EARN') OR coalesce(rail, '') NOT IN ('usdc_transfer', 'usdt_transfer', 'eurc_transfer', 'dai_transfer', 'x402') OR coalesce(asset, '') NOT IN ('USDC', 'USDT', 'EURC', 'DAI') OR confidence NOT IN ('onchain')"
     },
     {
       "id": "me_address_format",
+      "table": "money_events",
       "dimension": "validity",
       "severity": "block",
       "weight": 3,
-      "what": "A sender or recipient is not a lowercase CAIP-10 address, so joins against it silently miss."
+      "what": "A sender or recipient is not a lowercase CAIP-10 address, so joins against it silently miss.",
+      "sql": "SELECT event_id, from_caip10, to_id FROM money_events WHERE from_caip10 !~ '^eip155:[0-9]+:0x[0-9a-f]{40}$' OR to_id !~ '^eip155:[0-9]+:0x[0-9a-f]{40}$'"
     },
     {
       "id": "me_counted_self_payment",
+      "table": "money_events",
       "dimension": "consistency",
       "severity": "block",
       "weight": 3,
-      "what": "A wallet paying itself is counted as spending. Moving your own money is not paying anybody."
+      "what": "A wallet paying itself is counted as spending. Moving your own money is not paying anybody.",
+      "sql": "SELECT m.event_id FROM money_events m WHERE m.kind = 'PAY' AND NOT m.pre_registration AND NOT m.pass_through AND split_part(m.from_caip10, ':', 3) = split_part(m.to_id, ':', 3)"
     },
     {
       "id": "me_pre_registration_leak",
+      "table": "money_events",
       "dimension": "consistency",
       "severity": "block",
       "weight": 3,
-      "what": "A payment from BEFORE the agent was registered is counted. This exact leak once overstated the headline by 46%."
+      "what": "A payment from BEFORE the agent was registered is counted. This exact leak once overstated the headline by 46%.",
+      "sql": "SELECT m.event_id, m.block_time, a.registered_at FROM money_events m JOIN actors a ON a.actor_id = m.actor_id WHERE m.kind = 'PAY' AND NOT m.pre_registration AND NOT m.pass_through AND a.registered_at IS NOT NULL AND m.block_time < a.registered_at"
     },
     {
       "id": "me_orphan_actor",
+      "table": "money_events",
       "dimension": "referential",
       "severity": "block",
       "weight": 3,
-      "what": "A payment points at an actor that does not exist."
+      "what": "A payment points at an actor that does not exist.",
+      "sql": "SELECT m.event_id, m.actor_id FROM money_events m LEFT JOIN actors a ON a.actor_id = m.actor_id WHERE m.actor_id IS NOT NULL AND a.actor_id IS NULL"
     },
     {
       "id": "me_sender_never_bound",
+      "table": "money_events",
       "dimension": "referential",
       "severity": "warn",
       "weight": 3,
-      "what": "A payment is attributed to an agent whose wallet was never bound to it, so the attribution has no basis."
+      "what": "A payment is attributed to an agent whose wallet was never bound to it, so the attribution has no basis.",
+      "sql": "SELECT m.event_id, m.actor_id, m.from_caip10 FROM money_events m WHERE m.kind = 'PAY' AND NOT EXISTS ( SELECT 1 FROM bindings b WHERE b.actor_id = m.actor_id AND b.wallet = m.from_caip10)"
     },
     {
       "id": "me_pass_through_backlog",
+      "table": "money_events",
       "dimension": "freshness",
       "severity": "warn",
       "weight": 3,
-      "what": "Counted payments older than the backlog window have not been checked for pass-through routing yet. Pre-registration payments are excluded from every total already, so they never need checking (the first run flagged 3,313 of them by mistake)."
+      "what": "Counted payments older than the backlog window have not been checked for pass-through routing yet. Pre-registration payments are excluded from every total already, so they never need checking (the first run flagged 3,313 of them by mistake).",
+      "sql": "SELECT count(*)::int AS unchecked, min(block_time) AS oldest FROM money_events WHERE kind = 'PAY' AND NOT pre_registration AND pass_checked_at IS NULL AND block_time < now() - interval '24 hours' HAVING count(*) > 0"
     },
     {
       "id": "me_freshness",
+      "table": "money_events",
       "dimension": "freshness",
       "severity": "warn",
       "weight": 3,
-      "what": "The newest observed payment is older than the scan's own cadence allows: the payment scan may have stalled."
+      "what": "The newest observed payment is older than the scan's own cadence allows: the payment scan may have stalled.",
+      "sql": "SELECT max(block_time) AS newest FROM money_events HAVING max(block_time) < now() - interval '48 hours'"
     },
     {
       "id": "me_volume_swing",
+      "table": "money_events",
       "dimension": "volume",
       "severity": "info",
       "weight": 1,
-      "what": "Yesterday's number of newly recorded payments is far from the trailing 7-day median. Needs a week of history."
+      "what": "Yesterday's number of newly recorded payments is far from the trailing 7-day median. Needs a week of history.",
+      "sql": "WITH d AS (SELECT date_trunc('day', block_time)::date AS day, count(*) AS n FROM money_events WHERE block_time >= now() - interval '9 days' AND block_time < date_trunc('day', now()) GROUP BY 1), last AS (SELECT day, n FROM d ORDER BY day DESC LIMIT 1), base AS (SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY n) AS med FROM d WHERE day < (SELECT day FROM last)) SELECT last.day, last.n, round(base.med::numeric, 1) AS trailing_median FROM last, base WHERE base.med > 0 AND (last.n > base.med * 4 OR last.n < base.med / 4)"
     },
     {
       "id": "actor_liveness_range",
+      "table": "actors",
       "dimension": "validity",
       "severity": "block",
       "weight": 3,
-      "what": "A liveness level outside the L0–L9 ladder."
+      "what": "A liveness level outside the L0–L9 ladder.",
+      "sql": "SELECT actor_id, liveness FROM actors WHERE liveness NOT BETWEEN 0 AND 9"
     },
     {
       "id": "actor_rank_without_evidence",
+      "table": "actors",
       "dimension": "consistency",
       "severity": "block",
       "weight": 3,
-      "what": "An agent is ranked L7 or above with no countable payment behind it. The rank is the product; this is the check that protects it."
+      "what": "An agent is ranked L7 or above with no countable payment behind it. The rank is the product; this is the check that protects it.",
+      "sql": "SELECT a.actor_id, a.liveness FROM actors a WHERE a.liveness >= 7 AND NOT EXISTS ( SELECT 1 FROM money_events m WHERE m.actor_id = a.actor_id AND m.kind = 'PAY' AND NOT m.pre_registration AND NOT m.pass_through)"
     },
     {
       "id": "actor_evidence_without_rank",
+      "table": "actors",
       "dimension": "consistency",
       "severity": "warn",
       "weight": 3,
-      "what": "An agent has a payment that qualifies for L7 under ladder v2 (counted, not inferred, left its control) but is still ranked below L7: a promotion is pending until the next rank run (afg-payer, every 3 h)."
+      "what": "An agent has a payment that qualifies for L7 under ladder v2 (counted, not inferred, left its control) but is still ranked below L7: a promotion is pending until the next rank run (afg-payer, every 3 h).",
+      "sql": "SELECT a.actor_id, a.liveness FROM actors a WHERE a.liveness < 7 AND EXISTS ( SELECT 1 FROM money_events m WHERE m.actor_id = a.actor_id AND )"
     },
     {
       "id": "actor_rank_evidence_withdrawn",
+      "table": "actors",
       "dimension": "consistency",
       "severity": "warn",
       "weight": 2,
-      "what": "An agent ranked L7+ no longer has a payment that left its control (a position, own-address or bridged-back finding arrived after the last rank run). The next rank run (afg-payer, every 3 h) takes it down; a warning, so the gate does not stall publishing for up to three hours."
+      "what": "An agent ranked L7+ no longer has a payment that left its control (a position, own-address or bridged-back finding arrived after the last rank run). The next rank run (afg-payer, every 3 h) takes it down; a warning, so the gate does not stall publishing for up to three hours.",
+      "sql": "SELECT a.actor_id, a.liveness FROM actors a WHERE a.liveness >= 7 AND NOT EXISTS ( SELECT 1 FROM money_events m WHERE m.actor_id = a.actor_id AND )"
     },
     {
       "id": "actor_unmeasured_l6",
+      "table": "actors",
       "dimension": "consistency",
       "severity": "block",
       "weight": 2,
-      "what": "An agent shows L6 without a probe that measured L6. Ladder v1 parked withdrawn ranks at L6; v2 never does."
+      "what": "An agent shows L6 without a probe that measured L6. Ladder v1 parked withdrawn ranks at L6; v2 never does.",
+      "sql": "SELECT a.actor_id, a.liveness, a.probe_level FROM actors a WHERE a.liveness = 6 AND a.probe_level IS DISTINCT FROM 6"
     },
     {
       "id": "actor_l9_counterparties",
+      "table": "actors",
       "dimension": "consistency",
       "severity": "block",
       "weight": 3,
-      "what": "An L9 agent does not have even three distinct counterparties in 30 days, measured as of the last rank computation (afg-payer, every 3 h). Ladder v2 (13 Oct 2026) asks more (three independent ones among payments that left its control), so this is a necessary condition that a correct rank always passes. Until 9 Oct 2026 the window ended now, so a counterparty ageing out between two rank runs failed the check until the next run demoted the agent."
+      "what": "An L9 agent does not have even three distinct counterparties in 30 days, measured as of the last rank computation (afg-payer, every 3 h). Ladder v2 (13 Oct 2026) asks more (three independent ones among payments that left its control), so this is a necessary condition that a correct rank always passes. Until 9 Oct 2026 the window ended now, so a counterparty ageing out between two rank runs failed the check until the next run demoted the agent.",
+      "sql": "SELECT a.actor_id, count(DISTINCT m.to_id)::int AS counterparties_30d FROM actors a LEFT JOIN money_events m ON m.actor_id = a.actor_id AND m.kind = 'PAY' AND NOT m.pre_registration AND NOT m.pass_through AND m.block_time > (SELECT max(ts) FROM series WHERE metric = 'actors_l9') - interval '30 days' WHERE a.liveness = 9 GROUP BY a.actor_id HAVING count(DISTINCT m.to_id) < 3"
     },
     {
       "id": "binding_orphan_actor",
+      "table": "bindings",
       "dimension": "referential",
       "severity": "block",
       "weight": 3,
-      "what": "A binding points at an actor that does not exist."
+      "what": "A binding points at an actor that does not exist.",
+      "sql": "SELECT b.actor_id, b.wallet FROM bindings b LEFT JOIN actors a ON a.actor_id = b.actor_id WHERE a.actor_id IS NULL"
     },
     {
       "id": "binding_wallet_format",
+      "table": "bindings",
       "dimension": "validity",
       "severity": "block",
       "weight": 3,
-      "what": "A bound wallet is not a lowercase CAIP-10 address."
+      "what": "A bound wallet is not a lowercase CAIP-10 address.",
+      "sql": "SELECT actor_id, wallet FROM bindings WHERE wallet !~ '^eip155:[0-9]+:0x[0-9a-f]{40}$'"
     },
     {
       "id": "binding_interval",
+      "table": "bindings",
       "dimension": "consistency",
       "severity": "block",
       "weight": 3,
-      "what": "A binding closes before it opens."
+      "what": "A binding closes before it opens.",
+      "sql": "SELECT actor_id, wallet, valid_from, valid_to FROM bindings WHERE valid_to IS NOT NULL AND valid_to < valid_from"
     },
     {
       "id": "binding_shared_wallet",
+      "table": "bindings",
       "dimension": "uniqueness",
       "severity": "info",
       "weight": 1,
-      "what": "One wallet is currently bound to several identities: an operator wallet, not an agent wallet."
+      "what": "One wallet is currently bound to several identities: an operator wallet, not an agent wallet.",
+      "sql": "SELECT wallet, count(*)::int AS identities FROM bindings WHERE valid_to IS NULL GROUP BY wallet HAVING count(*) >= 3"
     },
     {
       "id": "snapshot_not_finite",
+      "table": "snapshots",
       "dimension": "validity",
       "severity": "block",
       "weight": 2,
-      "what": "A published value is null, NaN or infinite."
+      "what": "A published value is null, NaN or infinite.",
+      "sql": "SELECT metric, value FROM snapshots WHERE value IS NULL OR value = 'NaN'::float8 OR value IN ('Infinity'::float8, '-Infinity'::float8)"
     },
     {
       "id": "snapshot_from_future",
+      "table": "snapshots",
       "dimension": "validity",
       "severity": "block",
       "weight": 2,
-      "what": "A published value claims a timestamp in the future."
+      "what": "A published value claims a timestamp in the future.",
+      "sql": "SELECT metric, as_of FROM snapshots WHERE as_of > now() + interval '5 minutes'"
     },
     {
       "id": "snapshot_rate_out_of_range",
+      "table": "snapshots",
       "dimension": "validity",
       "severity": "block",
       "weight": 2,
-      "what": "A published rate or share is below 0 or above 1. A negative share was once published live."
+      "what": "A published rate or share is below 0 or above 1. A negative share was once published live.",
+      "sql": "SELECT metric, value FROM snapshots WHERE (metric ~ '(_rate|_share)(_|$)' OR metric ~ '_rate_') AND (value < 0 OR value > 1)"
     },
     {
       "id": "series_missing_definition",
+      "table": "series",
       "dimension": "completeness",
       "severity": "warn",
       "weight": 2,
-      "what": "A metric was written in the last day without a definition id, so /def cannot explain it."
+      "what": "A metric was written in the last day without a definition id, so /def cannot explain it.",
+      "sql": "SELECT metric, count(*)::int AS rows_24h FROM series WHERE ts > now() - interval '24 hours' AND definition_id IS NULL GROUP BY metric"
     },
     {
       "id": "acp_negative_amount",
+      "table": "acp_jobs",
       "dimension": "validity",
       "severity": "block",
       "weight": 1,
-      "what": "An ACP job has a negative amount."
+      "what": "An ACP job has a negative amount.",
+      "sql": "SELECT job_id FROM acp_jobs WHERE funded_usd < 0 OR paid_usd < 0 OR refunded_usd < 0 OR evaluator_fee_usd < 0"
     },
     {
       "id": "acp_paid_exceeds_funded",
+      "table": "acp_jobs",
       "dimension": "consistency",
       "severity": "warn",
       "weight": 1,
-      "what": "An ACP job paid out more than it was funded with (outside rounding)."
+      "what": "An ACP job paid out more than it was funded with (outside rounding).",
+      "sql": "SELECT job_id, funded_usd, paid_usd FROM acp_jobs WHERE funded_usd > 0 AND paid_usd > funded_usd * 1.01"
     },
     {
       "id": "bankr_address_format",
+      "table": "bankr_launches",
       "dimension": "validity",
       "severity": "block",
       "weight": 1,
-      "what": "A Bankr token, deployer or fee recipient is not a lowercase address."
+      "what": "A Bankr token, deployer or fee recipient is not a lowercase address.",
+      "sql": "SELECT token_address FROM bankr_launches WHERE token_address !~ '^0x[0-9a-f]{40}$' OR (deployer IS NOT NULL AND deployer !~ '^0x[0-9a-f]{40}$') OR (fee_recipient IS NOT NULL AND fee_recipient !~ '^0x[0-9a-f]{40}$')"
     },
     {
       "id": "bankr_fee_split",
+      "table": "bankr_launches",
       "dimension": "consistency",
       "severity": "warn",
       "weight": 1,
-      "what": "Bankr's platform plus creator fee exceeds the total fee it reported for the same token."
+      "what": "Bankr's platform plus creator fee exceeds the total fee it reported for the same token.",
+      "sql": "SELECT token_address, total_fees_usd, bankr_fees_usd, creator_fees_usd FROM bankr_launches WHERE total_fees_usd > 0 AND coalesce(bankr_fees_usd, 0) + coalesce(creator_fees_usd, 0) > total_fees_usd * (1 + 0.02)"
     },
     {
       "id": "bankr_negative_fee",
+      "table": "bankr_launches",
       "dimension": "validity",
       "severity": "block",
       "weight": 1,
-      "what": "A cited Bankr fee is negative."
+      "what": "A cited Bankr fee is negative.",
+      "sql": "SELECT token_address FROM bankr_launches WHERE total_fees_usd < 0 OR bankr_fees_usd < 0 OR creator_fees_usd < 0"
     },
     {
       "id": "partner_shared_flag",
+      "table": "partner_identities",
       "dimension": "consistency",
       "severity": "block",
       "weight": 1,
-      "what": "A wallet declared by several partner identities is not flagged as shared, so it could count as an agent wallet."
+      "what": "A wallet declared by several partner identities is not flagged as shared, so it could count as an agent wallet.",
+      "sql": "SELECT p.partner, p.wallet, count(*)::int AS identities FROM partner_identities p WHERE p.wallet IS NOT NULL AND NOT p.shared_wallet AND EXISTS (SELECT 1 FROM partner_identities q WHERE q.partner = p.partner AND q.wallet = p.wallet AND q.ext_id <> p.ext_id) GROUP BY 1, 2"
     },
     {
       "id": "x402_address_format",
+      "table": "x402_recipients",
       "dimension": "validity",
       "severity": "block",
       "weight": 1,
-      "what": "A named x402 seller is not a lowercase address, so payments to it are never attributed."
+      "what": "A named x402 seller is not a lowercase address, so payments to it are never attributed.",
+      "sql": "SELECT address FROM x402_recipients WHERE address !~ '^0x[0-9a-f]{40}$'"
     },
     {
       "id": "cursor_stalled",
+      "table": "partner_cursors",
       "dimension": "freshness",
       "severity": "warn",
       "weight": 2,
-      "what": "A worker that pages through a source has not saved a new position for several of its own cycles, so whatever it feeds has quietly stopped updating."
+      "what": "A worker that pages through a source has not saved a new position for several of its own cycles, so whatever it feeds has quietly stopped updating.",
+      "sql": "WITH live(name, cadence_hours) AS (VALUES ('x402.harvest_offset', 3), ('bankr.cursor', 3), ('acp.jobs.block', 2), ('partner.fetch.cursor', 4), ('partner.virtuals.page', 4)) SELECT c.name, c.updated_at FROM live l JOIN partner_cursors c ON c.name = l.name WHERE c.value IS DISTINCT FROM 'DONE' AND c.updated_at < now() - make_interval(hours => l.cadence_hours * 4)"
     },
     {
       "id": "catalogue_full_pass",
+      "table": "partner_cursors",
       "dimension": "freshness",
       "severity": "warn",
       "weight": 2,
-      "what": "The x402 harvest has not completed a full pass of the catalogue within the window. This is the page-one freeze of September 2026, caught by the machine instead of by a reader."
+      "what": "The x402 harvest has not completed a full pass of the catalogue within the window. This is the page-one freeze of September 2026, caught by the machine instead of by a reader.",
+      "sql": "SELECT 'x402.last_full_pass_at' AS name, max(value) AS last_full_pass_at FROM partner_cursors WHERE name = 'x402.last_full_pass_at' HAVING max(value) IS NULL OR max(value)::timestamptz < now() - interval '48 hours'"
     },
     {
       "id": "registration_from_future",
+      "table": "registrations",
       "dimension": "validity",
       "severity": "block",
       "weight": 2,
-      "what": "A registration claims to have been minted in the future."
+      "what": "A registration claims to have been minted in the future.",
+      "sql": "SELECT chain_id, token_id, minted_at FROM registrations WHERE minted_at > now() + interval '5 minutes'"
     },
     {
       "id": "waitlist_email_format",
+      "table": "waitlist",
       "dimension": "validity",
       "severity": "warn",
       "weight": 1,
-      "what": "A waitlist entry does not look like an email address. Only a hash is returned: this table holds personal data."
+      "what": "A waitlist entry does not look like an email address. Only a hash is returned: this table holds personal data.",
+      "sql": "SELECT md5(lower(email)) AS email_hash, first_seen FROM waitlist WHERE email !~* '^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$'"
     }
   ]
 }

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9 — 24 October 2026
+
+363 definitions (5 new since 0.8), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def); 50 data checks (5 new); test vectors unchanged.
+
+- **New definitions:** `research.exclusion_sensitivity.v1` and `research.feedback_predicts_paying.v1` (the manifesto's two pre-registered questions, answered 23 Oct 2026); `x402.settle.submitter.v4` (every transfer found is counted, an even stride sample is read); `x402.settle.oversize.v1` (settlements at least 100× the seller's median, the on-chain shape of the x402 client SDKs' missing spend cap reported by V12 on 22 Oct 2026); `reg.chains.upperbound.v1` (the ERC-8004 registry read from public nodes on 40 EVM chains: highest agent id per chain, an upper bound on registrations, and the platform behind each wave).
+- **New checks (50):** `payer_vs_logs` (stored payments against Transfer logs read straight from the chain for a sample of wallets), `offsite_backup_stale`, `sweep_lag`, `census_gap`, `payer_queue_age`.
+- **Frozen links made two-way.** The 13 superseded ids that carried `superseded_by` without `valid_until` now carry it (`agent.pass.v1`, `behaviour.out_of_character.v1`, `cctp.*.v1`, `detector.*.v1`, `incident.open.v1`, `rank.l9.v3`, `xchain.bnb.sample.*`); the 14 successors that lacked a backward `supersedes` now carry it. Bodies are unchanged.
+- **SPEC.md** now cites the current ids: the counted set is `pay.usd.total.v2` with the own-address exclusion (`pay.excluded.ownaddress.v1`, 21 Oct 2026) in the prose, L9 is `rank.l9.v4`, the check count is fifty, and the version string matches this file and `CITATION.cff`.
+- **Alias:** the headline metric `observed_pay_usd_total` resolves to `pay.usd.total.v2`.
+- Open items for 1.0 are listed in the gap review of 24 Oct 2026 (empty `excludes` on 55 ids, voluntary fields, CAIP-2 normalisation, `cost_to_fake` on the rank ids, new test vectors, CI checks on cited ids).
+
 ## 0.8 — 21 October 2026
 
 358 definitions (36 new since 0.7), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def). The data checks (45) and the test vectors are unchanged.

@@ -1,6 +1,6 @@
 # The Agentic Finance Graph accounting specification
 
-**Version 0.1 (draft), 28 September 2026.** Licence: CC BY 4.0.
+**Version 0.9 (draft), 24 October 2026.** Licence: CC BY 4.0.
 
 This document states how Agentic Finance Graph counts money held and spent by AI agents: which transfers count as an agent paying someone, which are excluded and why, how an agent is ranked, and how the counting is checked. It is written so that anyone can implement it from public chain data and compare their numbers with ours. Where this document and a definition in [`definitions/definitions.json`](definitions/definitions.json) disagree, the definition wins; definitions are frozen once published (a breaking change is a new id ending `.v2`, never an edit to `.v1`).
 
@@ -37,7 +37,7 @@ $$O = P \;\cup\; T \;\cup\; C, \qquad P \cap T = P \cap C = T \cap C = \varnothi
 
 1. **Pre-registration $P$** (`pay.excluded.preregistration.v1`). The payment's block time is earlier than the mint time of the registration its wallet is bound to. The wallet existed before the agent did.
 2. **Pass-through $T$** (`pay.excluded.passthrough.v1`). The payment forwards money the wallet received in the same transaction: the receipt shows approximately the same amount (within 2%) arriving at the wallet. It is a routing hop, not a purchase. A payment is only counted after this check has run on it.
-3. **Counted $C$** (`pay.usd.total.v1`). Everything else, provided the recipient is a different address from the sender (self-transfers are excluded).
+3. **Counted $C$** (`pay.usd.total.v2`). Everything else, provided the recipient is not one of the sender's own addresses: not the same address, not another wallet ever bound to the agent, not its registration's owner, not the address it was minted to (`pay.excluded.ownaddress.v1`, from 21 October 2026; before that date only the same address was excluded, `pay.usd.total.v1`).
 
 The counted set is further split by reading each receipt:
 
@@ -61,7 +61,7 @@ Every excluded amount is published as its own metric, so each exclusion can be a
 | L6 | An endpoint completes a handshake: MCP (`initialize` returns a `protocolVersion`), A2A (an agent card with a `name` and a `skills` array), or x402 (a 402 with `accepts[]` naming a scheme, a network and a `payTo`) | `probe.l6.protocol.v1` |
 | **L7** | A bound wallet made a counted payment that **left the agent's control**: not into a lending or vault position the receipt shows it still holds, not to its own addresses (any wallet ever bound to it, its registration's owner, its minter), and not a bridge leg that came back to it | `rank.l7plus.v2` |
 | L8 | L7, and a bound wallet holds at least $10 in stablecoins (USDC, USDT, EURC at the day's rate, DAI) at the latest balance read | `rank.l8plus.v3` |
-| L9 | L8, and its payments that left control reached at least three **independent** counterparties in the last 30 days: an address with contract code, or one that at least two registered agents pay | `rank.l9.v3` |
+| L9 | L8, and its payments that left control reached at least three **independent** counterparties in the last 30 days: an address with contract code that is not a bot-like router, or one that at least one registered agent outside the payer's operator set also pays | `rank.l9.v4` |
 
 L0 to L6 are measured on a uniform random sample of registrations; L7 to L9 on every registration (a census). The public rank starts at L7, because it is the first level that a registry entry alone cannot claim. When a ranked agent loses its payment evidence, it falls to the level its last probe measured.
 
@@ -100,7 +100,7 @@ A **loss** is a real payment to an address planted in that wallet's history firs
 
 ## 6. Checking our own tables
 
-Forty-three assertion checks ([`checks/checks.json`](checks/checks.json)) run against the tables every three hours: required fields, duplicate logs, amount ranges, self-transfers in the counted set, payments dated before their registration, classification backlogs, stalled collectors, and more. A check passes when its query returns no rows. Failing rows are published. Each check has a weight (3 for the tables the rank is built from, 2 for the published snapshot, 1 for partner and catalogue tables) that feeds a health score.
+Fifty assertion checks ([`checks/checks.json`](checks/checks.json)) run against the tables every three hours: required fields, duplicate logs, amount ranges, self-transfers in the counted set, payments dated before their registration, classification backlogs, stalled collectors, and more. A check passes when its query returns no rows. Failing rows are published. Each check has a weight (3 for the tables the rank is built from, 2 for the published snapshot, 1 for partner and catalogue tables) that feeds a health score.
 
 One check reads our own series rather than our tables (`unexplained_step`, added 12 October 2026). Changepoint detection (PELT, Killick, Fearnhead and Eckley 2012) finds sudden steps in each archived daily series. A step must be a material move, concentrated in one day, that persisted. Every step is matched against our dated register of coverage, method, label and detector-rule changes (`/api/changepoints`) or a checked note; one that nothing explains is a warning. On its first run it found that the register entry for the 27 September 2026 sweep named too few series, and a correcting entry was added. Entries in the register are never edited.
 
@@ -132,4 +132,4 @@ A signed tree head (size, root hash, time; Ed25519, `afg-statement-log:v1:<size>
 
 ## 10. Citing
 
-Agentic Finance Graph, *Accounting specification for machine money*, v0.1, 28 September 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.
+Agentic Finance Graph, *Accounting specification for machine money*, v0.9, 24 October 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.
