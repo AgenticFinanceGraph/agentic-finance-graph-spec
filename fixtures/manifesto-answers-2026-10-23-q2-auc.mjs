@@ -3,9 +3,15 @@
 // plans/2026-10-23-manifesto-research-preregistration-v1.md. Input: CSV t0,feat,feat_all,paid
 import { readFileSync } from "node:fs";
 
-const rows = readFileSync(process.argv[2], "utf8").trim().split(/\r?\n/).slice(1).map((l) => {
-  const [t0, feat, featAll, paid] = l.split(",");
-  return { t0, feat: +feat, featAll: +featAll, paid: paid === "1" };
+// Columns are read by header name (24 Oct 2026): the published CSV carries token_id as its second
+// column, and reading by position put the token id where the feedback count belongs.
+const lines = readFileSync(process.argv[2], "utf8").trim().split(/\r?\n/);
+const header = lines[0].split(",");
+const col = (name) => { const i = header.indexOf(name); if (i < 0) throw new Error("column " + name + " not found in " + lines[0]); return i; };
+const I = { t0: col("t0"), feat: col("feedback_top10_aside"), featAll: col("feedback_all"), paid: col("paid_within_30d") };
+const rows = lines.slice(1).map((l) => {
+  const c = l.split(",");
+  return { t0: c[I.t0], feat: +c[I.feat], featAll: +c[I.featAll], paid: c[I.paid] === "1" };
 });
 
 function auc(xs, key) {
