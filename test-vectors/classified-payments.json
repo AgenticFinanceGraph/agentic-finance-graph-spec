@@ -5,6 +5,46 @@
   "rows": [
     {
       "expected": "counted_left_control",
+      "tx": "0x3cb045875925d28eeabc3736b2ecf067ef36657fe23fb63536092d1b990c3c0f",
+      "log_index": 412,
+      "from": "eip155:8453:0x80d68d4342425b941c7a63d460195fe086cefc50",
+      "to": "eip155:8453:0x4e65fe4dba92790696d040ac24aa414708f5c0ab",
+      "asset": "USDC",
+      "amount_usd": 20.002619,
+      "block_time": "2026-10-15T17:14:53+00:00"
+    },
+    {
+      "expected": "counted_left_control",
+      "tx": "0x7f2a364abc0548a8318f426748f47756e9d59df730eba12ab4245a9ddaf64a36",
+      "log_index": 129,
+      "from": "eip155:8453:0x84c89731c89a5621419cc2b3c8b6e57d384d913d",
+      "to": "eip155:8453:0x4e65fe4dba92790696d040ac24aa414708f5c0ab",
+      "asset": "USDC",
+      "amount_usd": 50.000007,
+      "block_time": "2026-10-13T18:59:33+00:00"
+    },
+    {
+      "expected": "counted_left_control",
+      "tx": "0x72732c03945282199642f6be171f0c415a3e002ada29db4463b0aa5d56d489e6",
+      "log_index": 588,
+      "from": "eip155:8453:0xde4b87561d5773bf9d0c83ebca26bb91e026ca4f",
+      "to": "eip155:8453:0x4e65fe4dba92790696d040ac24aa414708f5c0ab",
+      "asset": "USDC",
+      "amount_usd": 101.011842,
+      "block_time": "2026-10-12T11:26:13+00:00"
+    },
+    {
+      "expected": "counted_left_control",
+      "tx": "0x7dc233f1156196788271077ffd5bca7bd9044c9092c07255bdde8209dffcae37",
+      "log_index": 593,
+      "from": "eip155:8453:0xa89245cd79f31f2d1054d6709ece8201dc6d325b",
+      "to": "eip155:8453:0x4e65fe4dba92790696d040ac24aa414708f5c0ab",
+      "asset": "USDC",
+      "amount_usd": 25,
+      "block_time": "2026-10-08T06:36:01+00:00"
+    },
+    {
+      "expected": "counted_left_control",
       "tx": "0x4864824fbb743b703120d58b02ca86879db838adddcda297d6ffda7ddca55039",
       "log_index": 878,
       "from": "eip155:8453:0x0321e89a7b9484f47e8ccd4daf97ee8066783c04",
@@ -15,233 +55,193 @@
     },
     {
       "expected": "counted_left_control",
-      "tx": "0x04bac77dac24a8028307b2026e1d77dd145cccafe00bcd5757443959e1c3e36d",
-      "log_index": 221,
-      "from": "eip155:8453:0x746c9e42fc5176ed73be908b1aff4a7536b578ab",
+      "tx": "0x2e2366286e2f73c6b5276db443acdd9e2e34294aae9e580c9d7f4969e1babc77",
+      "log_index": 415,
+      "from": "eip155:8453:0xf29434af98b2b3383a058369f45d6d35b068b383",
       "to": "eip155:8453:0x4e65fe4dba92790696d040ac24aa414708f5c0ab",
       "asset": "USDC",
-      "amount_usd": 10.087368,
-      "block_time": "2026-10-02T20:51:21+00:00"
+      "amount_usd": 58.764468,
+      "block_time": "2026-10-03T15:41:37+00:00"
     },
     {
-      "expected": "counted_left_control",
-      "tx": "0x51a2108c23fbd608e58d42275891e771daddf92573809bf9162bc96d260497eb",
-      "log_index": 306,
-      "from": "eip155:8453:0x5e1ba21df3a0aa048679d456adc9b7c5206ad7fc",
+      "expected": "counted_own_position",
+      "tx": "0xed746d4d6481e713af3aed38cc5f19c2a900411d843562fbd251eb65c499afff",
+      "log_index": 751,
+      "from": "eip155:8453:0x02c84cabc2af70526dc2ced1403b887c8ec2788a",
+      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
+      "asset": "USDC",
+      "amount_usd": 5731.823399,
+      "block_time": "2026-10-24T02:11:41.575121+00:00"
+    },
+    {
+      "expected": "counted_own_position",
+      "tx": "0x2241844c172947c67c64611c54998c5cea00c06452769dc75267e97ce7d0a07f",
+      "log_index": 187,
+      "from": "eip155:8453:0x09daac65f348e89dcc0e6318237b46187cb3013c",
+      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
+      "asset": "USDC",
+      "amount_usd": 492.850971,
+      "block_time": "2026-10-23T20:29:45.010192+00:00"
+    },
+    {
+      "expected": "counted_own_position",
+      "tx": "0xac3b03f9296c1470d245dfff489b25b52a2b7c5aa472b9ad53d9f31c3b3b244c",
+      "log_index": 632,
+      "from": "eip155:8453:0xa5b825a02be5fb8f8692e3ac6da72bcc187ccb4e",
+      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
+      "asset": "USDC",
+      "amount_usd": 1.030026,
+      "block_time": "2026-10-23T10:12:41.074654+00:00"
+    },
+    {
+      "expected": "counted_own_position",
+      "tx": "0xac3b03f9296c1470d245dfff489b25b52a2b7c5aa472b9ad53d9f31c3b3b244c",
+      "log_index": 616,
+      "from": "eip155:8453:0xa5b825a02be5fb8f8692e3ac6da72bcc187ccb4e",
+      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
+      "asset": "USDC",
+      "amount_usd": 1.033032,
+      "block_time": "2026-10-23T10:12:41.062759+00:00"
+    },
+    {
+      "expected": "counted_own_position",
+      "tx": "0x8b1955ae77d4973d5f2c8dd9a3f71cf1361ee310b247f1e1e43cc0e079055903",
+      "log_index": 17,
+      "from": "eip155:8453:0xd0e5122084f90d49cd8ffea056e431f94cb174c3",
       "to": "eip155:8453:0x4e65fe4dba92790696d040ac24aa414708f5c0ab",
       "asset": "USDC",
-      "amount_usd": 10.112986,
-      "block_time": "2026-10-02T16:42:29+00:00"
-    },
-    {
-      "expected": "counted_left_control",
-      "tx": "0x39b1bb5f94d39acf525eee5fbaee17b3b80927d117e98cef28052119cce85c23",
-      "log_index": 212,
-      "from": "eip155:8453:0x80a4e0f787d4eb058244924c20cc3808c4e298a3",
-      "to": "eip155:8453:0x4e65fe4dba92790696d040ac24aa414708f5c0ab",
-      "asset": "USDC",
-      "amount_usd": 48,
-      "block_time": "2026-09-29T14:57:39+00:00"
-    },
-    {
-      "expected": "counted_left_control",
-      "tx": "0x361daa4055f439a23848d2c5203b0a64e1a311193f9383fa2c3c46894ffdb42e",
-      "log_index": 246,
-      "from": "eip155:8453:0x2254a4a42bbbbbad5b5634439fa007b5ec2873f5",
-      "to": "eip155:8453:0x4e65fe4dba92790696d040ac24aa414708f5c0ab",
-      "asset": "USDC",
-      "amount_usd": 18,
-      "block_time": "2026-09-24T22:18:07+00:00"
-    },
-    {
-      "expected": "counted_left_control",
-      "tx": "0x9b79d334258a26d576af55c3a1d57f31353dc21b6fffc3bdd6ddf59e35a8b410",
-      "log_index": 52,
-      "from": "eip155:8453:0x01328e82fbc87d90fcfe7ee3a7932a6da3148f5b",
-      "to": "eip155:8453:0x4c1aeda9b43efcf1da1d1755b18802aabe90f61e",
-      "asset": "USDC",
-      "amount_usd": 23.419041,
-      "block_time": "2026-09-21T19:57:49+00:00"
+      "amount_usd": 235.594445,
+      "block_time": "2026-10-23T04:08:59+00:00"
     },
     {
       "expected": "counted_own_position",
-      "tx": "0xe95819201ce6f740b9cdb6455ec084b638f1f4bfe3a2a66402cd1180219ccfca",
-      "log_index": 367,
-      "from": "eip155:8453:0x2fdba2a11d74e3fac68ea53a7d26337aacf31a3c",
+      "tx": "0x114ceb8c0c225ae4219c24e30427424032e5c46c75715433f8197aad350eb13e",
+      "log_index": 73,
+      "from": "eip155:8453:0x09bf0b74681ade261658a971bc0ea64cfb2120a6",
       "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
       "asset": "USDC",
-      "amount_usd": 1091.484734,
-      "block_time": "2026-10-13T03:51:35+00:00"
-    },
-    {
-      "expected": "counted_own_position",
-      "tx": "0xdecf4f31012cdef7cda3225d588e100cbbea45f245ed139705eec20950e2a570",
-      "log_index": 393,
-      "from": "eip155:8453:0x394a9e4dfa11ed8788efe62258758af7221422e7",
-      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
-      "asset": "USDC",
-      "amount_usd": 8.105769,
-      "block_time": "2026-10-12T21:11:39+00:00"
-    },
-    {
-      "expected": "counted_own_position",
-      "tx": "0xb751d4509e7b629943458c44213353cc3f9c0e282487beb74033fb8b7db427d2",
-      "log_index": 150,
-      "from": "eip155:8453:0x1dc88a8baf3b3470984e8f1e82451023c75d296c",
-      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
-      "asset": "USDC",
-      "amount_usd": 5967.255669,
-      "block_time": "2026-10-12T19:31:37+00:00"
-    },
-    {
-      "expected": "counted_own_position",
-      "tx": "0xb751d4509e7b629943458c44213353cc3f9c0e282487beb74033fb8b7db427d2",
-      "log_index": 134,
-      "from": "eip155:8453:0x1dc88a8baf3b3470984e8f1e82451023c75d296c",
-      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
-      "asset": "USDC",
-      "amount_usd": 182.078343,
-      "block_time": "2026-10-12T19:31:37+00:00"
-    },
-    {
-      "expected": "counted_own_position",
-      "tx": "0xb751d4509e7b629943458c44213353cc3f9c0e282487beb74033fb8b7db427d2",
-      "log_index": 121,
-      "from": "eip155:8453:0x1dc88a8baf3b3470984e8f1e82451023c75d296c",
-      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
-      "asset": "USDC",
-      "amount_usd": 33653.501667,
-      "block_time": "2026-10-12T19:31:37+00:00"
-    },
-    {
-      "expected": "counted_own_position",
-      "tx": "0x6a1f234fcf278dc4d985cc54e4798b137a543906113e899d914feadc6b735083",
-      "log_index": 737,
-      "from": "eip155:8453:0x1dc88a8baf3b3470984e8f1e82451023c75d296c",
-      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
-      "asset": "USDC",
-      "amount_usd": 1147.946701,
-      "block_time": "2026-10-12T19:21:33+00:00"
+      "amount_usd": 2.155082,
+      "block_time": "2026-10-22T03:51:23.856152+00:00"
     },
     {
       "expected": "excluded_pass_through",
-      "tx": "0xe404b63a6c68cd7e5a7772563ac6d3c1c1c8addc6daf5cc24109379d0e7bd924",
-      "log_index": 518,
-      "from": "eip155:8453:0x4d2bdddec74be93a7a13e4771d2f49d820336735",
+      "tx": "0x193a716d87ccbc747bfbb631f2a0f4577b692baaf033dc2062faa582f751e343",
+      "log_index": 284,
+      "from": "eip155:8453:0x02c84cabc2af70526dc2ced1403b887c8ec2788a",
       "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
       "asset": "USDC",
-      "amount_usd": 1783.995653,
-      "block_time": "2026-10-13T14:07:47+00:00"
+      "amount_usd": 5731.73763,
+      "block_time": "2026-10-23T22:58:36.669604+00:00"
     },
     {
       "expected": "excluded_pass_through",
-      "tx": "0x8fe1b3a0fa3ff03441a620cf34cd13523fa8765013d51173ee7d12655e56cc62",
-      "log_index": 106,
-      "from": "eip155:8453:0x0696d0b3602f63cf8021461279d82b8d1b634569",
+      "tx": "0x73024a98f3f5698b4feb55526f20179c761ea1e99e12ccb557e81b402bb0d8be",
+      "log_index": 370,
+      "from": "eip155:8453:0x00ab46f5b12ad582a9f3df69ce8080b0f018a55e",
+      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
+      "asset": "USDC",
+      "amount_usd": 4048.978333,
+      "block_time": "2026-10-23T19:35:01.890411+00:00"
+    },
+    {
+      "expected": "excluded_pass_through",
+      "tx": "0x73024a98f3f5698b4feb55526f20179c761ea1e99e12ccb557e81b402bb0d8be",
+      "log_index": 384,
+      "from": "eip155:8453:0x00ab46f5b12ad582a9f3df69ce8080b0f018a55e",
       "to": "eip155:8453:0x62be78705295ca9ffdac410b4a9b6101983a7c3b",
       "asset": "USDC",
-      "amount_usd": 1.987305,
-      "block_time": "2026-10-13T14:02:55.966849+00:00"
+      "amount_usd": 0.659304,
+      "block_time": "2026-10-23T19:35:01.865087+00:00"
     },
     {
       "expected": "excluded_pass_through",
-      "tx": "0x8a1ff179a5761c83a357c7239d8773fcfe6f8ebe5cbcd1238991a2b843e42366",
-      "log_index": 1026,
-      "from": "eip155:8453:0x52f701850181825f65ccbe94298ca00cbbd72e4a",
+      "tx": "0x5061e78b03b0510f855c1ffd14af061b0864789a5f455d8ca9d6010aaabe2060",
+      "log_index": 590,
+      "from": "eip155:8453:0xeef26855c2a1b8e053fb190720f75b4ece20d8a0",
+      "to": "eip155:8453:0x0d5353800461831d05eeef1c12ace69f321ce44c",
+      "asset": "USDC",
+      "amount_usd": 1,
+      "block_time": "2026-10-23T17:41:01+00:00"
+    },
+    {
+      "expected": "excluded_pass_through",
+      "tx": "0x929199b410e4544497a287798f4072f9dcfaf30a0094d2acdb49380955c9d933",
+      "log_index": 1044,
+      "from": "eip155:8453:0x1e23131d10db8a161fd881aa6cabbfe494ea0aea",
+      "to": "eip155:8453:0x4fe4c7432cc1503650ed052f3c4cac5e5eff0b92",
+      "asset": "USDC",
+      "amount_usd": 0.81,
+      "block_time": "2026-10-23T17:40:27+00:00"
+    },
+    {
+      "expected": "excluded_pass_through",
+      "tx": "0x73f8fbf8f3c23d7d97648c7e04abdb86baaef865f9e6cf43bd5e1e0f0c631d53",
+      "log_index": 399,
+      "from": "eip155:8453:0x09bbf0231b1a408714b3a2021ea57df4644dc8b1",
+      "to": "eip155:8453:0x208c31c9fed31ad8605f656d856b7a816470ee5b",
+      "asset": "USDC",
+      "amount_usd": 1,
+      "block_time": "2026-10-23T17:38:29+00:00"
+    },
+    {
+      "expected": "excluded_pre_registration",
+      "tx": "0x1ecd3810dec006dd023962044ff6f22d5f6ad6c4896b5c0d0d731320e6901102",
+      "log_index": 1031,
+      "from": "eip155:8453:0x76b8ecf72968eb35d38aa62346fb37b9bd8c4ed5",
+      "to": "eip155:8453:0x2f44bb22c31c3758d19d4be56df6d5cfd2362bcb",
+      "asset": "USDC",
+      "amount_usd": 15.78329,
+      "block_time": "2026-10-21T14:20:55+00:00"
+    },
+    {
+      "expected": "excluded_pre_registration",
+      "tx": "0xbfa8178b84d4ada19ca4998b60c96658d501705906102c84131f0d98be778667",
+      "log_index": 560,
+      "from": "eip155:8453:0xe7351dca5f4e3836565996ce54ceaf3842b1510d",
+      "to": "eip155:8453:0xe30c4544ec57ac44d8586eb49e49e267fc2d40db",
+      "asset": "USDC",
+      "amount_usd": 0.138,
+      "block_time": "2026-10-20T22:39:19+00:00"
+    },
+    {
+      "expected": "excluded_pre_registration",
+      "tx": "0xd71cf5daa8c06b5db280e5095d6e87e5cdb0785b86fe7e2d1cc86ed285b6fe23",
+      "log_index": 185,
+      "from": "eip155:8453:0x09de36bebab849f091ac4a17b547d093aa8df0ba",
       "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
       "asset": "USDC",
-      "amount_usd": 389.09912,
-      "block_time": "2026-10-13T13:35:37+00:00"
-    },
-    {
-      "expected": "excluded_pass_through",
-      "tx": "0x9e8d8749e632960bdc8c36bd517a7b217667a2d7e8963ef1786e588994b87492",
-      "log_index": 858,
-      "from": "eip155:8453:0x4c6c22ee1ba66d469aa273888680b5d01735d9ac",
-      "to": "eip155:8453:0x62be78705295ca9ffdac410b4a9b6101983a7c3b",
-      "asset": "USDC",
-      "amount_usd": 1.544028,
-      "block_time": "2026-10-13T13:33:51+00:00"
-    },
-    {
-      "expected": "excluded_pass_through",
-      "tx": "0x5e3058082a6df47d5388f20c538bb503cf0c0e20517581e1e2d46ec9e8c81338",
-      "log_index": 334,
-      "from": "eip155:8453:0x040efe917d18189c5eb41996a46a4da9047e2cf5",
-      "to": "eip155:8453:0xb125e6687d4313864e53df431d5425969c15eb2f",
-      "asset": "USDC",
-      "amount_usd": 515.205679,
-      "block_time": "2026-10-13T12:06:56.774272+00:00"
-    },
-    {
-      "expected": "excluded_pass_through",
-      "tx": "0x34f74863cae6cfae45e222444f612cfdace582a9b13fcb7ca8f36b904f0ea598",
-      "log_index": 272,
-      "from": "eip155:8453:0x0a4ed8f9d728074399750ceb95f7fc1a0a6e210f",
-      "to": "eip155:8453:0xb125e6687d4313864e53df431d5425969c15eb2f",
-      "asset": "USDC",
-      "amount_usd": 22.409986,
-      "block_time": "2026-10-13T12:06:43.92286+00:00"
+      "amount_usd": 664.905932,
+      "block_time": "2026-10-19T21:01:25+00:00"
     },
     {
       "expected": "excluded_pre_registration",
-      "tx": "0xfc87aea2b1a6ac6a389d9b947a0d1bdacf746762247441b21509e58729a9b2a7",
-      "log_index": 0,
-      "from": "eip155:8453:0x28313e1a06fb97d3c8854697d4950dce45112b95",
-      "to": "eip155:8453:0xf5c13639c5d8f0a9752e1ca80f3c521083cdcbea",
+      "tx": "0x8e41ffd0a1028ede20935db160757f846d33f60ddf37396fe75a7e18498a5ab0",
+      "log_index": 786,
+      "from": "eip155:8453:0x6c43f1ad528cf10157119191f2832a573b6814bb",
+      "to": "eip155:8453:0x111116058b9828cdcdd810c502b925c14f34ca11",
       "asset": "USDC",
-      "amount_usd": 114.635342,
-      "block_time": "2026-10-12T04:03:13+00:00"
+      "amount_usd": 0.111444,
+      "block_time": "2026-10-19T17:23:03+00:00"
     },
     {
       "expected": "excluded_pre_registration",
-      "tx": "0xfca172c20890e9d28d566745b77a3071f1dbbb31a0928f1ff576e94cc1e49ae9",
-      "log_index": 0,
-      "from": "eip155:8453:0x28313e1a06fb97d3c8854697d4950dce45112b95",
-      "to": "eip155:8453:0x4e53ef1183553956d18c793c0b39b9b1162c59e3",
+      "tx": "0x1a35d1006e918f0121edbb0ece80aa20fed88091c9de7dde8b13aa99391c4b08",
+      "log_index": 1328,
+      "from": "eip155:8453:0x821b34146f26cbae700af58e29306f89d8a01973",
+      "to": "eip155:8453:0x7be14359d1918656e06019b09b21bb40cbcb22be",
       "asset": "USDC",
-      "amount_usd": 126.990962,
-      "block_time": "2026-10-12T04:02:39+00:00"
+      "amount_usd": 5.060505,
+      "block_time": "2026-10-19T14:43:03+00:00"
     },
     {
       "expected": "excluded_pre_registration",
-      "tx": "0xde54b27b9ecef8a3760bf3826e7d265c3ddbd7e8c56bf9ac30eaa676e62ad9d0",
-      "log_index": 298,
-      "from": "eip155:8453:0x28313e1a06fb97d3c8854697d4950dce45112b95",
-      "to": "eip155:8453:0xedec961747aa52ef4fd9093463c471283add4b33",
+      "tx": "0xeebc46f2ae346804889bde3fb42943ce17f8bce6af26693514d7ef344b3e2a68",
+      "log_index": 799,
+      "from": "eip155:8453:0x821b34146f26cbae700af58e29306f89d8a01973",
+      "to": "eip155:8453:0x7be14359d1918656e06019b09b21bb40cbcb22be",
       "asset": "USDC",
-      "amount_usd": 119.670714,
-      "block_time": "2026-10-12T04:01:45+00:00"
-    },
-    {
-      "expected": "excluded_pre_registration",
-      "tx": "0x1b792355ef2226db482c37e8064c620b2db77ef4ac2f25e1ccbe9804430e2e5c",
-      "log_index": 142,
-      "from": "eip155:8453:0x28313e1a06fb97d3c8854697d4950dce45112b95",
-      "to": "eip155:8453:0x053d04ffbe31ad8075a5bf732729825cb47a78bd",
-      "asset": "USDC",
-      "amount_usd": 117.483542,
-      "block_time": "2026-10-12T04:01:09+00:00"
-    },
-    {
-      "expected": "excluded_pre_registration",
-      "tx": "0xa8e1186a3101e8b4b88c11a54a691b48ce773b4d1b8df39f705de882ced59274",
-      "log_index": 0,
-      "from": "eip155:8453:0x0d5e95a01495d78d0e00cd0159d54c71f92471c1",
-      "to": "eip155:8453:0x92245a8876b312903aa8d9dc1a82572d68e0e6df",
-      "asset": "USDC",
-      "amount_usd": 100.992175,
-      "block_time": "2026-10-12T04:00:13+00:00"
-    },
-    {
-      "expected": "excluded_pre_registration",
-      "tx": "0xf846a4294fbe969dc724f99484969e6563068afae81a9a9da03e842f08136226",
-      "log_index": 319,
-      "from": "eip155:8453:0x0d5e95a01495d78d0e00cd0159d54c71f92471c1",
-      "to": "eip155:8453:0x9691e972bda1c059bdd4f39f657da962127daa62",
-      "asset": "USDC",
-      "amount_usd": 99.580712,
-      "block_time": "2026-10-12T03:59:47+00:00"
+      "amount_usd": 5.078211,
+      "block_time": "2026-10-19T14:36:49+00:00"
     }
   ]
 }

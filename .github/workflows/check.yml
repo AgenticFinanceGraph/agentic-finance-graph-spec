@@ -26,9 +26,12 @@ jobs:
       - name: Fixtures recount and every row passes
         run: |
           shopt -s nullglob
-          for f in fixtures/*.csv; do
+          for f in fixtures/erc8004-base-grounded-feedback-*.csv; do
             node fixtures/check-fixture.mjs "$f"
           done
+
+      - name: Manifesto answers recompute from the fixture (Q2 AUC)
+        run: node fixtures/manifesto-answers-2026-10-23-q2-auc.mjs fixtures/manifesto-answers-2026-10-23-q2-agents.csv
 
       - name: Relative links resolve
         run: node scripts/check-links.mjs

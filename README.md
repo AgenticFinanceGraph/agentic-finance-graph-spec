@@ -8,7 +8,7 @@ It says, precisely enough to implement:
 - which counted money went into **positions the agent still holds** and which **left its control**;
 - how an agent is **ranked** from L0 (a registration exists) to L9 (it pays repeat counterparties);
 - what a **drain-shaped payment** is;
-- the **45 checks** we run on our own data every three hours before a figure is published;
+- the **50 checks** we run on our own data every three hours before a figure is published;
 - how a figure is **measured twice** before it is published.
 
 ## Contents
@@ -16,7 +16,7 @@ It says, precisely enough to implement:
 | Path | What it is |
 |---|---|
 | [`SPEC.md`](SPEC.md) | The specification |
-| [`definitions/definitions.json`](definitions/definitions.json) | Every published metric definition, verbatim from `/api/def` (358 ids, 21 Oct 2026). Frozen once published |
+| [`definitions/definitions.json`](definitions/definitions.json) | Every published metric definition, verbatim from `/api/def` (363 ids, 24 Oct 2026). Frozen once published |
 | [`checks/checks.json`](checks/checks.json) | The data-quality checks: what each one tests, how severe a failure is, and its weight |
 | [`test-vectors/classified-payments.json`](test-vectors/classified-payments.json) | Real Base transfers with the class our rules gave them, to test an implementation against |
 | [`fixtures/`](fixtures/) | Dated data sets for outside work, each a CSV with notes beside it (CC BY 4.0). `node fixtures/check-fixture.mjs <file.csv>` recounts the figures in the notes from the CSV alone and checks every row |
@@ -42,4 +42,4 @@ A count only becomes a standard when others can reproduce it and argue with it. 
 
 ## Licence
 
-CC BY 4.0. Cite as: Agentic Finance Graph, *Accounting specification for machine money*, v0.5 (2026).
+CC BY 4.0. Cite as: Agentic Finance Graph, *Accounting specification for machine money*, v0.9 (2026).

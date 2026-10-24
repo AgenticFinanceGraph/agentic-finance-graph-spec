@@ -55,3 +55,5 @@ We expected the pre-registration rule to move it most. The routing-hop rule does
 - Nothing here says that feedback causes or prevents paying, that any rater is fake, or that paying is quality.
 
 Drafted with AI assistance; every figure is from the files in this folder. CC BY 4.0, Agentic Finance Graph.
+
+**Correction, 24 October 2026.** The recompute script `manifesto-answers-2026-10-23-q2-auc.mjs` read the CSV by column position and the published CSV carries `token_id` as its second column, so from 23 to 24 October it computed on the wrong columns. It now reads columns by header name and reproduces the figures above exactly (24,727 agents, 131 paid, AUC 0.4524, interval 0.4218 to 0.4866). The figures were never changed.
