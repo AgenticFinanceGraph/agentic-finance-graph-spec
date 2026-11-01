@@ -12,7 +12,7 @@
     "full_pass_hours": 48,
     "sample": 5
   },
-  "count": 50,
+  "count": 55,
   "checks": [
     {
       "id": "chain_lag",
@@ -67,6 +67,51 @@
       "weight": 2,
       "what": "The nightly database dump has not been copied to the off-site Storage Box and verified there for more than 36 hours (afg-offsite, daily at 04:10 UTC; the copy is checked with the box's own sha256sum). Until 24 Oct 2026 every backup lived on the same disk as the database. Added 24 Oct 2026.",
       "sql": "SELECT name, value AS last_success, updated_at::text, round(extract(epoch FROM now() - updated_at) / 3600, 1) AS hours_since FROM partner_cursors WHERE name = 'offsite_backup_at' AND updated_at < now() - interval '36 hours' UNION ALL SELECT 'offsite_backup_at', 'never', NULL, NULL WHERE NOT EXISTS (SELECT 1 FROM partner_cursors WHERE name = 'offsite_backup_at')"
+    },
+    {
+      "id": "ops_job_failing",
+      "table": "ops_job_health",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "A collector job is failing right now. afg-guard reads every afg-* job every 10 minutes, retries a failed timer job once and alerts the founder on a second failure in a row; until the job runs clean its figures stop refreshing. The cause is read from the job's own log.",
+      "sql": "SELECT unit, cause, consecutive_failures, left(last_error, 160) AS last_error, updated_at::text FROM ops_job_health WHERE active_state = 'failed' AND updated_at > now() - interval '30 minutes'"
+    },
+    {
+      "id": "ops_job_near_limit",
+      "table": "ops_job_health",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 1,
+      "what": "A collector job used 85% or more of its memory limit (the service cap or Node's own heap ceiling, whichever is lower) or of its time limit on its last run. It will fail as the data grows unless it is made lighter or given more room; on 27-28 Oct nine jobs failed this way with no warning.",
+      "sql": "SELECT unit, mem_pct, time_pct, round(mem_peak / 1048576) AS peak_mb, round(mem_limit / 1048576) AS limit_mb, duration_s, timeout_s FROM ops_job_health WHERE (mem_pct >= 85 OR time_pct >= 85) AND updated_at > now() - interval '30 minutes'"
+    },
+    {
+      "id": "ops_guard_silent",
+      "table": "ops_job_health",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "afg-guard has not checked the collector jobs for more than 30 minutes, so failures and limits are not being watched.",
+      "sql": "SELECT max(updated_at)::text AS last_check FROM ops_job_health HAVING max(updated_at) IS NULL OR max(updated_at) < now() - interval '30 minutes'"
+    },
+    {
+      "id": "ops_disk_low",
+      "table": "ops_system",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 2,
+      "what": "Less than 10 GB free on the collector's disk (on 26 Oct one query filled it and five jobs died). Archives belong on the off-site Storage Box.",
+      "sql": "SELECT at::text, disk_free_gb FROM ops_system WHERE at = (SELECT max(at) FROM ops_system) AND disk_free_gb < 10"
+    },
+    {
+      "id": "offsite_box_filling",
+      "table": "partner_cursors",
+      "dimension": "timeliness",
+      "severity": "warn",
+      "weight": 1,
+      "what": "The off-site Storage Box (1 TB) is 75% full or more. Nightly dumps are kept 60 days there and grow with the ledger; snapshots, editions, daily site archives, sum-log heads and code are kept forever. Time to plan retention or a larger box before a copy fails.",
+      "sql": "SELECT value AS used_pct, updated_at::text FROM partner_cursors WHERE name = 'offsite_box_used_pct' AND value ~ '^[0-9]+$' AND value::int >= 75"
     },
     {
       "id": "unexplained_step",

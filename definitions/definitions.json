@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-10-24T10:00:24.521Z",
+  "exported_at": "2026-11-01T11:52:33.705Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 363,
+  "count": 370,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -610,6 +610,34 @@
       "revisions": [],
       "body_sha256": "7c814c860d7cd182bae8f23809785b0a94adcd38bdd8c8ed98c9b98d2d43faa0",
       "url": "https://agenticfinancegraph.com/def/agent.statement.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "anchor.v1",
+      "title": "Daily on-chain anchor of the signed heads",
+      "unit": "one Base transaction per day",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "once a day at 04:30 UTC, the newest signed heads at that moment",
+      "definition": "Once a day, one zero-value transaction from the anchor address 0x11B9135be900fE8b40e486d7041b28f8c944B60b to itself on Base, whose input data is the UTF-8 text afg-anchor:v1|statement-log:<tree_size>:<root>:<ts_ms>|sum-log:<leaves>:<root>:<sum_micro>:<agent_root>:<agents>:<ts_ms>. It names the newest signed head of the statement log (agent.statement.log.v1) and of the sum log (sumlog.v1). A head is anchored when that transaction is mined. When both heads are unchanged since the last mined anchor, no transaction is sent.",
+      "method": "afg-anchor, daily at 04:30 UTC, after the sum log's 04:10 run. The key was created on our server and never leaves it; a transaction is sent only while the address holds at least 0.0002 ETH. Every anchor is listed with its transaction hash, block and the two roots at /api/anchors. To check one, read the transaction's input data on any Base explorer or node and compare the roots with the heads we publish (/api/sum-log and the statement log).",
+      "excludes": [
+        "Heads signed between two daily anchors: only the newest heads at 04:30 UTC are anchored that day. Earlier statement-log heads are tied to it by RFC 6962 consistency proofs; each sum-log head states what changed since the previous one."
+      ],
+      "does_not_assert": [
+        "That the published figures are right: an anchor proves which heads we committed to and by when, not that the chain facts behind them are true.",
+        "When a head was computed: the block time only bounds the moment by which the head existed."
+      ],
+      "assumptions": "Base keeps transaction input data readable from any node or explorer.",
+      "known_gaps": "No anchor exists before the address first holds ETH, and a day on which the job did not run has none; the list at /api/anchors shows every gap.",
+      "intended_use": "Checking, without trusting our server, that a head we publish later is the head we committed to on the day it was anchored.",
+      "not_intended_for": "Proof that any agent, payment or figure is correct.",
+      "source": "afg-anchor",
+      "since": "2026-11-01",
+      "revisions": [],
+      "body_sha256": "9f34ee19a1b161f2c05e02895945ea54e3ecff3a884a2f50e4b37b2e4d40623d",
+      "url": "https://agenticfinancegraph.com/def/anchor.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -2469,6 +2497,32 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "detector.delegate_change.v1",
+      "title": "EIP-7702 delegate changed on an agent wallet",
+      "unit": "detections (one per wallet per read that found a change)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "between two consecutive code reads of the wallet (delegated wallets re-read every 12 hours, undelegated ones every 48 hours, afg-delegates)",
+      "definition": "An info detection (delegate_changed) when a wallet bound to a registered agent answers eth_getCode with a different EIP-7702 designator than at the previous read: it now delegates to another implementation, delegates where it did not, or no longer delegates. The first read of a wallet is not a change. The row carries both implementation addresses (null where none) and the read time.",
+      "method": "afg-delegates reads eth_getCode for every bound wallet due for a re-read; a 23-byte answer 0xef0100 || address is a delegation (EIP-7702); the previous value is the wallet's stored implementation. Written to the incidents table as kind delegate_changed, severity info, never open: it is a dated note for a human, not a live incident under incident.live.v3.",
+      "excludes": [
+        "Wallets not bound to a registered agent.",
+        "Changes that happen and revert between two reads (not observable at this cadence).",
+        "Smart-contract wallets (they never carry a 7702 designator)."
+      ],
+      "does_not_assert": [
+        "That the new delegate is malicious or the old one was safe: unknown is not malicious, and a sweeper is identified only by the published fingerprints.",
+        "Who changed the delegation: the key holder, a platform, or a thief leave the same row."
+      ],
+      "source": "AFG-Pulse delegates",
+      "since": "2026-10-24",
+      "revisions": [],
+      "body_sha256": "dd52fb9db7853f44226417f3a2e166229ab4e4ad11b74a7951fafa974c68dfee",
+      "url": "https://agenticfinancegraph.com/def/detector.delegate_change.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "detector.drain_pattern.v1",
       "title": "Drain-shaped payment, superseded",
       "unit": "detections",
@@ -3329,12 +3383,16 @@
       "window": "as of the latest run",
       "definition": "Bound wallets of L7+ agents whose native ETH sends have been read up to the latest run. Smart-contract wallets and keys that never sent a transaction count as read. The coverage behind eth.out.wallets.30d.v1 and eth.out.usd.30d.v1.",
       "method": "As eth.out.wallets.30d.v1.",
-      "excludes": [],
-      "does_not_assert": [],
+      "excludes": [
+        "Smart-contract wallets and keys that never sent a transaction are counted as read without a chain call: they cannot send external ETH."
+      ],
+      "does_not_assert": [
+        "That an unread wallet sent no ETH: coverage is a share, and the remainder is unknown, not zero."
+      ],
       "source": "AFG-Pulse ethout",
       "since": "2026-10-13",
       "revisions": [],
-      "body_sha256": "d28c60cf7da166043558438474751a9257ae64e3cfba5bf1bcd25583ed354087",
+      "body_sha256": "4f4bfe14b212ecc3b5819018cc25ff399b0ca9a66570d68944d7d1cdf60cdb6b",
       "url": "https://agenticfinancegraph.com/def/eth.out.checked.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -4988,6 +5046,34 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "pay.excluded.loopreturn.v1",
+      "title": "Loop returns through a fee router, excluded from counted payments",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time",
+      "definition": "USD value of counted payments from an agent's wallet W to an address P, or to an address that funded P, where P is bound to no agent, has plain code (an EOA, or an EOA with an EIP-7702 delegation), paid agent wallets at least 1,000 USD through the fee routers we index in the last 30 days of router activity, and paid W through one of them in the 30 days before the payment. Matched oldest first and capped at what W had received from P (gross less the fee) up to each payment; above the cap a payment stays counted.",
+      "method": "Every payment-scan run: source payers from the router events we index (cc_feecharged); each source payer's code read from a public node; its funders read from the chain (alchemy_getAssetTransfers for USDC into P, every 6 hours), a funder counting for a payment when its transfers to P fall within 30 days of it, before or after. Matched rows are recorded in loop_returns and excluded the way routing hops are, after their receipt check, and stay recorded. First applied on 31 Oct 2026, 11:18 UTC: one source payer, 279 candidate payments from one agent, 274 matched (1,818,739.78 USD: 930,748.38 back to the payer, 887,991.40 to two of its funders), 5 above the cap (9,909.29 USD) left counted.",
+      "excludes": [
+        "Payments already excluded for another reason (pre-registration, routing hop, own address, unchecked receipt)."
+      ],
+      "known_gaps": [
+        "Loops through routers we do not index, loops made of direct transfers, and loops that pass more than one address beyond the payer's funders are not caught; they stay in counted payments.",
+        "Contracts (escrows, routers, vaults) are never source payers, so money an escrow pays out and receives back is not netted by this rule."
+      ],
+      "does_not_assert": [
+        "That anyone did anything wrong: the rule describes where money went, never why.",
+        "Who controls the addresses in a loop: the chain shows transfers, not owners."
+      ],
+      "source": "AFG-Pulse payment scan",
+      "since": "2026-10-31",
+      "revisions": [],
+      "body_sha256": "670790a20fd1caa0f18cf692fd00057a508d73987c4226dfb07a13a8a717445e",
+      "url": "https://agenticfinancegraph.com/def/pay.excluded.loopreturn.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "pay.excluded.ownaddress.v1",
       "title": "Transfers to an agent's own addresses, excluded from counted payments",
       "unit": "USD",
@@ -5274,9 +5360,42 @@
       "supersedes": "pay.usd.total.v1",
       "source": "AFG-Pulse payment scan",
       "since": "2026-10-21",
+      "valid_until": "2026-10-31",
+      "superseded_by": "pay.usd.total.v3",
       "revisions": [],
       "body_sha256": "e072a0555e1f8e68a54123d3125f405db63ca2f595488041e0730b29f36411f8",
       "url": "https://agenticfinancegraph.com/def/pay.usd.total.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "pay.usd.total.v3",
+      "title": "Counted payment value",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time since each registration's mint block",
+      "definition": "The summed USD value of every counted payment out of a wallet bound to a registered agent: a stablecoin transfer whose receipt was read, made after the registration existed, that was not a routing hop, did not go to one of the agent's own addresses and was not a loop return through a fee router.",
+      "method": "Sum of amount_usd over money_events of kind PAY with pre_registration false, pass_checked_at set and pass_through false. As in v2, a transfer to one of the agent's own addresses is recorded in own_transfers and excluded the same way a routing hop is. New in v3 (31 Oct 2026, 11:18 UTC): a loop return (pay.excluded.loopreturn.v1) is recorded in loop_returns and excluded the same way; its amount is published as loop_return_pay_usd_excluded. First applied to 274 payments, 1,818,739.78 USD, all from one agent, 22 to 30 Oct 2026.",
+      "excludes": [
+        "Pre-registration payments (pay.excluded.preregistration.v1).",
+        "Routing hops: money that arrived and left again on its way somewhere else (pay.excluded.passthrough.v1).",
+        "Transfers to the agent's own addresses: a payment is a change of who is entitled to the money, and moving it between one's own addresses is not one (pay.excluded.ownaddress.v1).",
+        "Loop returns: money an agent received through a fee router from an address bound to no agent, sent back to that address or to an address that funded it (pay.excluded.loopreturn.v1).",
+        "Payments whose receipt has not been read yet: held out until checked, never assumed."
+      ],
+      "does_not_assert": [
+        "That this is the size of the agent economy. It is what we watched, from the wallets we have bound, on one chain, in stablecoins.",
+        "That the total is typical of its members: read pay.topactor.share.v1 and pay.usd.median.v1 beside it.",
+        "That the money was spent on goods or services: about half goes into positions the agent still holds (pay.composition.v1).",
+        "That every loop is removed: the loop-return rule is narrow on purpose (see pay.excluded.loopreturn.v1, known_gaps)."
+      ],
+      "supersedes": "pay.usd.total.v2",
+      "source": "AFG-Pulse payment scan",
+      "since": "2026-10-31",
+      "revisions": [],
+      "body_sha256": "f051821e445f797b60e8112599d76153bf9efb42b177f7fbaeb88a7f1b355057",
+      "url": "https://agenticfinancegraph.com/def/pay.usd.total.v3",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5318,9 +5437,51 @@
       "source": "afg-security-lab gate/ (facts.mjs, POLICY.md, SAMPLES.md), 2026-10-14; production: AFG-Pulse (afg-oochar, afg-intake gate routes), 16 Oct 2026",
       "since": "2026-10-16",
       "status": "live from 16 Oct 2026 (/api/gate/facts, payee_facts); facts describe an address, they do not judge it",
+      "superseded_by": "payee.facts.v2",
+      "valid_until": "2026-10-24",
       "revisions": [],
       "body_sha256": "a2fd033380f41f2333e70194026319607b30307f19d389537de29556ec1123dc",
       "url": "https://agenticfinancegraph.com/def/payee.facts.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "payee.facts.v2",
+      "title": "Payee facts, v2: the seven v1 facts plus the payee's usual price and the paying agent's history of over-sized settlements",
+      "unit": "per payee and per request: nine facts, each true, false, a number or unavailable, with evidence and the time measured",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "as payee.facts.v1 for the seven inherited facts; the last 30 days of counted payments and x402 settlements for the two new ones",
+      "definition": "As payee.facts.v1, plus: (8) payee_price_dispersion, the median and the 95th percentile of what this address was paid in the last 30 days, over the counted payments to it in our ledger (pay.usd.total.v2) and the x402 settlements into it (x402.settle.submitter.v4), stated only when at least 20 payments exist, otherwise unavailable with the count; (9) payer_oversize_history, when a paying agent is given: how many of that agent's x402 settlements in the last 30 days were at least 100 times the seller's median price and at least $1 (the rule of x402.settle.oversize.v1), with their USD and the number of sellers; zero is a real answer, and without an agent the fact is unavailable.",
+      "method": "As payee.facts.v1 for the inherited facts. The two new facts are SQL over the ledger's own tables at request time (money_events, x402_settle_tx, bindings), no chain call; the oversize rule uses each seller's median over its last 30 days, sellers with 20 or more settlements only.",
+      "excludes": [
+        "As payee.facts.v1.",
+        "Payments through rails we do not read (Permit2, smart-account calls without a stablecoin transfer we count)."
+      ],
+      "does_not_assert": [
+        "As payee.facts.v1.",
+        "That a payment above the payee's usual price is an overcharge: tiered and usage-based pricing produce the same shape.",
+        "That an agent with over-sized settlements runs a capless client: a person using the same wallet produces the same rows."
+      ],
+      "assumptions": [
+        "As payee.facts.v1.",
+        "The payee's price history is complete to the extent our ledger and the x402 settlement reader are (coverage is stated by their definitions)."
+      ],
+      "known_gaps": [
+        "As payee.facts.v1.",
+        "The dispersion mixes counted payments from registered agents with x402 settlements from any payer; a payee with two price lists shows one spread."
+      ],
+      "intended_use": "A number beside the quote for a client that pins the price it expects to pay (x402 onBeforePaymentCreation), and a line in a Gate decision; the payer fact for a counterparty deciding whether a payer's client is known to sign what it is asked.",
+      "not_intended_for": "A verdict on a payee or a payer; a score; a public list.",
+      "cost_to_fake": "As payee.facts.v1; the dispersion can be moved only by real settlements at other prices, which cost the amounts settled.",
+      "threat_model": "As payee.facts.v1.",
+      "supersedes": "payee.facts.v1",
+      "source": "AFG-Pulse (afg-intake gate routes, lib/gate.mjs), 24 Oct 2026; the oversize rule from x402.settle.oversize.v1 (afg-x402submit)",
+      "since": "2026-10-24",
+      "status": "live from 24 Oct 2026 (/api/gate/facts, payee_facts); facts describe an address, they do not judge it",
+      "revisions": [],
+      "body_sha256": "0dffa8ecca4c4c19c1b4c550fc73dc030a89b10d0895535d77b260fb6d651319",
+      "url": "https://agenticfinancegraph.com/def/payee.facts.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5841,9 +6002,16 @@
       "definition": "Of the registrations counted by probe.domain.checked.v1, the share for which at least one off-domain endpoint domain serves /.well-known/agent-registration.json at all (status 2xx), whether or not it lists this agent.",
       "method": "Same fetch as probe.domain.verified.v1. The gap between this and the verified rate is domains that publish a file listing other agents, or a file without a registrations list.",
       "source": "AFG-Pulse liveness probe",
+      "excludes": [
+        "Registrations with no off-domain endpoint domain: nothing to probe."
+      ],
+      "does_not_assert": [
+        "That a served registration file is correct or belongs to the agent: only that the URL answered 2xx.",
+        "That a missing file means an agent is not real: platforms host agents without one."
+      ],
       "since": "2026-10-12",
       "revisions": [],
-      "body_sha256": "ccbb78fe440beafef6dc842a8997999aa43d0cd1e73f06ff37a02cc246cdef47",
+      "body_sha256": "b256fbb93025934663c0a935b1ae5a0a620f50a2abc50820ea91df59f32bbe3a",
       "url": "https://agenticfinancegraph.com/def/probe.domain.file.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -6268,11 +6436,12 @@
         "That the receiver is unrelated to the operator. An operator can pay a fresh address of its own that nothing links to the agent; rank.l9.v3 adds the independence test, and rank.costtofake.v1 publishes what the ranks cost to reach.",
         "Anything about what the payment was for."
       ],
+      "cost_to_fake": "One counted payment that left the registration's control: a few cents of a priced stablecoin to any address that is not one of its own, after the mint. Measured floors are published in rank.costtofake.v1 (ranked identities under $1 of counted payments).",
       "source": "AFG-Pulse payment scan, investigations and bridge follow",
       "since": "2026-10-13",
       "supersedes": "rank.l7plus.v1",
       "revisions": [],
-      "body_sha256": "43658626cec08f63da8c2d1f527b4ae66672fedf63ada017ae6a13eff62078fd",
+      "body_sha256": "240554b556bbcc56be7c51973a101efb39562400ffb3b3c9ed4ae19dfa671181",
       "url": "https://agenticfinancegraph.com/def/rank.l7plus.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -6359,11 +6528,12 @@
         "That the balance is the agent's operating budget, or that anyone intends to spend it.",
         "That an L8 agent is independent. Fleets top many wallets up to just over $10; rank.l9.v3 is the steadier measure."
       ],
+      "cost_to_fake": "L7 plus $10 in stablecoins held in a bound wallet at the read. The same $10 can be moved from one identity to the next between reads (Douceur 2002, lemma 2: a resource recycled through identities in turn), which the re-read cadence bounds but does not close.",
       "source": "AFG-Pulse payment scan + balance read",
       "since": "2026-10-13",
       "supersedes": "rank.l8plus.v2",
       "revisions": [],
-      "body_sha256": "f4fd48c7f53ea8b0677a8ae025c1107ede0034be832f46182e14be779a43ebca",
+      "body_sha256": "dd995dc997b7cc35b611fd1e120ecd617695d360eeeed9482da98fdc1883cdb9",
       "url": "https://agenticfinancegraph.com/def/rank.l8plus.v3",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -6515,13 +6685,14 @@
         "That two registrations in one operator set belong to one person: they share a chain fact.",
         "That the operator sets are complete: an operator that funds each agent from a fresh address leaves no link, so this rule closes the simplest case only."
       ],
+      "cost_to_fake": "L8 plus three independent counterparties within 30 days: payments to three contracts that are not bot-like routers, or to addresses that an agent outside the payer's operator set also pays. Cheap in dollars; the cost is coordination with parties the operator does not control, which is the point of the rule.",
       "source": "AFG-Pulse payment scan",
       "since": "2026-10-13",
       "supersedes": [
         "rank.l9.v3"
       ],
       "revisions": [],
-      "body_sha256": "afa883c582f2dfb616ed17fd08832bd4ce98d6b023a91e5ebd71758d5f89d245",
+      "body_sha256": "30e53573a6d0ea26adb26e1896c83e88ccb7ae0bf9735db5481df64af3526c49",
       "url": "https://agenticfinancegraph.com/def/rank.l9.v4",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -6648,10 +6819,53 @@
       "intended_use": "Context for any ERC-8004 registration figure: which chains are inside it and which platform minted the rest.",
       "not_intended_for": "Counting agents, ranking chains by adoption, or comparing with figures that count agents by behaviour (the L0–L9 ladder).",
       "source": "AFG-Pulse registry chains (afg-regchains); probe script ops/tools/erc8004-chains-probe.mjs in the site repository",
+      "superseded_by": "reg.chains.upperbound.v2",
+      "valid_until": "2026-10-25",
       "since": "2026-10-24",
       "revisions": [],
       "body_sha256": "f195467ed1b2ef98eab7819a2d883fc9eae8beab7b1e2d9d8ff89935ac61eaf7",
       "url": "https://agenticfinancegraph.com/def/reg.chains.upperbound.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "reg.chains.upperbound.v2",
+      "title": "ERC-8004 registrations by chain, read from the registry itself",
+      "unit": "registrations (highest existing agent id + 1) per chain; chains",
+      "chain_set": "every EVM mainnet where the reference Identity Registry (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432) is deployed, of 40 probed daily; testnets use another address and are not probed",
+      "window": "point in time, read once a day",
+      "definition": "For each probed chain: whether the reference ERC-8004 Identity Registry has code at its CREATE2 address, and if so the highest agent id whose ownerOf() answers, found by bisection over the sequential ids, plus one, because ids start at 0. Ids are assigned in sequence at mint, so this equals the registrations minted on the chain unless the newest were burned, and it is an upper bound on the registrations that still exist (a burn leaves a gap below it). erc8004_regs_upperbound_all_chains sums it over every chain with registrations; erc8004_regs_upperbound_uncounted over the chains our own census does not read (everything except Base, BNB Smart Chain, Ethereum, Arbitrum, OP Mainnet and Polygon); erc8004_chains_with_registry and erc8004_chains_with_registrations count chains; erc8004_regs_upperbound_0g and erc8004_regs_upperbound_base are the two largest single chains. Twelve agentURIs spread over each chain's id range name the hosts behind the registrations in the document.",
+      "method": "afg-regchains, daily, public JSON-RPC nodes only (no provider key): eth_getCode, ownerOf(0), about 25 eth_call ownerOf for the bisection, 24 more for the URI and owner sample; a second, unrelated endpoint re-reads the boundary (highest id exists, highest id + 1 does not) where one is configured. Replaces v1 on 25 Oct 2026: v1 reported the highest id itself and called it an upper bound, one short on every chain, because ids start at 0. Checked on 25 Oct: ownerOf(0) answers on Base, 0G, BNB Smart Chain, Ethereum, Arbitrum, Taiko and GOAT, and our log-based census counts 568 registrations minted on OP Mainnet and 691 on Polygon, whose highest ids were 567 and 690.",
+      "excludes": [
+        "Non-EVM chains (Solana is read by afg-solagents and reported separately).",
+        "Chains whose public endpoint was down or refused the calls on the day (listed as rpc_down / rpc_error in the document, never as zero).",
+        "Registries at any address other than the reference CREATE2 address, testnets included."
+      ],
+      "does_not_assert": [
+        "That a registration is an agent, a working agent or an independent operator.",
+        "That the twelve-id sample measures a platform's share: it names a dominant host where there is one, nothing finer, and a shared host is not proof of a shared minter.",
+        "An exact count of registrations that still exist: burns leave gaps below the highest id.",
+        "Anything about the people behind the minting addresses."
+      ],
+      "assumptions": [
+        "Agent ids are assigned in sequence from 0 at mint, as in the reference contracts (checked 25 Oct 2026 against our log-based census on OP Mainnet and Polygon, which match the highest id + 1 exactly).",
+        "Existence is contiguous enough for bisection: a burned id hit during the search would make the result read low; the second endpoint re-reads only the boundary.",
+        "The CREATE2 address holds the reference registry on every chain where code is present."
+      ],
+      "known_gaps": [
+        "Public endpoints rate-limit; a chain can be missing on a given day.",
+        "The URI sample is twelve ids: enough to name a dominant host, not to measure its share.",
+        "If the newest ids were burned, the figure is below the registrations minted."
+      ],
+      "intended_use": "Context for any ERC-8004 registration figure: which chains are inside it and which hosts are behind the registrations.",
+      "not_intended_for": "Counting agents, ranking chains by adoption, or comparing with figures that count agents by behaviour (the L0–L9 ladder).",
+      "supersedes": "reg.chains.upperbound.v1",
+      "source": "AFG-Pulse registry chains (afg-regchains); probe script ops/tools/erc8004-chains-probe.mjs in the site repository",
+      "since": "2026-10-25",
+      "revisions": [],
+      "body_sha256": "ba7314b017a47718cec15cdd8917471cca6a752d780cf16faefd43af122135a2",
+      "url": "https://agenticfinancegraph.com/def/reg.chains.upperbound.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -6923,9 +7137,12 @@
         "Feedback on agents whose income we do not read: there, no payer seen means not looked."
       ],
       "source": "AFG-Pulse reputation ingest and income scan",
+      "does_not_assert": [
+        "That a pair outside this base is ungrounded: outside it, no payer seen means not looked."
+      ],
       "since": "2026-10-12",
       "revisions": [],
-      "body_sha256": "b978c6021d3840e8f43fa8ae50bd19b2ac9f21f41768e8df52fe86597744a8a6",
+      "body_sha256": "7dc7098e7e6f4ce67dafbbb3e2e6a11ccb3d4bc7ffa5bae65d5d520d9cf1976a",
       "url": "https://agenticfinancegraph.com/def/rep.grounded.base.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -7193,10 +7410,13 @@
         "That an owner's payment is agent spending: an owner wallet belongs to a person or a company.",
         "Never added to any Base figure."
       ],
+      "known_gaps": [
+        "30 Oct 2026: an owner of record whose token-account listing is larger than the job's 48 MB response cap is skipped and re-checked weekly. One such address exists: 1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix, the Magic Eden V2 authority account (a program-derived account of M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K, Solscan public name 'Magic Eden V2 Authority'), which holds assets listed on that marketplace and is therefore the owner of record of 5 registered agents while they are listed. Its listing is over 1.3 GB (about 98,000 token accounts in the first 50 MB). It was never part of any published figure: before the cap the listing failed every hour and the address had no row."
+      ],
       "source": "AFG-Pulse Solana agent payments (afg-solpay)",
       "since": "2026-10-03",
       "revisions": [],
-      "body_sha256": "c9abc4dcca3c0728c2c0de7099aceb2e1cb5bde3e61f5aa03ac4bb539ddaf3d2",
+      "body_sha256": "58640c502d5633046a2e8d02005422d251dab318f85ee7ca24604e3348e7b910",
       "url": "https://agenticfinancegraph.com/def/sol.agents.pay.30d.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -7423,12 +7643,17 @@
       "window": "current",
       "definition": "Stablecoins (USDC, USDT, EURC, DAI, USDbC) as a share of treasury.usd.total.v1.",
       "method": "As treasury.usd.total.v1.",
-      "excludes": [],
-      "does_not_assert": [],
+      "excludes": [
+        "Unpriced tokens and positions the reader does not recognise."
+      ],
+      "does_not_assert": [
+        "That the share is a choice of the operators: a price move changes it without any transfer.",
+        "Anything about wallets outside the ranked set the treasury reader covers."
+      ],
       "source": "AFG-Pulse treasury read",
       "since": "2026-09-27",
       "revisions": [],
-      "body_sha256": "2890bfb8af55a6357a926e4619662d81074579223e02ca852638d2fbe8004951",
+      "body_sha256": "a10b704f790e9228ab6168bc88fcc6c965bb4ea4cd2e3b2e4514c7b5d0d29158",
       "url": "https://agenticfinancegraph.com/def/treasury.share.cash.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -7465,12 +7690,17 @@
       "window": "current",
       "definition": "ETH, WETH and liquid-staking ETH tokens as a share of treasury.usd.total.v1.",
       "method": "As treasury.usd.total.v1.",
-      "excludes": [],
-      "does_not_assert": [],
+      "excludes": [
+        "Unpriced tokens and positions the reader does not recognise."
+      ],
+      "does_not_assert": [
+        "That the share is a choice of the operators: a price move changes it without any transfer.",
+        "Anything about wallets outside the ranked set the treasury reader covers."
+      ],
       "source": "AFG-Pulse treasury read",
       "since": "2026-09-27",
       "revisions": [],
-      "body_sha256": "ae59af7a115b1ae88ad133ad4bd85dff3aaaf9e16f5f010698210a67299b1647",
+      "body_sha256": "7197f230ea3dc3eb1e6e24241d81538e089677b1411a434c881efbdf2d46f7ac",
       "url": "https://agenticfinancegraph.com/def/treasury.share.eth.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -7487,11 +7717,14 @@
       "excludes": [
         "Unpriced tokens."
       ],
-      "does_not_assert": [],
+      "does_not_assert": [
+        "That the share is a choice of the operators: a price move changes it without any transfer.",
+        "Anything about wallets outside the ranked set the treasury reader covers."
+      ],
       "source": "AFG-Pulse treasury read",
       "since": "2026-09-27",
       "revisions": [],
-      "body_sha256": "3c0b64b0cfca9eddc38048685622b471dfddc54d3dd01898129c1bedbf9cd043",
+      "body_sha256": "273b07538dfe33cccf56c2d156d09d0992982c6cfb02dd0d1fb843b0e7d28a47",
       "url": "https://agenticfinancegraph.com/def/treasury.share.tokens.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -7510,12 +7743,13 @@
         "NFTs and positions held outside the wallet."
       ],
       "does_not_assert": [
-        "That the tokens could be sold at that price."
+        "That the tokens could be sold at that price.",
+        "That this is what all ranked agents hold: the reader reads up to 900 ranked wallets a day, those not read in the last 20 hours, and the total sums the wallets read in the last day (treasury_wallets_read), a rotating part of all ranked wallets (added 25 Oct 2026)."
       ],
       "source": "AFG-Pulse treasury read",
       "since": "2026-09-27",
       "revisions": [],
-      "body_sha256": "063a615b3efb1db20be8797c765361190dccdeb648c917acc378695ac49f99ba",
+      "body_sha256": "03351b6542dad8858957a682ee5f296283dc465f59e83688cdbb20d0430d079d",
       "url": "https://agenticfinancegraph.com/def/treasury.usd.total.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -7585,6 +7819,31 @@
       "revisions": [],
       "body_sha256": "895c4f9224b3a697d31012c4b6ef3418b57f9f614dfffeafd2c80880a66bc60a",
       "url": "https://agenticfinancegraph.com/def/tvl.total.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "usage.origin.v1",
+      "title": "What our origin served",
+      "unit": "requests per UTC hour, by route family and status class",
+      "chain_set": "none (the web server)",
+      "window": "the current day by hour; daily totals kept 90 days",
+      "definition": "A request is counted once when our origin server finishes answering it, keyed by UTC hour, route family (home, page/<slug>, api/<name>, mcp, check/<kind>, def/*, agents/*, asset, well-known, other) and status class (2xx, 3xx, 402, 4xx, 5xx). A call to an MCP tool is counted a second time under mcp/<tool>. Nothing per visitor is kept: no address, no user agent, no query string, no body.",
+      "method": "afg-web counts in memory and writes the day's file once a minute; /api/usage reads the files and the live day. Counting started on 30 Oct 2026.",
+      "excludes": [
+        "Requests Cloudflare answered from its cache or stopped at its edge: they never reach the origin, so every figure is a floor.",
+        "Anything before 30 Oct 2026."
+      ],
+      "does_not_assert": [
+        "Visitors, people or agents: it counts requests, not anyone.",
+        "Interest or demand: scanners, uptime monitors and our own checks are in the count (our sitecheck alone calls 24 routes every 15 minutes)."
+      ],
+      "source": "afg-web",
+      "since": "2026-10-30",
+      "revisions": [],
+      "body_sha256": "8dcfba4cd0f8164fd2086d988b2c84451d5a6a944121898454c89fc2506b471d",
+      "url": "https://agenticfinancegraph.com/def/usage.origin.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -8205,12 +8464,13 @@
       ],
       "does_not_assert": [
         "That an over-sized settlement was an attack or a mistake: variable pricing produces the same shape.",
-        "Who the payer or the seller is, or that either acted in bad faith."
+        "Who the payer or the seller is, or that either acted in bad faith.",
+        "That the count bounds overcharging: an overcharge below 100 times the seller's median, under $1, at a seller with fewer than 20 settlements or outside the sample is not counted, and the chain does not carry the agreed price (added 25 Oct 2026 after review on x402-foundation/x402#3866)."
       ],
       "source": "AFG-Pulse x402 submitters",
       "since": "2026-10-24",
       "revisions": [],
-      "body_sha256": "6cc4614ac216413f4bdfaad67e6afe98a7ac751a5bb31f2273962b6c8aa13273",
+      "body_sha256": "ae8d4ef2797ca6a7ebaf2718f42612913f3a8851f87cafefed9e331a35add656",
       "url": "https://agenticfinancegraph.com/def/x402.settle.oversize.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",

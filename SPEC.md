@@ -1,6 +1,6 @@
 # The Agentic Finance Graph accounting specification
 
-**Version 0.9 (draft), 24 October 2026.** Licence: CC BY 4.0.
+**Version 0.10 (draft), 1 November 2026.** Licence: CC BY 4.0.
 
 This document states how Agentic Finance Graph counts money held and spent by AI agents: which transfers count as an agent paying someone, which are excluded and why, how an agent is ranked, and how the counting is checked. It is written so that anyone can implement it from public chain data and compare their numbers with ours. Where this document and a definition in [`definitions/definitions.json`](definitions/definitions.json) disagree, the definition wins; definitions are frozen once published (a breaking change is a new id ending `.v2`, never an edit to `.v1`).
 
@@ -37,7 +37,7 @@ $$O = P \;\cup\; T \;\cup\; C, \qquad P \cap T = P \cap C = T \cap C = \varnothi
 
 1. **Pre-registration $P$** (`pay.excluded.preregistration.v1`). The payment's block time is earlier than the mint time of the registration its wallet is bound to. The wallet existed before the agent did.
 2. **Pass-through $T$** (`pay.excluded.passthrough.v1`). The payment forwards money the wallet received in the same transaction: the receipt shows approximately the same amount (within 2%) arriving at the wallet. It is a routing hop, not a purchase. A payment is only counted after this check has run on it.
-3. **Counted $C$** (`pay.usd.total.v2`). Everything else, provided the recipient is not one of the sender's own addresses: not the same address, not another wallet ever bound to the agent, not its registration's owner, not the address it was minted to (`pay.excluded.ownaddress.v1`, from 21 October 2026; before that date only the same address was excluded, `pay.usd.total.v1`).
+3. **Counted $C$** (`pay.usd.total.v3`). Everything else, provided the recipient is not one of the sender's own addresses: not the same address, not another wallet ever bound to the agent, not its registration's owner, not the address it was minted to (`pay.excluded.ownaddress.v1`, from 21 October 2026; before that date only the same address was excluded, `pay.usd.total.v1`). From 31 October 2026 (`pay.usd.total.v3`) it also excludes money an agent receives through a fee router from an address tied to no agent and sends back to that address or to one that funded it (`pay.excluded.loopreturn.v1`).
 
 The counted set is further split by reading each receipt:
 
@@ -132,4 +132,4 @@ A signed tree head (size, root hash, time; Ed25519, `afg-statement-log:v1:<size>
 
 ## 10. Citing
 
-Agentic Finance Graph, *Accounting specification for machine money*, v0.9, 24 October 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.
+Agentic Finance Graph, *Accounting specification for machine money*, v0.10, 1 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.

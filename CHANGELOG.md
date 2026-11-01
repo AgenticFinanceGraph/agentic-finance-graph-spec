@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10 — 1 November 2026
+
+370 definitions (7 new since 0.9), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def); 55 data checks (5 new); test vectors regenerated under the current counting rules.
+
+- **Counting correction:** `pay.usd.total.v3` with `pay.excluded.loopreturn.v1` (31 Oct 2026). Money an agent receives through a fee router from an address tied to no agent and sends back to that address or to one that funded it is no longer counted: 274 payments, $1,818,739.78 (register entry `cp-2026-10-31-loop-returns`). SPEC.md now cites v3 for the counted set.
+- **On-chain anchoring:** `anchor.v1`. Once a day the newest signed statement-log head and sum-log head are committed on Base in a zero-value transaction from 0x11B9135be900fE8b40e486d7041b28f8c944B60b to itself; the first went out on 1 Nov 2026 (block 53,371,050). List: [/api/anchors](https://agenticfinancegraph.com/api/anchors).
+- **Other new definitions:** `detector.delegate_change.v1`, `payee.facts.v2` (adds the delegate implementation name and its source), `reg.chains.upperbound.v2`, `usage.origin.v1` (requests our origin served, by route family and hour).
+- **New checks (55):** `ops_job_failing`, `ops_job_near_limit`, `ops_guard_silent`, `ops_disk_low`, `offsite_box_filling`.
+- **The October 2026 edition** of *State of Agent Money* is final: [page](https://agenticfinancegraph.com/state-of-agent-money-2026-10), edition file SHA-256 48ed658a2ec7748159794919dc6be1adcb586111fdfeed4ddc1fbc2b7c57f66e.
+
 ## 0.9 — 24 October 2026
 
 363 definitions (5 new since 0.8), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def); 50 data checks (5 new); test vectors unchanged.
