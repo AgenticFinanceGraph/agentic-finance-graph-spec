@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-11-01T11:52:33.705Z",
+  "exported_at": "2026-11-01T12:21:19.388Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -1101,8 +1101,13 @@
       "supersedes": "behaviour.out_of_character.v1",
       "source": "afg-security-lab oochar/v2.mjs and docs/definitions/behaviour.out_of_character.v2.md, 2026-10-14; production: AFG-Pulse (afg-oochar, afg-intake gate routes), 16 Oct 2026",
       "since": "2026-10-16",
-      "status": "shadow: computed for every counted payment of ranked agents since 16 Oct 2026 (afg-oochar); nothing blocks or alerts from it; the drain_pattern detector remains the published rule",
-      "revisions": [],
+      "status": "shadow 16 Oct - 1 Nov 2026; advisory from 1 Nov 2026 (cp-2026-11-01-security-layer-advisory): computed for every counted payment of ranked agents (afg-oochar) and published with its reasons as a pattern for a human to read; nothing blocks and no incident opens from it; the drain_pattern detector remains the published rule",
+      "revisions": [
+        {
+          "date": "2026-11-01",
+          "what": "Left shadow at 12:02 UTC: scores are published as advisory patterns for a human to read; nothing blocks and no incident opens from them; the body, weights and thresholds did not change. Measured before the switch: across all scored history the notable line spoke 10.2 times per agent-year (0.8 in the evaluation, 0.55 without one payee address); 9,756 of the 9,767 notable scores since 28 October are one shape at one payee that 15,902 agents paid 1,149,361 times from 15 October, on average $0.07. A version that discounts payees many agents share is measured before it ships. See /api/changepoints cp-2026-11-01-security-layer-advisory."
+        }
+      ],
       "body_sha256": "ec6c774e2602686d6bcbf9a0f68e11b5a27f6119947ad2ccc5ed85c287880d46",
       "url": "https://agenticfinancegraph.com/def/behaviour.out_of_character.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -1334,8 +1339,13 @@
       "threat_model": "Assume the model behind an agent can be steered by text it reads (a prompt injection, a poisoned tool result, a planted memory): every signal here is measured from the chain and our ledger, never from what the agent says, and nothing here is a verdict on an agent, an operator or a person.",
       "source": "afg-security-lab canary/ (DESIGN.md, watch.mjs, SERVER.md), 2026-10-14; production: AFG-Pulse (afg-oochar, afg-intake gate routes), 16 Oct 2026",
       "since": "2026-10-16",
-      "status": "design registered 16 Oct 2026; the hosted watcher is built in shadow first",
-      "revisions": [],
+      "status": "design registered 16 Oct 2026; hosted watcher afg-canarywatch in shadow 16 Oct - 1 Nov 2026, live from 1 Nov 2026 (cp-2026-11-01-security-layer-advisory)",
+      "revisions": [
+        {
+          "date": "2026-11-01",
+          "what": "The hosted watcher (afg-canarywatch, every 2 minutes since 16 October 2026) left shadow at 12:02 UTC: canaries are live, 25 per operator, fires through canary_status and not by e-mail yet. The trigger rules did not change. See /api/changepoints cp-2026-11-01-security-layer-advisory."
+        }
+      ],
       "body_sha256": "51cd558eba1774a39f1c1f47ffef6a029312e434688ff6d52aa7c6b7f29ca5a5",
       "url": "https://agenticfinancegraph.com/def/canary.trigger.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.1 — 1 November 2026
+
+Status fields and revisions only; no definition body, hash or check changed. 370 definitions, re-exported verbatim at 12:21 UTC.
+
+- **The security layer left shadow at 12:02 UTC** (register entry `cp-2026-11-01-security-layer-advisory`). `behaviour.out_of_character.v2` is advisory: scores are published as patterns for a human to read, nothing blocks and no incident opens from them. `canary.trigger.v1`: canaries are live, 25 per operator. The Gate answers in advisory mode; its default policy is still `log-only`, and the blocking policies are opt-in by name. Both definitions carry a dated revision, and their `body_sha256` values are unchanged (status fields are excluded from the hash).
+- **Measured before the switch, in the revision of `behaviour.out_of_character.v2`:** the notable line spoke 10.2 times per agent-year across all scored history (0.8 in the evaluation, 0.55 without one payee address that 15,902 agents paid 1,149,361 times from 15 October). A version that discounts payees many agents share will be measured before it ships.
+
 ## 0.10 — 1 November 2026
 
 370 definitions (7 new since 0.9), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def); 55 data checks (5 new); test vectors regenerated under the current counting rules.
