@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.2 — 2 November 2026
+
+Fixture only; no definition, check or test vector changed.
+
+- **Fixture re-run, 1 November 2026** (`fixtures/erc8004-base-grounded-feedback-2026-11-01.csv`, [notes](fixtures/erc8004-base-grounded-feedback-2026-11-01.md)): 840 of 631,230 feedback entries on Base follow a payment from the rater (0.133%; 23 raters, 75 agents, 189 payment transactions; rails `usdc_transfer` 837, `x402` 3, `x402-receipt-commitment` 0), same method as 14 and 20 October, which stay published. All 816 rows of 20 October are still in. Two-wallet layout at the agent level (ratings by agents whose minting account is bound by `binding.minter.v1`): 0 of 7,413 follow a router payment from the rating agent; 23 have one only after the rating.
+
 ## 0.10.1 — 1 November 2026
 
 Status fields and revisions only; no definition body, hash or check changed. 370 definitions, re-exported verbatim at 12:21 UTC.
