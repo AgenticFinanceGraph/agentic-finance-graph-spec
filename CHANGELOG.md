@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.3 — 2 November 2026
+
+A correction, in status fields and revisions only; no definition body, hash or check changed.
+
+- **`behaviour.out_of_character.v2` was not computed for every counted payment, as its status said.** From 16 October to 1 November the scoring worker scored 538,825 of 2,402,995 counted payments (22.4%), from 4,402 of 24,779 agents: each run took the 300 agents with the newest payments and moved past the rest. From 2 November a queue covers every unscored counted payment of the last 35 days, and the payments still waiting are published with the scores. Rates published so far describe the scored payments only. Register entry `cp-2026-11-02-watch-coverage`.
+- **`agent.pass.v2`:** its assumption that every counted payment of the last 30 days was scored did not hold in that period; the two in-character checks were recorded as not checked, never as held.
+
 ## 0.10.2 — 2 November 2026
 
 Fixture only; no definition, check or test vector changed.

@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-11-01T12:21:19.388Z",
+  "exported_at": "2026-11-02T12:09:40.380Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -535,7 +535,12 @@
       "source": "afg-security-lab pass/ (CRITERIA.md §v2, issuance.mjs, ISSUANCE.md), 2026-10-14; production: AFG-Pulse (afg-oochar, afg-intake gate routes), 16 Oct 2026",
       "since": "2026-10-16",
       "status": "registered 16 Oct 2026; issued in shadow (unsigned rows) 16–24 Oct 2026; signed from 24 Oct 2026 08:53 UTC with key afg-pass-2026-10 (cp-2026-10-24-pass-signing); shadow rows are replaced as they expire, within three hours",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-02",
+          "what": "The assumption that the scoring worker had scored every counted payment of the last 30 days did not hold from 16 October to 1 November (22.4% of counted payments were scored). Where payments were unscored, the two in-character checks were recorded as not checked, never as held. From 2 November a queue covers every unscored payment, so those checks will be taken more often. See /api/changepoints cp-2026-11-02-watch-coverage."
+        }
+      ],
       "body_sha256": "1db6440f06db43ad8f06feea9ac3d55f21f68e64094d9195940184c68f8fe5a0",
       "url": "https://agenticfinancegraph.com/def/agent.pass.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -1101,11 +1106,15 @@
       "supersedes": "behaviour.out_of_character.v1",
       "source": "afg-security-lab oochar/v2.mjs and docs/definitions/behaviour.out_of_character.v2.md, 2026-10-14; production: AFG-Pulse (afg-oochar, afg-intake gate routes), 16 Oct 2026",
       "since": "2026-10-16",
-      "status": "shadow 16 Oct - 1 Nov 2026; advisory from 1 Nov 2026 (cp-2026-11-01-security-layer-advisory): computed for every counted payment of ranked agents (afg-oochar) and published with its reasons as a pattern for a human to read; nothing blocks and no incident opens from it; the drain_pattern detector remains the published rule",
+      "status": "shadow 16 Oct - 1 Nov 2026; advisory from 1 Nov 2026 (cp-2026-11-01-security-layer-advisory): computed by afg-oochar over counted payments of ranked agents and published with its reasons as a pattern for a human to read (coverage 16 Oct - 1 Nov was 22.4% of counted payments; since 2 Nov a queue covers every unscored payment of the last 35 days, see cp-2026-11-02-watch-coverage); nothing blocks and no incident opens from it; the drain_pattern detector remains the published rule",
       "revisions": [
         {
           "date": "2026-11-01",
           "what": "Left shadow at 12:02 UTC: scores are published as advisory patterns for a human to read; nothing blocks and no incident opens from them; the body, weights and thresholds did not change. Measured before the switch: across all scored history the notable line spoke 10.2 times per agent-year (0.8 in the evaluation, 0.55 without one payee address); 9,756 of the 9,767 notable scores since 28 October are one shape at one payee that 15,902 agents paid 1,149,361 times from 15 October, on average $0.07. A version that discounts payees many agents share is measured before it ships. See /api/changepoints cp-2026-11-01-security-layer-advisory."
+        },
+        {
+          "date": "2026-11-02",
+          "what": "Correction of the status text, which said every counted payment of ranked agents was scored. From 16 October to 1 November the worker scored 538,825 of 2,402,995 counted payments (22.4%), from 4,402 of 24,779 agents: each run took the 300 agents with the newest payments and moved past the rest. From 2 November a queue covers every unscored counted payment of the last 35 days, and the payments still waiting are published with the scores. The body, weights and thresholds did not change; rates published so far describe the scored payments only. See /api/changepoints cp-2026-11-02-watch-coverage."
         }
       ],
       "body_sha256": "ec6c774e2602686d6bcbf9a0f68e11b5a27f6119947ad2ccc5ed85c287880d46",
