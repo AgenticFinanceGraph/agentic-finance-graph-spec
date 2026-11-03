@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.4 — 3 November 2026
+
+Fixture addition only; no definition, check or test vector changed.
+
+- **First funder of each rater in the 1 November grounded-feedback fixture** (`fixtures/erc8004-raters-first-funder-2026-11-03.json`, script `fixtures/erc8004-raters-first-funder.mjs`), read 3 November 2026 08:44 UTC with alchemy_getAssetTransfers: the earliest inbound ETH or stablecoin transfer (USDC, USDbC, USDT, DAI, EURC, WETH, by contract address) to each of the 23 raters. 7 raters share one first funder (0.1 USDC each, 22 February 2026; 123 of 840 rows); 3 share another (0.3 USDC each, 8 July 2026; 16 rows); no rater was first funded by an agent wallet it paid or by another rater. A shared first funder is a pattern, not a finding about any rater. Without the contract filter the earliest inbound transfer is often a spam token copying the USDC name.
+
 ## 0.10.3 — 2 November 2026
 
 A correction, in status fields and revisions only; no definition body, hash or check changed.

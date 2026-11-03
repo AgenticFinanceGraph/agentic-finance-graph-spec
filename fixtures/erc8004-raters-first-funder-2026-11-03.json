@@ -1,0 +1,369 @@
+{
+ "measured_at": "2026-11-03T08:44:45.947Z",
+ "raters": 23,
+ "result": [
+  {
+   "rater": "0x04eaeddba3b03b9a5abbd2ecb024458c7b1dcefa",
+   "rows": 5,
+   "agents": 3,
+   "first_funder": "0xd152f549545093347a162dce210e7293f1452150",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.1,
+    "at": "2026-02-22T04:42:59.000Z",
+    "tx": "0x7c702199c47a0e54c11e7c24307ce708f47b59a2259c48085494c89324fb74e9"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 7
+  },
+  {
+   "rater": "0x07b86226443a2b8c0adda352d360ddd4e0a90093",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0xe1a6db7ff4a99ff36defbc6403200c8af7f291d7",
+   "first_in": {
+    "asset": "USDC",
+    "value": 3,
+    "at": "2026-03-23T05:46:53.000Z",
+    "tx": "0x78fd7a41fc37e243b6a425915b378c1031a65fb092bb65f29bb012eb16aff952"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0x09c32b8fc0a94a1eed424499a42180e29667beee",
+   "rows": 4,
+   "agents": 1,
+   "first_funder": "0xd3868e1ed738ced6945a574a7c769433bed5d474",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.3,
+    "at": "2026-07-08T03:50:13.000Z",
+    "tx": "0xe85e1a17c21ae3fe3ac63ca1190774c7f9b966b9821f72e4f5e9143567bd9eb1"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 3
+  },
+  {
+   "rater": "0x23bf1ccbfde571d857a7674572d3e98d84f35683",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0x21d4a21b247d3d62926058260d23cb28efd71b29",
+   "first_in": {
+    "asset": "USDC",
+    "value": 1,
+    "at": "2026-10-11T07:19:31.000Z",
+    "tx": "0x9b7fe720aa0ea794d7fcc9753b598cc4b549059474ea531bc1dbf59f1f598cfe"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0x369d04f08f245454926ac96a0164a634fd94660b",
+   "rows": 444,
+   "agents": 12,
+   "first_funder": "0xc12ecf02448e0e56dad9c0d5473553b80d030d75",
+   "first_in": {
+    "asset": "USDC",
+    "value": 3,
+    "at": "2026-03-05T05:24:19.000Z",
+    "tx": "0x7e4a682354ee7ad6548b6ff74c829755c451f16491e24227ccf9468fbd82e3ec"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0x3aebb73a33377f0d6fc2195f83559635adee8408",
+   "rows": 4,
+   "agents": 1,
+   "first_funder": "0xd152f549545093347a162dce210e7293f1452150",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.1,
+    "at": "2026-02-22T04:42:59.000Z",
+    "tx": "0x7c702199c47a0e54c11e7c24307ce708f47b59a2259c48085494c89324fb74e9"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 7
+  },
+  {
+   "rater": "0x3e5da3e1f890c94312bc21a443f06eeccbcca9f1",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0x80c67432656d59144ceff962e8faf8926599bcf8",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.01400000000000004,
+    "at": "2023-08-04T13:11:01.000Z",
+    "tx": "0xa3b1f0f51773355042ea9780d9cfa0d679ba6f33ede29225251fd422b6a069e3"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 2
+  },
+  {
+   "rater": "0x46bdfd8256ceeb3325725cb3b81701c3e2e32ebd",
+   "rows": 2,
+   "agents": 1,
+   "first_funder": "0xd152f549545093347a162dce210e7293f1452150",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.1,
+    "at": "2026-02-22T04:42:59.000Z",
+    "tx": "0x7c702199c47a0e54c11e7c24307ce708f47b59a2259c48085494c89324fb74e9"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 7
+  },
+  {
+   "rater": "0x5975442e9608f71cea6e9b1f3841b5a045e0500d",
+   "rows": 6,
+   "agents": 2,
+   "first_funder": "0xd152f549545093347a162dce210e7293f1452150",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.1,
+    "at": "2026-02-22T04:42:59.000Z",
+    "tx": "0x7c702199c47a0e54c11e7c24307ce708f47b59a2259c48085494c89324fb74e9"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 7
+  },
+  {
+   "rater": "0x633859e219acdf890c9304c1f4b300e7ac8a554d",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0x80c67432656d59144ceff962e8faf8926599bcf8",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.007942000000000012,
+    "at": "2023-08-07T16:35:13.000Z",
+    "tx": "0x8d900f06f60bf3bb2cea9c60a9504abf0cee25f5692f8d5dfa81f7416e38d0f3"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 2
+  },
+  {
+   "rater": "0x7d4218c79e2a0d15b00ff8f85a075541df647f1c",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0x2fc617e933a52713247ce25730f6695920b3befe",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.310704,
+    "at": "2023-09-10T21:26:11.000Z",
+    "tx": "0x1f66f9f3b7d6593ead2998a333050ccbcd34ba25ec86688cb4567d0644fa235c"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0x857fe6150401bfb4641fe0d2b2621cc3b05543cd",
+   "rows": 241,
+   "agents": 37,
+   "first_funder": "0xe4dc963c56979e0260fc146b87ee24f18220e545",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.0003,
+    "at": "2025-11-07T19:05:41.000Z",
+    "tx": "0x7fb15eadf88479706ac5b92bfdc62edaae6b6b3c164dc27b22777d071b28af31"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0x8e503212c3c0806adecd2cc24f74379a3dedcbbc",
+   "rows": 57,
+   "agents": 6,
+   "first_funder": "0xd152f549545093347a162dce210e7293f1452150",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.1,
+    "at": "2026-02-22T04:42:59.000Z",
+    "tx": "0x7c702199c47a0e54c11e7c24307ce708f47b59a2259c48085494c89324fb74e9"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 7
+  },
+  {
+   "rater": "0x945659f0eb9c34487b0c0f61ed7e9d279ace8f09",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0xd3868e1ed738ced6945a574a7c769433bed5d474",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.3,
+    "at": "2026-07-08T03:50:11.000Z",
+    "tx": "0x16d2cc75a975aea52fb769ad5b04dedc4982ff48809434303a916ac842cd3f69"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 3
+  },
+  {
+   "rater": "0xa23c85d2fb7c101169e75829f98209365c6938dc",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0xa23c85d2fb7c101169e75829f98209365c6938dc",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.001,
+    "at": "2023-07-23T04:38:35.000Z",
+    "tx": "0xc1ac9bb64822031e002ce8ee1dd8ad189f4a70d7286926d8832b477215be0ed2"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0xa3279f744438f83bc75ce9f8a8282c448f97cc8a",
+   "rows": 35,
+   "agents": 8,
+   "first_funder": "0xd152f549545093347a162dce210e7293f1452150",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.1,
+    "at": "2026-02-22T04:42:59.000Z",
+    "tx": "0x7c702199c47a0e54c11e7c24307ce708f47b59a2259c48085494c89324fb74e9"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 7
+  },
+  {
+   "rater": "0xaa4e9c738944431b115e0203fada90a349584a74",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0xe4edb277e41dc89ab076a1f049f4a3efa700bce8",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.00505000000000001,
+    "at": "2023-08-09T14:02:29.000Z",
+    "tx": "0xc9b8b2edc86361dc2d9cbd605013df7b0d0b0ce561f0bb0667457a51a9473b8d"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 2
+  },
+  {
+   "rater": "0xaf95b213f44f0177e3a82e2d959524dd1e2a1174",
+   "rows": 11,
+   "agents": 3,
+   "first_funder": "0xd3868e1ed738ced6945a574a7c769433bed5d474",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.3,
+    "at": "2026-07-08T03:50:11.000Z",
+    "tx": "0x551f7b402d6990b6b16deca80696ad94d0b7a075357c1bb4a713649da4d31a02"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 3
+  },
+  {
+   "rater": "0xb684898d3f4437d93848456141445c66aa322b13",
+   "rows": 6,
+   "agents": 1,
+   "first_funder": "0xee7ae85f2fe2239e27d9c1e23fffe168d63b4055",
+   "first_in": {
+    "asset": "USDC",
+    "value": 4.8,
+    "at": "2026-07-07T03:52:55.000Z",
+    "tx": "0x1af80c141ab9c69aa31fc705b20982beb199c037c26ff48319291234dfa720d8"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0xcafe434febdebdf1f8407175af7665433887866b",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0x20fe51a9229eef2cf8ad9e89d91cab9312cf3b7a",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.00677802,
+    "at": "2026-06-16T13:13:11.000Z",
+    "tx": "0x870e43d6cc79f8da6d573bc4b1e038ce5ebf9567ababb24e68e6f5017f38409a"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0xdb217e96cee043cdc91b3ad8d375ad1d437ccc7c",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0x349941d57d6f904504df866f97637e9c520dc2a1",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.000013504932239765,
+    "at": "2026-09-26T02:34:29.000Z",
+    "tx": "0xd5fe4894327a9aa0c62976a48063c898609ab3d315de1ecc9fb5f56a1e370de7"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 1
+  },
+  {
+   "rater": "0xe3fb9e1592b1f445d984e9fa4db2abb3d04eacdc",
+   "rows": 14,
+   "agents": 7,
+   "first_funder": "0xd152f549545093347a162dce210e7293f1452150",
+   "first_in": {
+    "asset": "USDC",
+    "value": 0.1,
+    "at": "2026-02-22T04:42:59.000Z",
+    "tx": "0x7c702199c47a0e54c11e7c24307ce708f47b59a2259c48085494c89324fb74e9"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 7
+  },
+  {
+   "rater": "0xe7bbb12e10be183e25244a4da4708003280cccfc",
+   "rows": 1,
+   "agents": 1,
+   "first_funder": "0xe4edb277e41dc89ab076a1f049f4a3efa700bce8",
+   "first_in": {
+    "asset": "ETH",
+    "value": 0.005200000000000014,
+    "at": "2023-08-08T17:53:05.000Z",
+    "tx": "0xf9d33432202b5d97152b42bd18f798b9a77c30b42b978b0ef281ed7050bc5709"
+   },
+   "funder_is_payee_it_paid": false,
+   "funder_is_another_rater": false,
+   "raters_sharing_funder": 2
+  }
+ ],
+ "shared_funders": [
+  {
+   "funder": "0xd152f549545093347a162dce210e7293f1452150",
+   "raters": 7
+  },
+  {
+   "funder": "0xd3868e1ed738ced6945a574a7c769433bed5d474",
+   "raters": 3
+  },
+  {
+   "funder": "0x80c67432656d59144ceff962e8faf8926599bcf8",
+   "raters": 2
+  },
+  {
+   "funder": "0xe4edb277e41dc89ab076a1f049f4a3efa700bce8",
+   "raters": 2
+  }
+ ]
+}
