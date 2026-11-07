@@ -1,6 +1,6 @@
 # The Agentic Finance Graph accounting specification
 
-**Version 0.11 (draft), 7 November 2026.** Licence: CC BY 4.0.
+**Version 0.11.1 (draft), 7 November 2026.** Licence: CC BY 4.0.
 
 This document states how Agentic Finance Graph counts money held and spent by AI agents: which transfers count as an agent paying someone, which are excluded and why, how an agent is ranked, and how the counting is checked. It is written so that anyone can implement it from public chain data and compare their numbers with ours. Where this document and a definition in [`definitions/definitions.json`](definitions/definitions.json) disagree, the definition wins; definitions are frozen once published (a breaking change is a new id ending `.v2`, never an edit to `.v1`).
 
@@ -26,6 +26,10 @@ An implementation that measures another chain or asset must say so and must not 
   - Method 3, declared: the `agentWallet` named in the registration file.
   - Bindings are closed, never deleted, when the NFT changes owner or the declaration changes.
 - **Payment.** A `Transfer` event of one of the assets above whose sender is a bound wallet, identified by `(transaction hash, log index)`.
+- **Definition.** Every published figure names one frozen definition (`/api/def?id=<id>`) with `title`, `unit`, `chain_set`, `window`, `definition`, `method`, `excludes[]`, `does_not_assert[]`, `source` and `since`. A body never changes after publication: a change is a new id with `supersedes`, and the old id keeps `superseded_by` and `valid_until`; dated notes about a body are `revisions`.
+  - `excludes[]` may be empty: an empty array means nothing is excluded by design (51 of 376 ids on 7 November 2026).
+  - `assumptions`, `known_gaps`, `intended_use`, `not_intended_for` and `cost_to_fake` are optional in 1.0; the rank ids carry `cost_to_fake`.
+  - `chain_set` is a CAIP-2 chain id, or a list of them, where a figure reads named chains; otherwise one of `multi-chain`, `all chains`, `n/a (our own database)` or a named off-chain source. Older bodies that say `Base` mean `eip155:8453`; frozen bodies are not rewritten to say so.
 
 **Proposed for v0.2: binding tiers.** Tier A is declared by the registration or confirmed by its operator. Tier B is a holder wallet with evidence of automation: a smart account or EIP-7702 delegation, bundler or relayer submission, paymaster-paid gas, x402 settlement, or machine-regular timing. Tier C is a holder wallet with none of these. Today almost all counted money comes from method-1 wallets, so part of it can be the owner's own spending.
 
@@ -37,7 +41,7 @@ $$O = P \;\cup\; T \;\cup\; C, \qquad P \cap T = P \cap C = T \cap C = \varnothi
 
 1. **Pre-registration $P$** (`pay.excluded.preregistration.v1`). The payment's block time is earlier than the mint time of the registration its wallet is bound to. The wallet existed before the agent did.
 2. **Pass-through $T$** (`pay.excluded.passthrough.v1`). The payment forwards money the wallet received in the same transaction: the receipt shows approximately the same amount (within 2%) arriving at the wallet. It is a routing hop, not a purchase. A payment is only counted after this check has run on it.
-3. **Counted $C$** (`pay.usd.total.v3`). Everything else, provided the recipient is not one of the sender's own addresses: not the same address, not another wallet ever bound to the agent, not its registration's owner, not the address it was minted to (`pay.excluded.ownaddress.v1`, from 21 October 2026; before that date only the same address was excluded, `pay.usd.total.v1`). From 31 October 2026 (`pay.usd.total.v3`) it also excludes money an agent receives through a fee router from an address tied to no agent and sends back to that address or to one that funded it (`pay.excluded.loopreturn.v1`).
+3. **Counted $C$** (`pay.usd.total.v3`). Everything else, provided the recipient is not one of the sender's own addresses: not the same address, not another wallet ever bound to the agent, not its registration's owner, not the address it was minted to (`pay.excluded.ownaddress.v1`, from 21 October 2026; before that date only the same address was excluded, under `pay.usd.total.v1`, now superseded). From 31 October 2026 (`pay.usd.total.v3`) it also excludes money an agent receives through a fee router from an address tied to no agent and sends back to that address or to one that funded it (`pay.excluded.loopreturn.v1`).
 
 The counted set is further split by reading each receipt:
 
@@ -132,4 +136,4 @@ A signed tree head (size, root hash, time; Ed25519, `afg-statement-log:v1:<size>
 
 ## 10. Citing
 
-Agentic Finance Graph, *Accounting specification for machine money*, v0.11, 7 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.
+Agentic Finance Graph, *Accounting specification for machine money*, v0.11.1, 7 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.

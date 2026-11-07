@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.1 — 7 November 2026
+
+376 definitions (1 new), re-exported verbatim at 11:39 UTC on 7 November 2026; checks and test vectors unchanged.
+
+- **New definition:** `income.composition.v1`, counted agent income taken apart by sender in one pass (work escrow, vaults, lending, swap, bridge, other labelled, other agents' wallets, x402 sellers, unnamed), published every three hours with the income figures; the parts add up to the total. Nine USDC vaults were added to the label map from their verified contract names (register entry `cp-2026-11-07-labels`).
+
+- **`scripts/check-spec.mjs` runs in CI** (spec 1.0 gaps 11, 12 and 16): every id cited in `SPEC.md` exists in `definitions.json`; a superseded id is cited only on a history line; the export's `count` matches its contents; the check count in `README.md` matches `checks.json`; and a warning, not a failure, when the export count differs from the live site.
+- **`README.md`** states 55 checks, the number `checks.json` holds (it said 50).
+- **`SPEC.md` section 2 states the definition schema** (spec 1.0 gaps 1, 3 and 7): an empty `excludes[]` means nothing is excluded by design; `assumptions`, `known_gaps`, `intended_use`, `not_intended_for` and `cost_to_fake` are optional; `chain_set` is CAIP-2 or one of a fixed vocabulary, and older bodies that say `Base` mean `eip155:8453`.
+
 ## 0.11 — 7 November 2026
 
 375 definitions (5 new since 0.10.4), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def) at 10:38 UTC; 55 data checks, unchanged; test vectors regenerated (24 transfers) under the current counting rules. No definition body or hash changed.

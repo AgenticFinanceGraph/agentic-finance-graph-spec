@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: Spec ids, counts and supersession (scripts/check-spec.mjs)
+        run: node scripts/check-spec.mjs
+
       - name: JSON files parse
         run: |
           for f in definitions/definitions.json checks/checks.json test-vectors/classified-payments.json; do

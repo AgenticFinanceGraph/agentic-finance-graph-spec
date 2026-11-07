@@ -8,7 +8,7 @@ It says, precisely enough to implement:
 - which counted money went into **positions the agent still holds** and which **left its control**;
 - how an agent is **ranked** from L0 (a registration exists) to L9 (it pays repeat counterparties);
 - what a **drain-shaped payment** is;
-- the **50 checks** we run on our own data every three hours before a figure is published;
+- the **55 checks** we run on our own data every three hours before a figure is published;
 - how a figure is **measured twice** before it is published.
 
 ## Contents
