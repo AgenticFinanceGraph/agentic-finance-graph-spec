@@ -1,7 +1,16 @@
 {
   "note": "Each row is a real stablecoin transfer on Base (chain 8453) with the class our rules assigned. An implementation of this spec should assign the same class from the chain alone: the transaction receipt, the registration's mint block and the recipient's category.",
+  "classes": {
+    "counted_left_control": "Counted, and the money left the agent's control (pay.usd.leftcontrol.v1).",
+    "counted_own_position": "Counted, into a lending or vault position the paying wallet still holds (pay.usd.ownpositions.v1).",
+    "excluded_pass_through": "Not counted: a routing hop, money that arrived and left in the same transaction (pay.excluded.passthrough.v1).",
+    "excluded_pre_registration": "Not counted: made before the registration existed (pay.excluded.preregistration.v1).",
+    "excluded_own_address": "Not counted: to one of the agent's own addresses (pay.excluded.ownaddress.v1).",
+    "counted_bridged_back_to_payer": "Counted, a bridge leg whose money arrived at the paying wallet's own address on another chain; taken out of pay.usd.leftcontrol.netbridge.v1.",
+    "counted_own_position_not_l7": "Counted, into the agent's own position, from an agent below L7: such a deposit does not earn L7 under rank.l7plus.v2."
+  },
   "chain": "eip155:8453",
-  "count": 24,
+  "count": 36,
   "rows": [
     {
       "expected": "counted_left_control",
@@ -95,6 +104,16 @@
     },
     {
       "expected": "counted_own_position",
+      "tx": "0xc90d3b7696d8491ac86a849ea07cdea04df95283819b2b8299eac7a18eb3baca",
+      "log_index": 36,
+      "from": "eip155:8453:0x8a488f46d13109e732a14506aca2ccc7825f24d7",
+      "to": "eip155:8453:0xb125e6687d4313864e53df431d5425969c15eb2f",
+      "asset": "USDC",
+      "amount_usd": 400.064455,
+      "block_time": "2026-11-06T18:07:30+00:00"
+    },
+    {
+      "expected": "counted_own_position",
       "tx": "0x5c686ccef83bac192f1e3a2e9690df4f842dd44c2b892f0c69b4d32612ea28ed",
       "log_index": 41,
       "from": "eip155:8453:0x3ded74527582b3f63eb121fc65b2d8958a18c6f2",
@@ -112,16 +131,6 @@
       "asset": "USDC",
       "amount_usd": 62750.296728,
       "block_time": "2026-11-06T16:36:22+00:00"
-    },
-    {
-      "expected": "counted_own_position",
-      "tx": "0x4653fe286fd72a290c6a9bf33de6287435575cd334c327ea9f29f9287afaa1b0",
-      "log_index": 32,
-      "from": "eip155:8453:0xb3a1e10321c5f76c793ed33c404d6eb5db51d8e2",
-      "to": "eip155:8453:0xb125e6687d4313864e53df431d5425969c15eb2f",
-      "asset": "USDC",
-      "amount_usd": 2291.920331,
-      "block_time": "2026-11-06T14:52:38+00:00"
     },
     {
       "expected": "excluded_pass_through",
@@ -242,6 +251,126 @@
       "asset": "USDC",
       "amount_usd": 0.003,
       "block_time": "2026-11-04T14:47:07+00:00"
+    },
+    {
+      "expected": "excluded_own_address",
+      "tx": "0xc1d10cfdb2f3f6a988a61da4b2e814acbda61acdc65eceb1c22f36fd274c8172",
+      "log_index": 290,
+      "from": "eip155:8453:0x1f3d6e414cc6761cb9fb11adf3c42f691a094d46",
+      "to": "eip155:8453:0x823971727b5332291267cc5d0d48e13e5b53428c",
+      "asset": "USDC",
+      "amount_usd": 1.19,
+      "block_time": "2026-10-27T16:42:51+00:00"
+    },
+    {
+      "expected": "excluded_own_address",
+      "tx": "0x89e0a7d3b3d424d0283b07199729d9090839bbce42b60a8eb72c83fb92eca6a1",
+      "log_index": 464,
+      "from": "eip155:8453:0x4990604cae83d1d6d5db017bb0b274a6504f997f",
+      "to": "eip155:8453:0x0983dce1320f934b982fd72203ed6f89fe7da6b7",
+      "asset": "USDC",
+      "amount_usd": 1.12,
+      "block_time": "2026-10-27T16:41:29+00:00"
+    },
+    {
+      "expected": "excluded_own_address",
+      "tx": "0x5d9a6a489351f73a0d366f5f8c0c451d681c57d5119ad346ae12f105c7fecc73",
+      "log_index": 664,
+      "from": "eip155:8453:0xb52e16c109c6020202425d3d4a0908c88d27fdd4",
+      "to": "eip155:8453:0x35a52b45dac0042af8ff8557a185ed87094790f7",
+      "asset": "USDC",
+      "amount_usd": 1.097,
+      "block_time": "2026-10-27T16:39:57+00:00"
+    },
+    {
+      "expected": "excluded_own_address",
+      "tx": "0x70f1e4b1fb19be89a1e93fb9ce44ea88a2048a546f10ca7c44998b32d8077b7a",
+      "log_index": 180,
+      "from": "eip155:8453:0xab1990156795f299c47a9879439a85b403bf8fe6",
+      "to": "eip155:8453:0xdec69a1a5475052102d68bb3e742517ef0e76819",
+      "asset": "USDC",
+      "amount_usd": 1.06,
+      "block_time": "2026-10-27T16:34:23+00:00"
+    },
+    {
+      "expected": "counted_bridged_back_to_payer",
+      "tx": "0xd53ca530b04bd830b53449583290fd28f2b147ea0378542eb1c6d42af66395d2",
+      "log_index": 89,
+      "from": "eip155:8453:0x8a889eb68a39bba036c75f633358ae243c9a98a7",
+      "to": "eip155:8453:0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae",
+      "asset": "USDC",
+      "amount_usd": 5,
+      "block_time": "2026-11-07T02:12:21+00:00"
+    },
+    {
+      "expected": "counted_bridged_back_to_payer",
+      "tx": "0x9a08c18f387e8b0157fd239db2e75da9e5a6c11c912960333853665b6df185e8",
+      "log_index": 7,
+      "from": "eip155:8453:0x703cf6401d04a06378c6f59dbd9117203ba9892d",
+      "to": "eip155:8453:0x4cd00e387622c35bddb9b4c962c136462338bc31",
+      "asset": "USDC",
+      "amount_usd": 51.5,
+      "block_time": "2026-11-07T01:25:54+00:00"
+    },
+    {
+      "expected": "counted_bridged_back_to_payer",
+      "tx": "0xcdf3a3244e8639283dd7b974bfbc3684b639ef60a7df23d796c98f7717c5a3b8",
+      "log_index": 62,
+      "from": "eip155:8453:0x472f6914375a83fc827499612f5673e3780469fd",
+      "to": "eip155:8453:0x4cd00e387622c35bddb9b4c962c136462338bc31",
+      "asset": "USDC",
+      "amount_usd": 18,
+      "block_time": "2026-11-07T00:48:26+00:00"
+    },
+    {
+      "expected": "counted_bridged_back_to_payer",
+      "tx": "0x8a0c7b37b84cfd8df8e610a2960c1e9e08c1117316ad407d5221b94c282a5542",
+      "log_index": 1,
+      "from": "eip155:8453:0xf88908e9aa57585b57961886ec0a920203138d62",
+      "to": "eip155:8453:0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae",
+      "asset": "USDC",
+      "amount_usd": 111,
+      "block_time": "2026-11-06T22:54:25+00:00"
+    },
+    {
+      "expected": "counted_own_position_not_l7",
+      "tx": "0x0bd3a0ce0ddbccd1b9d62bafa2c3cc1b46d2c15052372fb87e6a2d5b74802376",
+      "log_index": 15,
+      "from": "eip155:8453:0x502406b651793c0f0d8bdd7566de55a5ee1bc8a8",
+      "to": "eip155:8453:0xb125e6687d4313864e53df431d5425969c15eb2f",
+      "asset": "USDC",
+      "amount_usd": 2.493902,
+      "block_time": "2026-11-06T19:02:37+00:00"
+    },
+    {
+      "expected": "counted_own_position_not_l7",
+      "tx": "0x212914a5b3b4f3e7130b9692f8d9e88b4d918eb3ab94a47af76d417ea66ca327",
+      "log_index": 15,
+      "from": "eip155:8453:0x502406b651793c0f0d8bdd7566de55a5ee1bc8a8",
+      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
+      "asset": "USDC",
+      "amount_usd": 2500.016991,
+      "block_time": "2026-11-06T18:54:44+00:00"
+    },
+    {
+      "expected": "counted_own_position_not_l7",
+      "tx": "0xc90d3b7696d8491ac86a849ea07cdea04df95283819b2b8299eac7a18eb3baca",
+      "log_index": 36,
+      "from": "eip155:8453:0x8a488f46d13109e732a14506aca2ccc7825f24d7",
+      "to": "eip155:8453:0xb125e6687d4313864e53df431d5425969c15eb2f",
+      "asset": "USDC",
+      "amount_usd": 400.064455,
+      "block_time": "2026-11-06T18:07:30+00:00"
+    },
+    {
+      "expected": "counted_own_position_not_l7",
+      "tx": "0x5c686ccef83bac192f1e3a2e9690df4f842dd44c2b892f0c69b4d32612ea28ed",
+      "log_index": 41,
+      "from": "eip155:8453:0x3ded74527582b3f63eb121fc65b2d8958a18c6f2",
+      "to": "eip155:8453:0xaffd3c3cd06cf499deddf78b26868018a93f2c31",
+      "asset": "USDC",
+      "amount_usd": 62750.296728,
+      "block_time": "2026-11-06T16:36:22+00:00"
     }
   ]
 }
