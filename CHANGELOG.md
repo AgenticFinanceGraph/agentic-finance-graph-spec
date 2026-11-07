@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.11 — 7 November 2026
+
+375 definitions (5 new since 0.10.4), exported verbatim from [agenticfinancegraph.com/def](https://agenticfinancegraph.com/def) at 10:38 UTC; 55 data checks, unchanged; test vectors regenerated (24 transfers) under the current counting rules. No definition body or hash changed.
+
+- **Correction: agent income had been read for 2,640 of 46,509 ranked wallets** (register entries `cp-2026-11-07-income-coverage` and `cp-2026-11-07-income-hop-rule`; dated revisions on the seven `income.*` definitions). The method text of `income.usd.total.v1` says every ranked wallet is re-read about twice a week; the reader took 60 wallets a run and the 50 newest transfers of each, so every income figure published before 7 November was a floor. From 7 November 10:28 UTC every ranked wallet's incoming USDC, USDT, EURC and DAI is read from the Transfer logs by recipient: history from the first Base registration to block 54,209,693, then the sweep's logs on every run. Income moved from $3,761,583.76 (07:57 UTC) to $57,759,142.00 (10:28 UTC), agents with income from 2,519 to 30,101. Checked two other ways: one work escrow's 6,048 payouts to bound wallets in the week of 30 October, read on chain, are all in the ledger now (it held 142), and 25 randomly chosen ranked wallets read through Alchemy's transfer index agree with the ledger to the cent (2,252 transfers). The figure is money received, not money earned: payments from other agents' wallets were 0.9% of it. Two rules were brought in line with the definitions: the hop test judges the agent's wallet, not the sender's, and a transfer from another wallet bound to the same agent is a self-transfer. Compare the income series from 8 November.
+- **New definitions:**
+  - `behaviour.out_of_character.v3` (supersedes v2 from 7 November 08:17 UTC): v2 without the delegated-payee reason when at least 100 registered agents paid the payee before the payment. Pre-registered before its first run (register entry `cp-2026-11-07-watch-v3`).
+  - `agent.pass.portable.v1`: the Agent Pass of `agent.pass.v2`, unchanged in its eight checks, also issued as a JWT (EdDSA, key in `/.well-known/jwks.json`) and as a W3C Verifiable Credential in the JWT encoding (issuer `did:web:agenticfinancegraph.com`).
+  - `wallet.7702.rate.v2` (supersedes v1): the delegated share over ranked agents' bound wallets, written only when at least 99% of them have been read. v1's base, every bound wallet whose code we had read, moved with our reading order (register entry `cp-2026-11-07-7702-rate-ranked`).
+  - `approval.unlimited.usd.v2` (supersedes v1): each wallet's balance of a token counted once, however many spenders hold an unlimited approval on it (register entry `cp-2026-11-06-approvals-usd-once`).
+  - `rank.shape.v1`: the shape of the whole rank, the share of ranked agents' counted payments held by the top 25, 100 and 1,000 agents, and bands.
+- **Revisions:** `agent.pass.v2` and `behaviour.out_of_character.v2` (the Watch's switch to v3).
+
 ## 0.10.4 — 3 November 2026
 
 Fixture addition only; no definition, check or test vector changed.

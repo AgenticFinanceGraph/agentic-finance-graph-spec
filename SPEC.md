@@ -1,6 +1,6 @@
 # The Agentic Finance Graph accounting specification
 
-**Version 0.10.4 (draft), 3 November 2026.** Licence: CC BY 4.0.
+**Version 0.11 (draft), 7 November 2026.** Licence: CC BY 4.0.
 
 This document states how Agentic Finance Graph counts money held and spent by AI agents: which transfers count as an agent paying someone, which are excluded and why, how an agent is ranked, and how the counting is checked. It is written so that anyone can implement it from public chain data and compare their numbers with ours. Where this document and a definition in [`definitions/definitions.json`](definitions/definitions.json) disagree, the definition wins; definitions are frozen once published (a breaking change is a new id ending `.v2`, never an edit to `.v1`).
 
@@ -132,4 +132,4 @@ A signed tree head (size, root hash, time; Ed25519, `afg-statement-log:v1:<size>
 
 ## 10. Citing
 
-Agentic Finance Graph, *Accounting specification for machine money*, v0.10.4, 3 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.
+Agentic Finance Graph, *Accounting specification for machine money*, v0.11, 7 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.

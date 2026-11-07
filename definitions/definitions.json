@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-11-02T12:09:40.380Z",
+  "exported_at": "2026-11-07T10:38:05.219Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 370,
+  "count": 375,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -460,6 +460,36 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "agent.pass.portable.v1",
+      "title": "Agent Pass, portable forms: the same Pass as a JWT and as a W3C Verifiable Credential",
+      "unit": "one compact JWS per request; expires with the Pass it encodes (3 hours from the evaluation)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "the newest evaluation of the registration under agent.pass.v2 that holds, is signed and has neither expired nor been revoked",
+      "definition": "The Pass of agent.pass.v2, unchanged in its eight checks, issued on request in two more encodings with the same Ed25519 key (key id afg-pass-2026-10): a JWT (alg EdDSA; iss https://agenticfinancegraph.com; sub the ERC-8004 identity eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432:<token id>; iat, nbf and exp equal to the Pass's issue and expiry; jti the pass_id; the claim pass holds the Pass body with holds, fails, not_checked and checks) and a W3C Verifiable Credential in the JWT encoding of VC Data Model 1.1 (iss did:web:agenticfinancegraph.com; the vc claim with type VerifiableCredential and AgentPassCredential and the same facts in credentialSubject).",
+      "method": "Signed on demand on our server from the stored Pass row; nothing new is measured. Keys: /.well-known/jwks.json (JWK, OKP Ed25519) and /.well-known/did.json (did:web document, JsonWebKey2020); the same key as /.well-known/afg-pass-keys.json. Served at /api/pass?agent=<token id>&format=jwt, &format=vc and &format=portable (both, with verification notes).",
+      "excludes": [
+        "Registrations without a Pass that holds right now: the request answers 404 and the summary says which checks failed or could not be taken.",
+        "Revoked or expired Passes."
+      ],
+      "does_not_assert": [
+        "That the agent is safe, verified, trusted or compliant: a Pass says what was checked and when.",
+        "Anything after exp.",
+        "Who operates the agent: the subject is a registration, not a person or a company."
+      ],
+      "assumptions": "A verifier trusts this key for statements by agenticfinancegraph.com and checks exp before relying on the claims.",
+      "known_gaps": "The VC uses the 1.1 JWT encoding because the libraries agents use today (did-jwt-vc, used by Catena's ACK) verify that form; a VC 2.0 JOSE form can be added with the same claims.",
+      "intended_use": "Carrying the Pass into systems that verify JWTs or Verifiable Credentials offline: wallet policy engines, agent frameworks, KYA flows.",
+      "not_intended_for": "A credit score, a licence, a sanctions screen, or any judgement about a natural person.",
+      "source": "AFG-Pulse Agent Pass (agent_pass rows), signed by the issuer key",
+      "since": "2026-11-07",
+      "revisions": [],
+      "body_sha256": "de169ea0d64bc99b458e74f0d85ab13df983c1a54ab4df4c743e600cecae8f75",
+      "url": "https://agenticfinancegraph.com/def/agent.pass.portable.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "agent.pass.v1",
       "title": "Agent Pass: a signed, three-hour statement of what the ledger checked about one agent",
       "unit": "one signed document per issuance; valid 3 hours; revocable",
@@ -539,6 +569,10 @@
         {
           "date": "2026-11-02",
           "what": "The assumption that the scoring worker had scored every counted payment of the last 30 days did not hold from 16 October to 1 November (22.4% of counted payments were scored). Where payments were unscored, the two in-character checks were recorded as not checked, never as held. From 2 November a queue covers every unscored payment, so those checks will be taken more often. See /api/changepoints cp-2026-11-02-watch-coverage."
+        },
+        {
+          "date": "2026-11-07",
+          "what": "From 08:17 UTC the two in-character checks read the Watch under behaviour.out_of_character.v3, which no longer counts a payee's EIP-7702 account type as a reason when at least 100 registered agents paid it before; each Pass lists the definitions it used. The other six checks are unchanged. See /api/changepoints cp-2026-11-07-watch-v3."
         }
       ],
       "body_sha256": "1db6440f06db43ad8f06feea9ac3d55f21f68e64094d9195940184c68f8fe5a0",
@@ -703,9 +737,37 @@
       ],
       "source": "AFG-Pulse approval watch",
       "since": "2026-10-12",
+      "valid_until": "2026-11-06",
+      "superseded_by": "approval.unlimited.usd.v2",
       "revisions": [],
       "body_sha256": "ffe69fa62f1e40c9f545b8d1876572e9606b4f1c8ef6c28bf484b31bd11d44ad",
       "url": "https://agenticfinancegraph.com/def/approval.unlimited.usd.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "approval.unlimited.usd.v2",
+      "title": "Dollars behind standing unlimited approvals (each balance once)",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "approvals in the last 30 days; allowances and balances read at the time of the run",
+      "definition": "The sum, over the wallets in approval.unlimited.wallets.v1, of each wallet's current balance of each token for which it has at least one standing unlimited approval, counted once per wallet and token however many spenders hold such an approval: what those spenders together could move today. v1 summed the balance once per approval, so a wallet that had approved two spenders for the same token was counted twice; on 6 Nov 2026 (00:48 UTC run) v1 read $20,958.52 and v2 $17,936.16 across 916 wallets and 982 approvals (v1 14.4% higher).",
+      "method": "As approval.unlimited.usd.v1: ERC-20 Approval events whose owner is a paying agent wallet, on USDC, USDT, DAI, USDbC, EURC, WETH and cbBTC, plus Permit2 Approval and Permit events for the same tokens, read daily with eth_getLogs over the last 30 days; for each (wallet, spender, token) whose latest ERC-20 approval was unlimited (at least half of 2^256), the allowance still standing and the token balance read at run time from Base's public node; WETH and cbBTC at the latest stored ETH and BTC price, EURC at 1.08. Then one balance per (wallet, token). The per-approval sum is kept in /api/approvals as exposure.usd_behind_per_pair.",
+      "excludes": [
+        "Balances of tokens the wallet did not approve.",
+        "The second and later approvals of the same token by the same wallet (their balance is already counted)."
+      ],
+      "does_not_assert": [
+        "That the money is at risk from a specific spender: most spenders are routers, escrows and lending pools.",
+        "That the exposure is spread evenly: on 5 Nov 2026 one wallet held a third of it and ten wallets 83%."
+      ],
+      "supersedes": "approval.unlimited.usd.v1",
+      "source": "AFG-Pulse approval watch",
+      "since": "2026-11-06",
+      "revisions": [],
+      "body_sha256": "239b7ee8f0eadbc537ddf06198de96ecbdea5e8174a8907f28d890d52ff39de3",
+      "url": "https://agenticfinancegraph.com/def/approval.unlimited.usd.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -1107,6 +1169,8 @@
       "source": "afg-security-lab oochar/v2.mjs and docs/definitions/behaviour.out_of_character.v2.md, 2026-10-14; production: AFG-Pulse (afg-oochar, afg-intake gate routes), 16 Oct 2026",
       "since": "2026-10-16",
       "status": "shadow 16 Oct - 1 Nov 2026; advisory from 1 Nov 2026 (cp-2026-11-01-security-layer-advisory): computed by afg-oochar over counted payments of ranked agents and published with its reasons as a pattern for a human to read (coverage 16 Oct - 1 Nov was 22.4% of counted payments; since 2 Nov a queue covers every unscored payment of the last 35 days, see cp-2026-11-02-watch-coverage); nothing blocks and no incident opens from it; the drain_pattern detector remains the published rule",
+      "valid_until": "2026-11-07",
+      "superseded_by": "behaviour.out_of_character.v3",
       "revisions": [
         {
           "date": "2026-11-01",
@@ -1115,10 +1179,50 @@
         {
           "date": "2026-11-02",
           "what": "Correction of the status text, which said every counted payment of ranked agents was scored. From 16 October to 1 November the worker scored 538,825 of 2,402,995 counted payments (22.4%), from 4,402 of 24,779 agents: each run took the 300 agents with the newest payments and moved past the rest. From 2 November a queue covers every unscored counted payment of the last 35 days, and the payments still waiting are published with the scores. The body, weights and thresholds did not change; rates published so far describe the scored payments only. See /api/changepoints cp-2026-11-02-watch-coverage."
+        },
+        {
+          "date": "2026-11-07",
+          "what": "Superseded by behaviour.out_of_character.v3 from 08:17 UTC: new scores no longer add the delegated-payee reason when at least 100 registered agents paid the payee before the payment; scores written before keep this definition id. Pre-registered and evaluated first (afg-security-lab 5de77f2): identical on the evaluation data; 853 of 1,308 notable scores of the previous 7 days would have been none. See /api/changepoints cp-2026-11-07-watch-v3."
         }
       ],
       "body_sha256": "ec6c774e2602686d6bcbf9a0f68e11b5a27f6119947ad2ccc5ed85c287880d46",
       "url": "https://agenticfinancegraph.com/def/behaviour.out_of_character.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "behaviour.out_of_character.v3",
+      "title": "Out-of-character payment, v3: v2 without the delegated-payee reason for payees that 100 or more agents paid before",
+      "unit": "per counted payment: a score in [0, ∞) with public reasons and a level (none, notable at 0.9, major at 1.4), as v2",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "as v2 (the agent's whole counted-payment history before the payment, past only)",
+      "definition": "As v2, with one fixed change: the reason payee_7702_delegated (the payee is an EIP-7702 delegated account) is not added when at least 100 distinct registered agents paid the payee before the payment. Every other reason, weight and threshold is v2's.",
+      "method": "Pre-registered on 7 Nov 2026 at 08:10 UTC and committed alone before any v3 run (afg-security-lab 5de77f2, docs/definitions/behaviour.out_of_character.v3.md), with the rule for shipping fixed in advance: recall at notable on the 17 positives, recall on the synthetic positive control, and notable alerts per control agent-year no worse than v2. Results on the evaluation data of 14 Oct: identical to v2 on every figure (37 notable alerts over 47.70 control agent-years, 13 of 15 scoreable positives, 301 of 319 synthetic drains); the delegated-payee reason fired 10 times on controls and never on a positive. Replayed on the 2,688,687 payments scored in the 7 days to 7 Nov 08:00 UTC: 853 of 1,308 notable scores fall to none, the 455 others and all 244 major scores are unchanged. In production the payee count is past-only (agents that paid the payee before the payment).",
+      "excludes": [
+        "As v2."
+      ],
+      "does_not_assert": [
+        "As v2.",
+        "That a payee 100 agents pay is legitimate: v3 only stops counting its account type as a reason; the amount and novelty reasons still fire on it."
+      ],
+      "assumptions": [
+        "A payee paid by 100 or more registered agents is a service, and its account type says how the service runs, not that the paying agent's key was taken."
+      ],
+      "known_gaps": [
+        "v2 considered and rejected a general popularity dampener because 7 of 12 harmful payments in its base rates went to payees hundreds of agents pay. v3 is not that dampener: it removes one reason, which fired on no positive, and keeps every amount and novelty reason; recall on the positives is unchanged.",
+        "A drain destination shared across many victims could reach 100 payers; the amount reasons and the sweeper-delegate check still apply to it."
+      ],
+      "intended_use": "An advisory pattern for a human or an operator's policy to read, with fewer alerts on routine traffic to widely used services.",
+      "not_intended_for": [
+        "A verdict on an agent, a payee or the people behind them."
+      ],
+      "source": "AFG-Pulse Watch (lib/oochar.mjs), from 7 Nov 2026 08:17 UTC",
+      "since": "2026-11-07",
+      "supersedes": "behaviour.out_of_character.v2",
+      "revisions": [],
+      "body_sha256": "4e99db58f6d0f64ea730c748a24b88f27221b1e31f6a91809fe44438f8080594",
+      "url": "https://agenticfinancegraph.com/def/behaviour.out_of_character.v3",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -3906,7 +4010,16 @@
       ],
       "source": "AFG-Pulse income scan",
       "since": "2026-09-27",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-07",
+          "what": "Correction of the method text, which says every ranked wallet is re-read about twice a week. The reader takes 60 wallets a run, 8 runs a day, and the ranked set grew past that in October: on 7 Nov at 08:50 UTC, 2,640 of 46,509 ranked agents' bound wallets had ever been read for income and 1,276 in the last 7 days, so these figures are floors for a small part of the ranked set. Measured the other way for one payer: in the week of 30 Oct to 5 Nov one work escrow sent 6,048 transfers ($473,934.68) into bound wallets on chain, of which the ledger holds 142 ($11,348.03). A reader of large payers' outgoing transfers comes next, and the jump it makes will be registered."
+        },
+        {
+          "date": "2026-11-07",
+          "what": "From 10:28 UTC every ranked wallet is read: the incoming transfers of the four stablecoins come from the chain's Transfer logs by recipient (eth_getLogs from the first Base registration to block 54,209,693, then the sweep's logs on every run), and the per-wallet reader in the method text is a third route. Two rules were brought in line with the definition: the hop test judges the agent's wallet, not the sender's, and a transfer from another wallet bound to the same agent is a self-transfer. This figure: 1,937 at 07:57 UTC, 25,778 at 10:28 UTC. Income is money received, not earned: at 10:29 UTC payments from other agents' wallets were 0.9% of it. Compare from 8 November. See /api/changepoints cp-2026-11-07-income-coverage and cp-2026-11-07-income-hop-rule."
+        }
+      ],
       "body_sha256": "00339623b21667eb11ee02fb5e5e7d77dd513e600b76817d3f4823425e29ace5",
       "url": "https://agenticfinancegraph.com/def/income.actors.30d.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -3929,7 +4042,16 @@
       ],
       "source": "AFG-Pulse income scan",
       "since": "2026-09-27",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-07",
+          "what": "Correction of the method text, which says every ranked wallet is re-read about twice a week. The reader takes 60 wallets a run, 8 runs a day, and the ranked set grew past that in October: on 7 Nov at 08:50 UTC, 2,640 of 46,509 ranked agents' bound wallets had ever been read for income and 1,276 in the last 7 days, so these figures are floors for a small part of the ranked set. Measured the other way for one payer: in the week of 30 Oct to 5 Nov one work escrow sent 6,048 transfers ($473,934.68) into bound wallets on chain, of which the ledger holds 142 ($11,348.03). A reader of large payers' outgoing transfers comes next, and the jump it makes will be registered."
+        },
+        {
+          "date": "2026-11-07",
+          "what": "From 10:28 UTC every ranked wallet is read: the incoming transfers of the four stablecoins come from the chain's Transfer logs by recipient (eth_getLogs from the first Base registration to block 54,209,693, then the sweep's logs on every run), and the per-wallet reader in the method text is a third route. Two rules were brought in line with the definition: the hop test judges the agent's wallet, not the sender's, and a transfer from another wallet bound to the same agent is a self-transfer. This figure: 2,519 at 07:57 UTC, 30,101 at 10:28 UTC. Income is money received, not earned: at 10:29 UTC payments from other agents' wallets were 0.9% of it. Compare from 8 November. See /api/changepoints cp-2026-11-07-income-coverage and cp-2026-11-07-income-hop-rule."
+        }
+      ],
       "body_sha256": "7315dcb06f50248e0ff1ac2fcf4af366a21d2342d5855d530c18edf05d0755fa",
       "url": "https://agenticfinancegraph.com/def/income.actors.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -3952,7 +4074,16 @@
       ],
       "source": "AFG-Pulse income scan",
       "since": "2026-09-27",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-07",
+          "what": "Correction of the method text, which says every ranked wallet is re-read about twice a week. The reader takes 60 wallets a run, 8 runs a day, and the ranked set grew past that in October: on 7 Nov at 08:50 UTC, 2,640 of 46,509 ranked agents' bound wallets had ever been read for income and 1,276 in the last 7 days, so these figures are floors for a small part of the ranked set. Measured the other way for one payer: in the week of 30 Oct to 5 Nov one work escrow sent 6,048 transfers ($473,934.68) into bound wallets on chain, of which the ledger holds 142 ($11,348.03). A reader of large payers' outgoing transfers comes next, and the jump it makes will be registered."
+        },
+        {
+          "date": "2026-11-07",
+          "what": "From 10:28 UTC every ranked wallet is read: the incoming transfers of the four stablecoins come from the chain's Transfer logs by recipient (eth_getLogs from the first Base registration to block 54,209,693, then the sweep's logs on every run), and the per-wallet reader in the method text is a third route. Two rules were brought in line with the definition: the hop test judges the agent's wallet, not the sender's, and a transfer from another wallet bound to the same agent is a self-transfer. This figure: 55,634 at 07:57 UTC, 3,310,142 at 10:28 UTC. Income is money received, not earned: at 10:29 UTC payments from other agents' wallets were 0.9% of it. Compare from 8 November. See /api/changepoints cp-2026-11-07-income-coverage and cp-2026-11-07-income-hop-rule."
+        }
+      ],
       "body_sha256": "a2a2a5a8e79932e4b6811e872853213abdcfddb341da323684d22427dfc3f539",
       "url": "https://agenticfinancegraph.com/def/income.events.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -3975,7 +4106,12 @@
       ],
       "source": "AFG-Pulse income scan",
       "since": "2026-09-27",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-07",
+          "what": "From 10:28 UTC every ranked wallet is read: the incoming transfers of the four stablecoins come from the chain's Transfer logs by recipient (eth_getLogs from the first Base registration to block 54,209,693, then the sweep's logs on every run), and the per-wallet reader in the method text is a third route. Two rules were brought in line with the definition: the hop test judges the agent's wallet, not the sender's, and a transfer from another wallet bound to the same agent is a self-transfer. This figure: -$8,086,604.25 at 07:57 UTC, +$4,872,302.35 at 10:28 UTC. Income is money received, not earned: at 10:29 UTC payments from other agents' wallets were 0.9% of it. Compare from 8 November. See /api/changepoints cp-2026-11-07-income-coverage and cp-2026-11-07-income-hop-rule."
+        }
+      ],
       "body_sha256": "e8670833388bba0304cdfa32a7e211c12ba4633e062e1b0ab3ed0913c95bed04",
       "url": "https://agenticfinancegraph.com/def/income.netflow.30d.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -3996,7 +4132,16 @@
       ],
       "source": "AFG-Pulse income scan",
       "since": "2026-09-27",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-07",
+          "what": "Correction of the method text, which says every ranked wallet is re-read about twice a week. The reader takes 60 wallets a run, 8 runs a day, and the ranked set grew past that in October: on 7 Nov at 08:50 UTC, 2,640 of 46,509 ranked agents' bound wallets had ever been read for income and 1,276 in the last 7 days, so these figures are floors for a small part of the ranked set. Measured the other way for one payer: in the week of 30 Oct to 5 Nov one work escrow sent 6,048 transfers ($473,934.68) into bound wallets on chain, of which the ledger holds 142 ($11,348.03). A reader of large payers' outgoing transfers comes next, and the jump it makes will be registered."
+        },
+        {
+          "date": "2026-11-07",
+          "what": "From 10:28 UTC every ranked wallet is read: the incoming transfers of the four stablecoins come from the chain's Transfer logs by recipient (eth_getLogs from the first Base registration to block 54,209,693, then the sweep's logs on every run), and the per-wallet reader in the method text is a third route. Two rules were brought in line with the definition: the hop test judges the agent's wallet, not the sender's, and a transfer from another wallet bound to the same agent is a self-transfer. This figure: 9,406 at 07:57 UTC, 37,216 at 10:28 UTC. Income is money received, not earned: at 10:29 UTC payments from other agents' wallets were 0.9% of it. Compare from 8 November. See /api/changepoints cp-2026-11-07-income-coverage and cp-2026-11-07-income-hop-rule."
+        }
+      ],
       "body_sha256": "83ce440f8ea54efcc820b4fe03c129eb99beefac5767c07c813845be12f5710f",
       "url": "https://agenticfinancegraph.com/def/income.payers.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -4019,7 +4164,16 @@
       ],
       "source": "AFG-Pulse income scan",
       "since": "2026-09-27",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-07",
+          "what": "Correction of the method text, which says every ranked wallet is re-read about twice a week. The reader takes 60 wallets a run, 8 runs a day, and the ranked set grew past that in October: on 7 Nov at 08:50 UTC, 2,640 of 46,509 ranked agents' bound wallets had ever been read for income and 1,276 in the last 7 days, so these figures are floors for a small part of the ranked set. Measured the other way for one payer: in the week of 30 Oct to 5 Nov one work escrow sent 6,048 transfers ($473,934.68) into bound wallets on chain, of which the ledger holds 142 ($11,348.03). A reader of large payers' outgoing transfers comes next, and the jump it makes will be registered."
+        },
+        {
+          "date": "2026-11-07",
+          "what": "From 10:28 UTC every ranked wallet is read: the incoming transfers of the four stablecoins come from the chain's Transfer logs by recipient (eth_getLogs from the first Base registration to block 54,209,693, then the sweep's logs on every run), and the per-wallet reader in the method text is a third route. Two rules were brought in line with the definition: the hop test judges the agent's wallet, not the sender's, and a transfer from another wallet bound to the same agent is a self-transfer. This figure: $912,254.40 at 07:57 UTC, $13,885,198.37 at 10:28 UTC. Income is money received, not earned: at 10:29 UTC payments from other agents' wallets were 0.9% of it. Compare from 8 November. See /api/changepoints cp-2026-11-07-income-coverage and cp-2026-11-07-income-hop-rule."
+        }
+      ],
       "body_sha256": "69c81a693d9dd84eb3c56ddacb501450a4a661c6acd37ec5e403850e578b35b7",
       "url": "https://agenticfinancegraph.com/def/income.usd.30d.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -4045,7 +4199,16 @@
       ],
       "source": "AFG-Pulse income scan",
       "since": "2026-09-27",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-07",
+          "what": "Correction of the method text, which says every ranked wallet is re-read about twice a week. The reader takes 60 wallets a run, 8 runs a day, and the ranked set grew past that in October: on 7 Nov at 08:50 UTC, 2,640 of 46,509 ranked agents' bound wallets had ever been read for income and 1,276 in the last 7 days, so these figures are floors for a small part of the ranked set. Measured the other way for one payer: in the week of 30 Oct to 5 Nov one work escrow sent 6,048 transfers ($473,934.68) into bound wallets on chain, of which the ledger holds 142 ($11,348.03). A reader of large payers' outgoing transfers comes next, and the jump it makes will be registered."
+        },
+        {
+          "date": "2026-11-07",
+          "what": "From 10:28 UTC every ranked wallet is read: the incoming transfers of the four stablecoins come from the chain's Transfer logs by recipient (eth_getLogs from the first Base registration to block 54,209,693, then the sweep's logs on every run), and the per-wallet reader in the method text is a third route. Two rules were brought in line with the definition: the hop test judges the agent's wallet, not the sender's, and a transfer from another wallet bound to the same agent is a self-transfer. This figure: $3,761,583.76 at 07:57 UTC, $57,759,142.00 at 10:28 UTC. Income is money received, not earned: at 10:29 UTC payments from other agents' wallets were 0.9% of it. Compare from 8 November. See /api/changepoints cp-2026-11-07-income-coverage and cp-2026-11-07-income-hop-rule."
+        }
+      ],
       "body_sha256": "3906c504b9fc0341a8da88c52a4a2983a4b70650782d54c73e0a94803eb0749a",
       "url": "https://agenticfinancegraph.com/def/income.usd.total.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -6718,6 +6881,36 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "rank.shape.v1",
+      "title": "Shape of the whole rank: concentration and bands of every ranked agent",
+      "unit": "shares (0–1), counts of actors and USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time, at the roster's measurement time",
+      "definition": "Over every agent at L7 or above (rank.l7plus.v2) in the published roster, each with its lifetime counted payments (the same per-agent total as the ranked table): the share of their combined counted USD held by the 25, 100 and 1,000 agents with the most; the number of agents, and their share of that USD, in bands of counted USD (under $1, $1–10, $10–100, $100–1,000, $1,000–10,000, $10,000 or more) and of number of counted payments (1, 2–9, 10–99, 100–999, 1,000 or more); the number of agents by distinct receiving addresses (1, 2, 3–9, 10 or more); and the median agent's counted USD and number of payments. A value on a band edge belongs to the higher band.",
+      "method": "Computed by the serve layer from the roster behind /api/agents (state/agents-index.json) on each new roster version; nothing here is a separate measurement. Checked on 6 November 2026 at 22:57 UTC against a direct query of the counted payments (money_events) over the same 30,440 agents: the same total ($52,137,627.21), the same three shares (0.4075, 0.6037, 0.7711), the same count in every band and the same medians ($9.15, 31 payments).",
+      "excludes": [
+        "Everything the counted payments exclude (pay.usd.total.v3): history before the registration, routing hops and loop returns, payments without a read receipt.",
+        "Agents below L7. Their counted payments, money that never left their control (on 6 November 2026, 559 agents and $4,266,235), are in observed_pay_usd_total but not in this total."
+      ],
+      "does_not_assert": [
+        "That counted USD is spending: about half of all counted value went into positions the payers still hold (pay.composition.v1).",
+        "That an agent in a high band runs a working service, or that one in a low band does not: the bands count money and payments, not work.",
+        "That the agents with the most are independent of each other: one operator can run many of them (cluster.ratio.v1)."
+      ],
+      "assumptions": "Each roster row's payment totals are the counted payments the headline figures use, grouped by the agent whose bound wallet paid.",
+      "known_gaps": "No history is kept yet: the shape follows the current roster, which is rebuilt every few hours. Distinct receiving addresses are counted over all time, not as the 30-day independent counterparties of rank.l9.v4.",
+      "intended_use": "Seeing how value and activity spread across all ranked agents without the full list, so a reader can judge the long tail behind the free top 25.",
+      "not_intended_for": "Evaluating natural persons, credit decisions, or findings of wrongdoing about any agent or operator.",
+      "source": "AFG serve layer over the AFG-Pulse roster",
+      "since": "2026-11-06",
+      "revisions": [],
+      "body_sha256": "6bb5cd6f46ecaef38a00956fed8487df03f6f64001a2d5409f289222633505b8",
+      "url": "https://agenticfinancegraph.com/def/rank.shape.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "rank.survival.km.v1",
       "title": "Time from registration to first counted payment",
       "unit": "share of identities",
@@ -8043,9 +8236,49 @@
       ],
       "source": "AFG-Pulse delegation sweep",
       "since": "2026-09-06",
+      "valid_until": "2026-11-07",
+      "superseded_by": "wallet.7702.rate.v2",
       "revisions": [],
       "body_sha256": "a5d73f3341b4f48fe70b179c6f9a19c53ec4c7c7e72a7da33abc1b20ea15de64",
       "url": "https://agenticfinancegraph.com/def/wallet.7702.rate.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "wallet.7702.rate.v2",
+      "title": "Share of ranked agents' wallets that have delegated",
+      "unit": "ratio (0–1)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "current",
+      "definition": "Bound wallets of ranked agents (L7 or above, a counted payment seen) that carry an EIP-7702 delegation designator, divided by those bound wallets whose code we have read. Written only when at least 99% of them have been read.",
+      "method": "A delegated account's code is exactly 23 bytes: the 0xef0100 prefix followed by the implementation address. Code is read by the delegation reader (eth_getCode, 900 bound wallets a run, delegated ones re-read sooner) and by the wallet investigator, which reads wallets that paid before the others. The population is the live bindings of agents at L7 or above at the moment of the run.",
+      "excludes": [
+        "Wallets of agents below L7: since 30 October 2026 about 10,000 more of them are read each day, so a share over every read wallet moves with the order of reading (wallet.7702.rate.v1).",
+        "Wallets whose code we failed to read."
+      ],
+      "does_not_assert": [
+        "That delegation is dangerous. It is how a wallet gets batching, sponsorship and session keys.",
+        "That the wallet's owner understands what the implementation does. That is the actual risk, and it is not measurable from the designator.",
+        "Anything about registrations that never paid; they are outside the population."
+      ],
+      "assumptions": [
+        "A ranked agent's bound wallets are the wallets that signed or received its counted payments, so their code is the code its money runs on."
+      ],
+      "known_gaps": [
+        "A wallet that delegates or revokes between two reads keeps its last reading: delegated wallets are re-read sooner than undelegated ones."
+      ],
+      "intended_use": "How common delegated wallet code is among AI agents seen paying on Base, as a series comparable from 7 November 2026.",
+      "not_intended_for": [
+        "Rating an agent or the people behind it.",
+        "Comparing with wallet.7702.rate.v1 values; the populations differ."
+      ],
+      "source": "AFG-Pulse delegation sweep",
+      "since": "2026-11-07",
+      "supersedes": "wallet.7702.rate.v1",
+      "revisions": [],
+      "body_sha256": "badd85ac083248a3365f749c41e85a0ff6496ab4cd228983fa28a11160f64114",
+      "url": "https://agenticfinancegraph.com/def/wallet.7702.rate.v2",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
