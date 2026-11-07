@@ -26,6 +26,10 @@ An implementation that measures another chain or asset must say so and must not 
   - Method 3, declared: the `agentWallet` named in the registration file.
   - Bindings are closed, never deleted, when the NFT changes owner or the declaration changes.
 - **Payment.** A `Transfer` event of one of the assets above whose sender is a bound wallet, identified by `(transaction hash, log index)`.
+- **Definition.** Every published figure names one frozen definition (`/api/def?id=<id>`) with `title`, `unit`, `chain_set`, `window`, `definition`, `method`, `excludes[]`, `does_not_assert[]`, `source` and `since`. A body never changes after publication: a change is a new id with `supersedes`, and the old id keeps `superseded_by` and `valid_until`; dated notes about a body are `revisions`.
+  - `excludes[]` may be empty: an empty array means nothing is excluded by design (51 of 376 ids on 7 November 2026).
+  - `assumptions`, `known_gaps`, `intended_use`, `not_intended_for` and `cost_to_fake` are optional in 1.0; the rank ids carry `cost_to_fake`.
+  - `chain_set` is a CAIP-2 chain id, or a list of them, where a figure reads named chains; otherwise one of `multi-chain`, `all chains`, `n/a (our own database)` or a named off-chain source. Older bodies that say `Base` mean `eip155:8453`; frozen bodies are not rewritten to say so.
 
 **Proposed for v0.2: binding tiers.** Tier A is declared by the registration or confirmed by its operator. Tier B is a holder wallet with evidence of automation: a smart account or EIP-7702 delegation, bundler or relayer submission, paymaster-paid gas, x402 settlement, or machine-regular timing. Tier C is a holder wallet with none of these. Today almost all counted money comes from method-1 wallets, so part of it can be the owner's own spending.
 

@@ -8,6 +8,7 @@
 
 - **`scripts/check-spec.mjs` runs in CI** (spec 1.0 gaps 11, 12 and 16): every id cited in `SPEC.md` exists in `definitions.json`; a superseded id is cited only on a history line; the export's `count` matches its contents; the check count in `README.md` matches `checks.json`; and a warning, not a failure, when the export count differs from the live site.
 - **`README.md`** states 55 checks, the number `checks.json` holds (it said 50).
+- **`SPEC.md` section 2 states the definition schema** (spec 1.0 gaps 1, 3 and 7): an empty `excludes[]` means nothing is excluded by design; `assumptions`, `known_gaps`, `intended_use`, `not_intended_for` and `cost_to_fake` are optional; `chain_set` is CAIP-2 or one of a fixed vocabulary, and older bodies that say `Base` mean `eip155:8453`.
 
 ## 0.11 — 7 November 2026
 
