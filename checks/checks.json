@@ -309,7 +309,7 @@
       "severity": "warn",
       "weight": 3,
       "what": "An agent has a payment that qualifies for L7 under ladder v2 (counted, not inferred, left its control) but is still ranked below L7: a promotion is pending until the next rank run (afg-payer, every 3 h).",
-      "sql": "SELECT a.actor_id, a.liveness FROM actors a WHERE a.liveness < 7 AND EXISTS ( SELECT 1 FROM money_events m WHERE m.actor_id = a.actor_id AND )"
+      "sql": "SELECT a.actor_id, a.liveness FROM actors a JOIN dq_left_control lc USING (actor_id) WHERE a.liveness < 7"
     },
     {
       "id": "actor_rank_evidence_withdrawn",
@@ -318,7 +318,7 @@
       "severity": "warn",
       "weight": 2,
       "what": "An agent ranked L7+ no longer has a payment that left its control (a position, own-address or bridged-back finding arrived after the last rank run). The next rank run (afg-payer, every 3 h) takes it down; a warning, so the gate does not stall publishing for up to three hours.",
-      "sql": "SELECT a.actor_id, a.liveness FROM actors a WHERE a.liveness >= 7 AND NOT EXISTS ( SELECT 1 FROM money_events m WHERE m.actor_id = a.actor_id AND )"
+      "sql": "SELECT a.actor_id, a.liveness FROM actors a WHERE a.liveness >= 7 AND NOT EXISTS (SELECT 1 FROM dq_left_control lc WHERE lc.actor_id = a.actor_id)"
     },
     {
       "id": "actor_unmeasured_l6",
