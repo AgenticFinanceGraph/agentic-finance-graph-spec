@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-11-07T10:38:05.219Z",
+  "exported_at": "2026-11-07T11:39:40.116Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 375,
+  "count": 376,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -4054,6 +4054,43 @@
       ],
       "body_sha256": "7315dcb06f50248e0ff1ac2fcf4af366a21d2342d5855d530c18edf05d0755fa",
       "url": "https://agenticfinancegraph.com/def/income.actors.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "income.composition.v1",
+      "title": "What agent income consists of, by sender",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time since each registration's mint block, as income.usd.total.v1",
+      "definition": "The counted set of income.usd.total.v1 (stablecoin transfers into ranked agents' bound wallets, after registration, not a routing hop, hop answer known, not from another wallet of the same agent), taken apart in one pass by sender, each transfer in exactly one part, in this order: work_escrow, yield_vault, lending, swap and bridge = the sender is a contract our counterparty label map puts in that category; labelled_other = any other labelled category; agent_to_agent = the sender is a wallet bound to another ERC-8004 registration; x402_sellers = the sender is the payTo address of a seller listed in Coinbase's x402 Bazaar; unnamed = everything else. comp_income_total_usd is the total of the same pass, so the parts add up to it exactly.",
+      "method": "One grouping of the income rows by sender inside the income scan run, every three hours, after the income figures; every part is written with the same timestamp. Labels are the counterparty map's (config/counterparty_labels.json), each with a citable basis. Metric keys: comp_income_total_usd and comp_income_<part>_usd.",
+      "excludes": [
+        "Everything income.usd.total.v1 excludes: routing hops, transfers before registration, transfers whose hop answer is not known yet, and transfers from another wallet of the same agent."
+      ],
+      "does_not_assert": [
+        "That income is earned. A withdrawal from a vault, the proceeds of a swap, a bridge arrival and an operator's top-up are all income here; the parts exist so that a reader can see how much of it is which.",
+        "That an unnamed sender is a customer: unnamed means only that we have not labelled the sender.",
+        "That agent_to_agent is commerce between independent parties: two agents can share an operator."
+      ],
+      "assumptions": [
+        "A contract's category is what its verified code does (the label map's rule), not who runs it."
+      ],
+      "known_gaps": [
+        "Labels cover a few dozen contracts; the largest unnamed senders are reviewed by hand and labelled only with a citable basis.",
+        "A sender that is an operator's own wallet bound to no agent is unnamed, not excluded."
+      ],
+      "intended_use": "Reading the income headline: how much of what agents receive comes from other agents, from work escrow, or from their own positions and conversions.",
+      "not_intended_for": [
+        "Rating an agent or the people behind it.",
+        "Calling any part revenue without reading the part's rule."
+      ],
+      "source": "AFG-Pulse income scan",
+      "since": "2026-11-07",
+      "revisions": [],
+      "body_sha256": "134c5f009db6993119a6431dbc818cdb448e14cda73cb8a0a4190a51a60fc10d",
+      "url": "https://agenticfinancegraph.com/def/income.composition.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
