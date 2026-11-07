@@ -1,6 +1,6 @@
 # The Agentic Finance Graph accounting specification
 
-**Version 0.11.1 (draft), 7 November 2026.** Licence: CC BY 4.0.
+**Version 0.11.2 (draft), 7 November 2026.** Licence: CC BY 4.0.
 
 This document states how Agentic Finance Graph counts money held and spent by AI agents: which transfers count as an agent paying someone, which are excluded and why, how an agent is ranked, and how the counting is checked. It is written so that anyone can implement it from public chain data and compare their numbers with ours. Where this document and a definition in [`definitions/definitions.json`](definitions/definitions.json) disagree, the definition wins; definitions are frozen once published (a breaking change is a new id ending `.v2`, never an edit to `.v1`).
 
@@ -126,7 +126,7 @@ A signed tree head (size, root hash, time; Ed25519, `afg-statement-log:v1:<size>
 
 ## 8. Test vectors
 
-[`test-vectors/classified-payments.json`](test-vectors/classified-payments.json) lists real Base transfers with the class our rules gave them: `counted_left_control`, `counted_own_position`, `excluded_pass_through`, `excluded_pre_registration`. An implementation should assign the same classes from the chain alone: the transaction receipt, the registration's mint block and the recipient's category.
+[`test-vectors/classified-payments.json`](test-vectors/classified-payments.json) lists real Base transfers with the class our rules gave them: `counted_left_control`, `counted_own_position`, `excluded_pass_through`, `excluded_pre_registration`, `excluded_own_address` (`pay.excluded.ownaddress.v1`), `counted_bridged_back_to_payer` (counted, but taken out of `pay.usd.leftcontrol.netbridge.v1`) and `counted_own_position_not_l7` (a counted deposit into the agent's own position that does not earn L7 under `rank.l7plus.v2`); the file names each class. An implementation should assign the same classes from the chain alone: the transaction receipt, the registration's mint block and the recipient's category.
 
 ## 9. What this specification does not claim
 
@@ -136,4 +136,4 @@ A signed tree head (size, root hash, time; Ed25519, `afg-statement-log:v1:<size>
 
 ## 10. Citing
 
-Agentic Finance Graph, *Accounting specification for machine money*, v0.11.1, 7 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.
+Agentic Finance Graph, *Accounting specification for machine money*, v0.11.2, 7 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.

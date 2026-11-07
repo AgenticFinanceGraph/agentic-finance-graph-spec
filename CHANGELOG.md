@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.2 — 7 November 2026
+
+Test vectors only; no definition or check changed (spec 1.0 gap 13).
+
+- **`test-vectors/classified-payments.json`: 36 real Base transfers in seven classes** (was 24 in four). New: `excluded_own_address` (to one of the agent's own addresses, `pay.excluded.ownaddress.v1`), `counted_bridged_back_to_payer` (a counted bridge leg whose money arrived at the paying wallet's own address on another chain, taken out of `pay.usd.leftcontrol.netbridge.v1`) and `counted_own_position_not_l7` (a counted deposit into the agent's own position, from an agent below L7: it does not earn L7 under `rank.l7plus.v2`). The file now names every class.
+- **`excluded_pass_through` rows are routing hops only**: rows that are own-address transfers or loop returns, which are also flagged in our table, are no longer drawn into that class.
+
 ## 0.11.1 — 7 November 2026
 
 376 definitions (1 new), re-exported verbatim at 11:39 UTC on 7 November 2026; checks and test vectors unchanged.
