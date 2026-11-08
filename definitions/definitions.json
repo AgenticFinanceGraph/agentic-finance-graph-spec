@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-11-07T11:44:06.423Z",
+  "exported_at": "2026-11-08T07:27:01.013Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 376,
+  "count": 380,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -414,6 +414,37 @@
       "revisions": [],
       "body_sha256": "c5a5014416b2424ed41faa999eadb3cdd18c0e5a516be61aecde113fe777b184",
       "url": "https://agenticfinancegraph.com/def/acp.zerorate.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "address.facts.v1",
+      "title": "Address facts: what we know of every address agents paid",
+      "unit": "addresses",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time, refreshed every three hours",
+      "definition": "One row per Base address that a registered agent paid with a counted payment (pay.usd.total.v3 rules): its code type (EOA, EIP-7702 delegated EOA, contract) and delegate implementation; our label and category if it has one; the number of distinct agents that paid it, the number and USD of those payments, the first and last; whether it is itself a wallet bound to a registration; whether it is the payTo of a seller listed in the x402 Bazaar; whether it appeared as a look-alike in address poisoning against agents; and the stablecoin issuers whose latest freeze-list action on it was a freeze.",
+      "method": "Written by the counterparty-map run as state/address-facts.json and served at /api/address-facts (one address with ?address=, or pages of up to 5,000 rows, most-paid first). Code type from eth_getCode (counterparties); labels from the label map, each with a citable basis; poisoning look-alikes from the poisoning watch; freezes from issuer freeze events on chain.",
+      "excludes": [
+        "Addresses paid only with payments that are not counted (routing hops, before registration, receipt not read).",
+        "Payments on chains other than Base."
+      ],
+      "does_not_assert": [
+        "A risk score or a verdict on any address.",
+        "Who owns or operates an address: a label describes what the code does, never a company.",
+        "That an address not in the feed is safe: absence means no counted agent payment, nothing else."
+      ],
+      "intended_use": "A data feed for wallet-security vendors and payment checks: the facts we hold about a payee, each with its source, in one row.",
+      "not_intended_for": [
+        "Rating a person.",
+        "Blocking payments on our behalf: we never block."
+      ],
+      "source": "AFG-Pulse counterparty map",
+      "since": "2026-11-08",
+      "revisions": [],
+      "body_sha256": "dd6992e313bf52373ff2b86bfe67a0b1f1bd408788ff6ee2fbd05f6a50ae62e9",
+      "url": "https://agenticfinancegraph.com/def/address.facts.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -5188,6 +5219,38 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "pay.composition.by_binding.v1",
+      "title": "Counted spending by how the paying wallet is tied to the agent",
+      "unit": "USD",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "all time since each registration's mint block, as pay.usd.total.v3",
+      "definition": "The counted set of pay.usd.total.v3 taken apart in one pass by the binding of the paying wallet to the agent, each payment in exactly one part, in this order: declared = the registration names the wallet as its agentWallet (binding method 3); minter = the account the registration was minted to, bound as a second wallet (method 6, binding.minter.v1); holder = the wallet that holds the registration NFT (method 1); other = any other binding. bind_comp_total_usd is the total of the same pass, so the parts add up to it exactly.",
+      "method": "One grouping of the counted payments joined to bindings by agent and wallet, inside the counterparty-map run, every three hours. Metric keys: bind_comp_total_usd and bind_comp_<part>_usd.",
+      "excludes": [
+        "Everything pay.usd.total.v3 excludes."
+      ],
+      "does_not_assert": [
+        "That holder payments are the owner's own spending, or that they are the agent's: the holder of the registration NFT can be a person, an operator's treasury or the agent's own account, and the chain does not say which.",
+        "That a declared wallet is controlled by software: the registration says so; we do not check who signs."
+      ],
+      "assumptions": [
+        "A binding records how a wallet is tied to a registration (SPEC.md section 2); a wallet can carry more than one, and the order above picks one."
+      ],
+      "intended_use": "Reading 'agent spending' honestly: how much of it comes from wallets the registry itself names as the agent's, and how much from the wallet that holds the identity.",
+      "not_intended_for": [
+        "Rating an agent or the people behind it.",
+        "Deciding whether a person or a program made a payment."
+      ],
+      "source": "AFG-Pulse counterparty map",
+      "since": "2026-11-08",
+      "revisions": [],
+      "body_sha256": "6c782110e832e8a5631ebf30c493f306fc8391edfae01cafcff0feb0abe1540b",
+      "url": "https://agenticfinancegraph.com/def/pay.composition.by_binding.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "pay.composition.v1",
       "title": "What counted spending consists of",
       "unit": "USD",
@@ -5753,6 +5816,36 @@
       "revisions": [],
       "body_sha256": "4c91d6522f1878b776e0191df190d270729ec68a94a54c1aea43f66349c51ebd",
       "url": "https://agenticfinancegraph.com/def/platform.sdr.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.copy_lag.median.bykind.v1",
+      "title": "Copy lag of address-poisoning plants, median, by kind",
+      "unit": "minutes",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "payments made 1 to 14 days before the run",
+      "definition": "For each kind of plant (fake_symbol, zero_value, lookalike_token, tiny_transfer), the median time from an agent's payment to the first plant of that kind on the same wallet whose address matches the payee on the first 4 and last 4 hex characters but is a different address, within 7 days. Same rule as poison.copy_lag.median.v1, split by kind; a kind with fewer than 5 matched payments is not written.",
+      "method": "One query over poison_payments and poison_events in the poisoning watch run (hourly). Metric keys: poison_copy_lag_median_min_<kind>.",
+      "excludes": [
+        "Payments under a day old (their plants may not have arrived yet).",
+        "Plants on another wallet than the one that paid.",
+        "Kinds with fewer than 5 matched payments in the window."
+      ],
+      "does_not_assert": [
+        "That a plant caused a loss: losses are poison.losses.v2.",
+        "Who sends the plants, or that one sender sends one kind."
+      ],
+      "intended_use": "How fast each kind of poisoner copies an agent's payee, so a check before paying knows how long a look-alike can sit in the history.",
+      "not_intended_for": [
+        "Rating an agent or the people behind it."
+      ],
+      "source": "AFG-Pulse poisoning watch",
+      "since": "2026-11-08",
+      "revisions": [],
+      "body_sha256": "973f57a610677b1ee6b3b4ff64faf3e1c6c6ca20fbf53553ab6a7b1aded1f542",
+      "url": "https://agenticfinancegraph.com/def/poison.copy_lag.median.bykind.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -6965,7 +7058,12 @@
       ],
       "source": "AFG-Pulse investigations (own tables)",
       "since": "2026-09-27",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-07",
+          "what": "The three survival_paid_365d_* figures are the Kaplan-Meier estimate at the longest follow-up observed, not at 365 days: the first Base registration is from 3 February 2026, 277 days before 7 November 2026, so the curve ends there, and the figures can only become 365-day readings from 3 February 2027. Read them as the share that paid within the follow-up we have. The finding that quotes them says so from 7 November."
+        }
+      ],
       "body_sha256": "ab6fb8f2f10e9d8967cba26db04ee1cf251240bd2eee391e7f3686f169fc3e79",
       "url": "https://agenticfinancegraph.com/def/rank.survival.km.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -7643,6 +7741,31 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "sol.agents.listed_custody.v1",
+      "title": "Solana agents held in a marketplace custody account",
+      "unit": "registrations",
+      "chain_set": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp (Solana mainnet)",
+      "window": "current",
+      "definition": "Live (not burnt) registrations in the Metaplex agent registry whose owner of record is a known marketplace custody account, so the asset is listed for sale and the seller is not on record. Known custody accounts are added one by one after reading the account's owner program on chain.",
+      "method": "Read by the Solana agents job with the owner of record (DAS getAssets). Custody accounts known on 8 Nov 2026: 1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix, a program-derived account of program M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K (Magic Eden V2). Metric key: solana_agents_listed_custody.",
+      "excludes": [
+        "Burnt registrations.",
+        "Custody accounts of marketplaces not yet identified."
+      ],
+      "does_not_assert": [
+        "Who the seller is.",
+        "That a listed agent is inactive: listing moves the asset, not the agent's wallet."
+      ],
+      "source": "AFG-Pulse Solana agents",
+      "since": "2026-11-08",
+      "revisions": [],
+      "body_sha256": "8f8a8be9b51590bd4a40dc79a03f087183657cefa1b2cc95b9836f9473cd4ee3",
+      "url": "https://agenticfinancegraph.com/def/sol.agents.listed_custody.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "sol.agents.pay.30d.v1",
       "title": "What Solana agents and their owners paid, last 30 days",
       "unit": "wallets / USD / transfers",
@@ -7687,7 +7810,12 @@
       ],
       "source": "AFG-Pulse Solana agents (afg-solagents)",
       "since": "2026-10-03",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-08",
+          "what": "From the 07:01 UTC run, solana_agent_owners and solana_agent_top_owner_share leave out owners of record that are known marketplace custody accounts: an asset listed for sale is held by the market, not its seller. On 8 November one such account, Magic Eden V2's custody account, held 5 registrations; owners moved from 669 to 668. Those registrations are counted in sol.agents.listed_custody.v1. See /api/changepoints cp-2026-11-08-sol-listed-custody."
+        }
+      ],
       "body_sha256": "47190456ecc5e4615abf7b46d9a677b4eb29b4dcfd4f69c835e646414a01063a",
       "url": "https://agenticfinancegraph.com/def/sol.agents.registered.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",

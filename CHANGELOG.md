@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.3 — 8 November 2026
+
+380 definitions (4 new), re-exported verbatim at 07:27 UTC; checks and test vectors unchanged.
+
+- **`address.facts.v1`:** every Base address that registered agents paid, with code type and EIP-7702 implementation, label, agents and USD that paid it, agent-wallet and x402-seller flags, poisoning look-alike and issuer-freeze flags, served at `/api/address-facts`. Facts, not a score.
+- **`pay.composition.by_binding.v1`:** counted spending by how the paying wallet is tied to the agent. On 8 November at 07:10 UTC, 99.4% came from the wallet holding the registration NFT, 0.6% from minting accounts bound as second wallets, and $554.70 from wallets the registrations declare as their own.
+- **`poison.copy_lag.median.bykind.v1`:** copy lag of poisoning plants by kind. Median for payments 1 to 14 days old: fake-symbol about 21.5 h, look-alike token about 24 h, zero-value under 8 minutes.
+- **`sol.agents.listed_custody.v1`:** Solana registrations held by a marketplace custody account (listed for sale), left out of the owner figures. Revision on `sol.agents.registered.v1`, register entry `cp-2026-11-08-sol-listed-custody`.
+- **Revisions:** `rank.survival.km.v1` (the 365-day keys are the Kaplan-Meier value at the 277-day follow-up). Register entry `cp-2026-11-07-wallet-code-backlog` (830,600 wallets' code read on 7 November).
+
 ## 0.11.2 — 7 November 2026
 
 Test vectors only; no definition or check changed (spec 1.0 gap 13).
