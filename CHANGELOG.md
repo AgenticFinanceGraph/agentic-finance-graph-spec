@@ -1,5 +1,11 @@
 # Changelog
 
+## Fixture of 16 November 2026 (no release)
+
+- **`fixtures/erc8004-base-grounded-feedback-v2-2026-11-16.csv`: feedback that follows a payment, under rule v2.** The paid address must have been the rated identity's address at the time of the payment (`rep.grounded.share.v2`). 858 of 638,946 entries (0.134%) at the cutoff of 16 November, 07:00 UTC. The files of 14 October, 20 October and 1 November were built under rule v1 and stay as published.
+- **Found by an outside reader.** nablaz-sdk re-ran the 20 October file row by row and reported 122 of its 816 rows as grounded on a payment that came before the identity. Under v2 the same file keeps 694 rows, 688 with the same payment and 6 with another: the reader's own counts.
+- **`fixtures/check-owner-at-payment.mjs`** reads the owner of an identity at the block of a payment from a public Base node; `fixtures/erc8004-grounded-v2-owner-check-2026-11-16.json` holds the 40 rows it was run on (40 agree).
+
 ## 0.11.3 — 8 November 2026
 
 380 definitions (4 new), re-exported verbatim at 07:27 UTC; checks and test vectors unchanged.
