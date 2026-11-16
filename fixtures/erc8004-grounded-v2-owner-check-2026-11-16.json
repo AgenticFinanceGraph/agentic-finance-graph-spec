@@ -1,0 +1,268 @@
+{
+ "note": "Rows read from a public Base node at the block of each payment, for rule v2 of payment-grounded feedback (16 Nov 2026). Cutoff of the rows: 2026-10-20T21:00:00Z.",
+ "cutoff": "2026-10-20T21:00:00Z",
+ "dropped": [
+  {
+   "agent_id": "106166",
+   "payee": "0x8508331c2e1b1f3ffa89df210e813a5cbb4b85e8",
+   "payment_tx": "0x2d8c3476afd3e975f1186f98bc257b4a5f77ba1d20e0a39fff8ea412311362ad",
+   "payment_at": "2026-10-12T19:28:55.000Z",
+   "identity_minted_at": "2026-10-12T19:29:23.000Z"
+  },
+  {
+   "agent_id": "159380",
+   "payee": "0xb4bc4d693bf2efe161e43c61a6da8e29c5f3cb85",
+   "payment_tx": "0x93dda40a581772d36806d6d561f6415eaa4b53e8fa9108afe0290e448e138e18",
+   "payment_at": "2026-10-16T18:40:09.000Z",
+   "identity_minted_at": "2026-10-16T18:40:45.000Z"
+  },
+  {
+   "agent_id": "45688",
+   "payee": "0xb7f90674ac37658898d16b3f09dff552a0c607ae",
+   "payment_tx": "0x375e445b5c329aae609414b8620b61f28938fc117911cdd900a7ed7b25e692b2",
+   "payment_at": "2026-04-25T01:01:09.000Z",
+   "identity_minted_at": "2026-04-25T01:19:43.000Z"
+  },
+  {
+   "agent_id": "88339",
+   "payee": "0xb6b4a5a4db4ef4e07b6fdf90433cf0a7203e1174",
+   "payment_tx": "0x695291ae64fa52f9cd80e1b8d46869afae9189e72988534bb2c278843dbf735c",
+   "payment_at": "2026-09-16T18:31:41.000Z",
+   "identity_minted_at": "2026-09-16T22:08:53.000Z"
+  },
+  {
+   "agent_id": "88934",
+   "payee": "0xc7393e519ed2f54e7aaa037a2c2a9ce45923ecaa",
+   "payment_tx": "0x1f84cab9cc6407b6725b5223c0c1064633f2f9a8654be3867f67ac9b1ed7a36c",
+   "payment_at": "2026-09-16T19:26:21.000Z",
+   "identity_minted_at": "2026-09-17T18:37:35.000Z"
+  },
+  {
+   "agent_id": "88937",
+   "payee": "0x0a9d31baae2bd8ce642fd9c6e7fed8216890d27d",
+   "payment_tx": "0x94fe8cc9d3e329699e4d679d4852968d2e15a35a51c40d47cc65ba0feb9be346",
+   "payment_at": "2026-09-11T19:30:59.000Z",
+   "identity_minted_at": "2026-09-17T18:39:05.000Z"
+  },
+  {
+   "agent_id": "88973",
+   "payee": "0xdf1d32575350b3e52eda7486ac72dadd33336b60",
+   "payment_tx": "0xd4bf802b218db6412237dd00e017b35a44f081c3b313d19c5d6db21ad6aca1b9",
+   "payment_at": "2026-09-16T18:57:57.000Z",
+   "identity_minted_at": "2026-09-17T18:43:39.000Z"
+  },
+  {
+   "agent_id": "88975",
+   "payee": "0x0137f27ea78fc09bb3948f337989e681610643ca",
+   "payment_tx": "0xa6e3a93991ca6a51ca3758a8a11ca960de7ba51caed790a998cfc57c6554ed58",
+   "payment_at": "2026-09-15T19:28:19.000Z",
+   "identity_minted_at": "2026-09-17T18:44:21.000Z"
+  },
+  {
+   "agent_id": "89104",
+   "payee": "0xac1c3a81c6902c2db4a5cb6d2ea202f13c43d616",
+   "payment_tx": "0x6a637f9ceaeb7762bc29290514918f0a4008cdf540e230366b100efa17817935",
+   "payment_at": "2026-09-14T20:26:59.000Z",
+   "identity_minted_at": "2026-09-17T19:04:31.000Z"
+  },
+  {
+   "agent_id": "89118",
+   "payee": "0x2607662d441e7dab3e2f8d320fe5ad4b7c973fa9",
+   "payment_tx": "0x2252771fd5e2051c9b1924a0b668add0e320f2929d52c6ebc47d8fcb26f978cc",
+   "payment_at": "2026-08-24T19:00:45.000Z",
+   "identity_minted_at": "2026-09-17T19:24:17.000Z"
+  },
+  {
+   "agent_id": "89120",
+   "payee": "0x31ae2fd63e97d4cd987e1f2ab6d73eba69e5e449",
+   "payment_tx": "0xb35332d9eb563af2423d5b4530b095a6f3c5f5b6b7486c7b23a259f3f46b4975",
+   "payment_at": "2026-08-18T18:20:43.000Z",
+   "identity_minted_at": "2026-09-17T19:24:37.000Z"
+  },
+  {
+   "agent_id": "89121",
+   "payee": "0x3ebe967153b232b64fe5cd49fc65c708e454dd43",
+   "payment_tx": "0x7b2e6277bbd9e83b2fc94a5d6892cb973fc1a892fe14561a82da64b5a907649c",
+   "payment_at": "2026-08-24T19:42:39.000Z",
+   "identity_minted_at": "2026-09-17T19:25:43.000Z"
+  },
+  {
+   "agent_id": "89123",
+   "payee": "0x53929c6add8632731da8f74fdbd8fb2e0673d109",
+   "payment_tx": "0x37f3783404209e1b0ed9a103a8552d1c752b4cbc948e2c38542e225ec9ac5191",
+   "payment_at": "2026-08-25T18:08:53.000Z",
+   "identity_minted_at": "2026-09-17T19:26:17.000Z"
+  },
+  {
+   "agent_id": "89338",
+   "payee": "0xb958f4b7b00cf9e6b9bc6ce62321abc49373a567",
+   "payment_tx": "0xd43ac2dc717aded5d929af9df2f88f9306f5be6287592f53ea8004726ca87da5",
+   "payment_at": "2026-08-22T17:39:03.000Z",
+   "identity_minted_at": "2026-09-17T20:28:23.000Z"
+  },
+  {
+   "agent_id": "89340",
+   "payee": "0xdef9fe4503eb137c9838c613585b08b60f537105",
+   "payment_tx": "0x7e3693eabd1596cdf36a7f8ab8ae2e6b7718d54ae567b947b245e4043fd51cc8",
+   "payment_at": "2026-08-18T18:21:39.000Z",
+   "identity_minted_at": "2026-09-17T20:33:31.000Z"
+  },
+  {
+   "agent_id": "91269",
+   "payee": "0x10bc02cbe50c22c6df259a95d15723328835cca8",
+   "payment_tx": "0xf994bb6bd37d03e135097e816615113b0b28e4051c7fe30007d0ab97a211408e",
+   "payment_at": "2026-09-18T19:48:37.000Z",
+   "identity_minted_at": "2026-09-18T19:49:15.000Z"
+  },
+  {
+   "agent_id": "95381",
+   "payee": "0x944ac0084e56dc4c7d2c9e7f7cbe27aa8f80ead5",
+   "payment_tx": "0x8d5e5e20306c87b3f5432f5e4de86b03f7cfd025a4f13a4efd263c5df1b36469",
+   "payment_at": "2026-09-22T19:49:59.000Z",
+   "identity_minted_at": "2026-09-22T19:50:25.000Z"
+  },
+  {
+   "agent_id": "95736",
+   "payee": "0x1c56ac4e1b5dfff90aeec035d3fb13c615bb844d",
+   "payment_tx": "0x454a5cf606659b8917f0e8a07882e469fac449497c1148a76650ee63efc8c43d",
+   "payment_at": "2026-09-25T18:43:03.000Z",
+   "identity_minted_at": "2026-09-25T18:43:33.000Z"
+  },
+  {
+   "agent_id": "96316",
+   "payee": "0xfa32aca4ff10f6882c137d1016839c2bfebaf6a7",
+   "payment_tx": "0xdcc60d93a5b4544597de38ce6e95207353c654564b3d5058ad8e3cca9bb5e12e",
+   "payment_at": "2026-09-29T19:38:05.000Z",
+   "identity_minted_at": "2026-09-29T19:38:31.000Z"
+  },
+  {
+   "agent_id": "98754",
+   "payee": "0xb156bab152ebbfa2c889876074b3b75a2c40860d",
+   "payment_tx": "0xc7cef72561e57a62a8f3502dae7136e898920d80b18ce22a42516a25702d292c",
+   "payment_at": "2026-10-08T19:20:37.000Z",
+   "identity_minted_at": "2026-10-08T19:21:09.000Z"
+  }
+ ],
+ "kept": [
+  {
+   "agent_id": "1380",
+   "payee": "0xf9d1d63f362bbf1ee08ab9acb36fe74afc48d5f1",
+   "payment_tx": "0xcbfe4fa368f5efbc3b13e320ca9fa922d3265750dac8a0e11644fc8cb03a6bac",
+   "payment_at": "2026-09-28T08:17:25.000Z"
+  },
+  {
+   "agent_id": "16849",
+   "payee": "0xe56fce94c0d9635af0ef05f5074d5adcf000daa1",
+   "payment_tx": "0xe74acd91818d36cd0c3a7b66c950eab0c1e0d48a0b280b88b1711a75be6e5e21",
+   "payment_at": "2026-02-12T00:04:07.000Z"
+  },
+  {
+   "agent_id": "17666",
+   "payee": "0xe653804032a2d51cc031795afc601b9b1fd2c375",
+   "payment_tx": "0x9cd2258d562cc19fda71c856bbe8c868c0d43110b429c86adf1d6713c9449287",
+   "payment_at": "2026-03-21T01:05:27.000Z"
+  },
+  {
+   "agent_id": "18645",
+   "payee": "0x52e05c8e45a32eee169639f6d2ca40f8887b5a15",
+   "payment_tx": "0x8e979dcad9f509148d867635434de2fd2e02c2a54dc4215a2514172a7762da95",
+   "payment_at": "2026-02-21T09:15:29.000Z"
+  },
+  {
+   "agent_id": "18818",
+   "payee": "0x914c38fc1aec27912b90609ca82383630d64b5e4",
+   "payment_tx": "0x34aa391674d3a6c26dc417890aec7e89df22f5e2a85e16bac6a81bcea9ac9159",
+   "payment_at": "2026-07-17T23:04:47.000Z"
+  },
+  {
+   "agent_id": "18905",
+   "payee": "0xedc637d4b1bb9069753cc9335942be932083d2d0",
+   "payment_tx": "0xdeceb8b103b4486b392050cc41ee885c266d29a5cea703e8e045c02098165b4a",
+   "payment_at": "2026-08-01T18:08:33.000Z"
+  },
+  {
+   "agent_id": "38388",
+   "payee": "0xe9982d03ccd11769f6d954d8f8b1b821d598a4a2",
+   "payment_tx": "0x77ecf9693751bdc25ef9536b4e30350f8128c48e8997228ea920bb1afc57e974",
+   "payment_at": "2026-05-01T17:02:37.000Z"
+  },
+  {
+   "agent_id": "38635",
+   "payee": "0x91bd5ddd94a8b4555d2bcfc2166daae4276aec58",
+   "payment_tx": "0xce0e67bb6924435b8bcaf28637d4c912f873f13f482dded747602c4845e30663",
+   "payment_at": "2026-05-22T02:19:55.000Z"
+  },
+  {
+   "agent_id": "45250",
+   "payee": "0x93862e5b2b1fa10a01772e7e9ca7cdc7deb5ca25",
+   "payment_tx": "0xf78b2dbc17f062a9472d3bf97e68da9604bc90300f921a57be9917767b105d54",
+   "payment_at": "2026-04-21T22:48:09.000Z"
+  },
+  {
+   "agent_id": "47167",
+   "payee": "0x6c0752c09e7f6fa6526fcdf40e456a159ebb5621",
+   "payment_tx": "0xf40114d4b688ea92c21068ebaad17d2da551d9463660aea22ad57c1defbefda5",
+   "payment_at": "2026-09-28T08:16:57.000Z"
+  },
+  {
+   "agent_id": "51042",
+   "payee": "0xf8dddbb10252bbde51f8c9dad8b74ebad456dda9",
+   "payment_tx": "0x90dfb8394f367d7faf88b41aef6d362f2deab74352339fabba9696c3633926a8",
+   "payment_at": "2026-05-21T06:29:21.000Z"
+  },
+  {
+   "agent_id": "54630",
+   "payee": "0x86fef93fd83bebe802b1259836127ac50f04512b",
+   "payment_tx": "0x56fd9afced94edc5e5dbbc40e6593f39849e2410cabbb72761401b54446c2f98",
+   "payment_at": "2026-06-08T15:33:43.000Z"
+  },
+  {
+   "agent_id": "56447",
+   "payee": "0x482f81dd3436a61419236e240d29ed5cbea47161",
+   "payment_tx": "0x4e1f4bb795fad9928aae733529e814e3832dea1a54961cd86afdeb17286404fe",
+   "payment_at": "2026-08-08T13:09:41.000Z"
+  },
+  {
+   "agent_id": "58517",
+   "payee": "0xaf95b213f44f0177e3a82e2d959524dd1e2a1174",
+   "payment_tx": "0x7bb73c88dce697f03e995a9f1422773e67ba34c265898dbf169b1df4d3667742",
+   "payment_at": "2026-07-10T20:34:53.000Z"
+  },
+  {
+   "agent_id": "58588",
+   "payee": "0x01f90369170c917a2c0e9d26d54c6a3a400984d3",
+   "payment_tx": "0x8921037e4e60b6384df218ca0776878ba0fca32a85e3e10c5f6e03cd635e8684",
+   "payment_at": "2026-08-20T19:25:23.000Z"
+  },
+  {
+   "agent_id": "88339",
+   "payee": "0xb6b4a5a4db4ef4e07b6fdf90433cf0a7203e1174",
+   "payment_tx": "0xcf4aeeff093b96758a7d48301a154d2bb7a9bd7ece8f9cdfe83a030a80e12a08",
+   "payment_at": "2026-09-18T20:04:57.000Z"
+  },
+  {
+   "agent_id": "88968",
+   "payee": "0x975c0a087033034fb532bffce75b4a604bdaf40a",
+   "payment_tx": "0x94c848f4d025ee60efc0e1bae66822e3af0e1946baa6c54a3a7ce14890535fe5",
+   "payment_at": "2026-10-13T19:26:57.000Z"
+  },
+  {
+   "agent_id": "89120",
+   "payee": "0x31ae2fd63e97d4cd987e1f2ab6d73eba69e5e449",
+   "payment_tx": "0x9f43cac83d9344698d9cb639134b74f9a22cc3f0d2bcb3609a52860986ff9636",
+   "payment_at": "2026-10-13T19:17:41.000Z"
+  },
+  {
+   "agent_id": "95735",
+   "payee": "0x92cb873c2d114d6aa847eb110f721da22b5220f7",
+   "payment_tx": "0x162128f4254c028347a76a8c1cd3d6880369c3dcaafd058c140e2107fa32996f",
+   "payment_at": "2026-09-25T18:42:15.000Z"
+  },
+  {
+   "agent_id": "98754",
+   "payee": "0xb156bab152ebbfa2c889876074b3b75a2c40860d",
+   "payment_tx": "0x58f50930127147b8f7b7d7e32d174dba4ecff2fd2ee3202b6327e83499081855",
+   "payment_at": "2026-10-08T19:25:13.000Z"
+  }
+ ]
+}
