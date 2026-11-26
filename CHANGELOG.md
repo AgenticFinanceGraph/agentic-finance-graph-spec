@@ -2,7 +2,10 @@
 
 ## 0.12.0 — 26 November 2026
 
-418 definitions (38 new), re-exported verbatim at 16:55 UTC; checks and test vectors unchanged. SPEC.md describes own positions and left control under version 2.
+421 definitions (41 new), re-exported verbatim at 22:58 UTC; checks and test vectors unchanged. SPEC.md describes own positions and left control under version 2.
+
+- **A Gate policy the owner of a registration pins** (26 Nov): `gate.policy.pin.v1` and `gate.receipt.v3`. While a pin is in force, every Gate answer for the agent is at least as strict as the pinned policy's answer, whatever policy the caller asks with; the receipt names the pin and both decisions.
+- **Copy lag counted once per wallet and copied address, by kind** (26 Nov): `poison.copy_lag.pairs.v1`. Look-alike tokens arrive minutes after the payment they copy and fake-symbol tokens about a day after it; dated notes on `poison.copy_lag.median.v1` and `poison.copy_lag.median.bykind.v1`, which keep being published.
 
 - **Income leaves out money sent back to its payer** (26 Nov, register `cp-2026-11-26-income-leaves-out-loop-receipts`): `income.excluded.loopreceipt.v1` and version 2 of the seven income figures and of the income composition (`income.usd.total.v2`, `income.usd.30d.v2`, `income.events.v2`, `income.actors.v2`, `income.actors.30d.v2`, `income.payers.v2`, `income.netflow.30d.v2`, `income.composition.v2`). The amount left out is a figure of its own, so each earlier figure is the new one plus that amount.
 - **Holdings** (24 and 25 Nov): `treasury.usd.total.v2` sums every ranked wallet's newest reading; `treasury.usd.total.v3` values only tokens on a published list, by address, with Aave debt subtracted. The four shares follow in versions 2 and 3; `treasury.wallets.summed.v1` is the count of wallets in the sum.

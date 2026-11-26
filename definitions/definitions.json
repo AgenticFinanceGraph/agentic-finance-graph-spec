@@ -1,6 +1,6 @@
 {
   "source": "https://agenticfinancegraph.com/api/def",
-  "exported_at": "2026-11-26T16:55:09.080Z",
+  "exported_at": "2026-11-26T22:58:16.746Z",
   "contract": {
     "frozen": "The text of a published definition never changes.",
     "versioning": "A breaking change is a new id ending .v2, never an edit to .v1.",
@@ -8,7 +8,7 @@
     "revisions": "Anything said about a definition after publication is a dated entry in its revisions list; body_sha256 is the hash of the frozen body (status fields excluded), so a reader can check the body never moved.",
     "does_not_assert": "Every definition states what it does NOT claim, because most misuse of a metric is reading in something it never said."
   },
-  "count": 418,
+  "count": 421,
   "definitions": [
     {
       "id": "acp.clients.v1",
@@ -4016,6 +4016,49 @@
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
     },
     {
+      "id": "gate.policy.pin.v1",
+      "title": "A Gate policy pinned to an agent by the owner of its registration",
+      "unit": "per agent: one pinned policy or none; one stored event per pin, replacement or lift",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "from a pin until the agent's next pin event",
+      "definition": "The owner of an agent's registration can pin one policy to the agent. While a pin is in force, the Gate evaluates every check of that agent twice on the same facts: under the policy the caller asks with, and under the pinned policy with the pinned policy's own counted context. The decision is the worse of the two (block > warn > log > allow). The answer carries both decisions, the reasons of each and which of them decided, and its receipt is gate.receipt.v3. Whoever asks can make an answer stricter and can never make it looser. A pin is set, replaced or lifted by a message signed by the wallet that owns the registration on Base at that moment (ownerOf on the ERC-8004 identity registry); the agent's own paying key can do none of these unless it is that owner. A pin over a pin replaces it. Every event is stored, never changed, and written into the signed statement log.",
+      "method": "The message is plain text with fixed lines: this site's name, the action (pin or lift), the agent by chain and registration number, the identity registry's address, the SHA-256 of the policy in canonical form (pin only), a nonce of ours and the time of issue. A nonce is random, bound to the agent and the action, valid for ten minutes and used once. The signature is verified twice. The site verifies it as the Desk sign-in does: a plain key by recovery, a smart wallet by ERC-1271, a smart wallet that is not deployed yet by ERC-6492. The service that stores the event then checks what it can check itself: it recovers a plain key's signer, asks the account's own isValidSignature on two public Base nodes for a deployed smart wallet or a key that has delegated under EIP-7702 (with the inner signature when the wallet wrapped it), and accepts a wallet that is not deployed yet only with a wrapped signature that the site verified. The service reads ownerOf for the registration from the same two nodes at one block, 25 blocks behind the head, and stores nothing unless both name the signer. What can be pinned: one of the named policies (/api/gate/policies), with the limits it has at that moment, or the operator's own policy object; a policy the evaluator does not fully understand is refused. If a later evaluator no longer understands a stored pin, the decision under it is block with the reason pin_not_evaluable. Each event is one stored row with the signed message and the signature, and one record (the event's id, the agent, the action, the policy's SHA-256, the signer, the owner read from the chain, how the signature was verified, the SHA-256 of the message, the time) whose SHA-256 is written into the signed statement log as the leaf publication/1|gate-pin/<event_id>|<sha256>|<time> (agent.statement.log.v1), which the daily Base anchor commits to (anchor.v2). The pin in force is the agent's newest event, in the order in which events were stored, if that event is a pin. At a check, set_by_earlier_owner compares the owner on record in our census of the registry with the owner at the event, and pinned_by_paying_wallet is true when the ledger holds a counted payment of the agent from the wallet that signed the pin. Public at /api/gate/pin?agent=<registration number>: whether a pin is in force, since when, the SHA-256 of the pinned policy, and every event with its record. The body of an operator's own pinned policy is shown only to a Desk session of the wallet that owns the registration at that moment. The rule, eight tests and the rule for shipping were written down on 25 November 2026 at 10:37 UTC, before any code; two amendments of the same day and the changes made to the candidate on 26 November 2026 are recorded with what had been seen at the time. Results: on 340 stored decisions of 30 days and each of the five named policies as the pin, the final decision is the worse of the two in every case (it differs from the decision asked in 0 cases with log-only pinned, 8 with balanced, 15 with recommended, 15 with recommended-v3 and 22 with strict). Without a pin, the code in force and the new code give the same decision, the same reasons and the same receipt body on every stored decision compared (344 decisions and 46 receipt bodies on 26 November 2026). Refused in the tests, with nothing stored: a wallet that does not own the registration; the owner's address with another key's signature; a signature over another agent or another policy; a used or an expired nonce; a change signed by the previous owner after a transfer. Eight submissions of one signed message at the same moment store one event. Eight identical checks sent at once under one reference, asked log-only with recommended pinned ($200 each to a payee never paid before, under a limit of $250 in 168 hours): one allowed, seven blocked by the pin. The time a pin adds to a check: a second evaluation (median 0.02 ms) and one read of our own tables (median 0.4 ms). In force from 26 November 2026, 22:40 UTC. Checked on the live service between 22:40 and 22:42 UTC: the status of a registration without a pin answers that no policy is pinned; a request for a pin message is answered with the message to sign; a correctly signed pin from a key that owns nothing is refused, naming the owner read from Base; a Gate check for an agent without a pin answers as before, with a receipt of version 2.",
+      "excludes": [
+        "Agents without a pin: their answers and receipts are as before (gate.receipt.v2).",
+        "Decisions made before a pin: nothing stored is rewritten.",
+        "The shadow evaluation of gate.context.v3: it answers for the policy asked only."
+      ],
+      "does_not_assert": [
+        "That the agent asks the Gate: an agent that never calls the Gate is not held by a pin.",
+        "That the owner wallet is in the operator's hands: whoever holds that key, or takes the registration, can replace or lift the pin.",
+        "That the pinned policy is strict: a pinned log-only holds nothing.",
+        "That a payment was made or stopped: the Gate is advisory and the client decides."
+      ],
+      "assumptions": [
+        "The wallet that owns the registration is held by the operator and not by the agent the pin is meant to hold.",
+        "The party that signs or accepts the payment asks the Gate and follows its answer."
+      ],
+      "known_gaps": [
+        "Many registrations are owned by the agent's own paying wallet. For those a pin shows intent and no more, and the answer says so (pinned_by_paying_wallet).",
+        "A replaced or lifted pin takes effect at once; there is no waiting time. The public log shows every change.",
+        "A registration that changes hands carries its pin until the new owner changes it. The answer says the pin was set by an earlier owner once our census of the registry holds the transfer, which can take hours.",
+        "The pinned policy's budget and new-payee limits use the context we count (gate.context.v2): a payment the ledger does not hold yet counts only for a caller that sends its reference with every check.",
+        "Anyone can ask about any agent and learn from the answers where a pinned limit lies: the reasons of an answer name a limit that fired.",
+        "One pin per agent: none per payee, per day or per caller.",
+        "Tested on the two public nodes before release: the reading of ownerOf, and the refusal of a correctly signed pin from a key that owns nothing. Tested against stand-in nodes and the documented signature format only: an accepted pin, and the smart-wallet paths (ERC-1271, ERC-6492)."
+      ],
+      "intended_use": "An operator's own limits that the agent, and anyone who talks the agent into something, cannot loosen by asking the Gate with a weaker policy; and a way for a seller or a co-signer to see from the receipt that a payment was checked under limits the operator pinned.",
+      "not_intended_for": "A statement that an agent, a payee or a payment is safe, or a control that stops a payment by itself: the Gate is advisory and never blocks a payment.",
+      "source": "AFG-Pulse intake (lib/gatepin.mjs; lib/gate.mjs gateCheck)",
+      "since": "2026-11-26",
+      "revisions": [],
+      "body_sha256": "93b5f46b8e9f3c54a05e2ce0419223022fae25fc04d3c391250ddb38975022a3",
+      "url": "https://agenticfinancegraph.com/def/gate.policy.pin.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
       "id": "gate.receipt.v1",
       "title": "Gate receipt: the signed record of one check made before a payment",
       "unit": "one receipt per gate check",
@@ -4078,9 +4121,45 @@
       "source": "AFG-Pulse intake (lib/receipt.mjs; lib/gate.mjs policySha256)",
       "since": "2026-11-24",
       "supersedes": "gate.receipt.v1",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-26",
+          "what": "From 22:40 UTC on 26 November 2026 an answer given while a policy is pinned to the agent carries gate.receipt.v3 (gate.policy.pin.v1). An answer for an agent without a pin keeps this version byte for byte, and receipts issued under it stay as issued. See /api/changepoints cp-2026-11-26-gate-policy-can-be-pinned."
+        }
+      ],
       "body_sha256": "86eed5bfa988b36b5c8816f8be3be85f9b49a4083f7b028946eb8d73102b0c8f",
       "url": "https://agenticfinancegraph.com/def/gate.receipt.v2",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "gate.receipt.v3",
+      "title": "Gate receipt for an answer given under a pinned policy",
+      "unit": "one receipt per gate check of an agent with a pin in force",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "the moment of the check (decided_at)",
+      "definition": "For each answer of the Gate given while a policy is pinned to the agent (gate.policy.pin.v1): what a gate.receipt.v2 receipt carries (the decision id, the paying agent's token id, the payee address, the amount in USD, the policy asked by name and by the SHA-256 of its whole body, the reasons, the mode and the time), and in addition the pin (the SHA-256 of the pinned policy, since when it is in force, whether an earlier owner of the registration set it, whether the wallet that pinned it pays for the agent), the decision under the policy asked, the decision under the pinned policy, the final decision (the worse of the two), which of them decided, and the reasons of the pinned policy. Serialised with RFC 8785 (JCS), hashed with SHA-256 and signed with Ed25519 (key afg-pass-2026-10). An answer for an agent without a pin keeps gate.receipt.v2 byte for byte.",
+      "method": "Made by the server at the moment the decision is recorded; a failure to sign never fails the check (the answer then says the receipt is unavailable). The body holds the pinned policy's SHA-256 and never its limits. Stored, returned with the answer, read back at /api/gate/receipt?id=<decision_id>, and logged under the same rules as version 2 (checks made with a Desk session; at most 500 a day). To check: as for version 2 (the SHA-256 of the canonical text, the signature with the key at /.well-known/afg-pass-keys.json, the SHA-256 of the policy asked, and for a logged receipt its place in the log and the Base anchor); then body.decision is the worse of body.decision_asked and body.decision_pinned (block > warn > log > allow), and body.pin.sha256 equals the pin shown at /api/gate/pin?agent=<registration number> and, if the operator gave you the pinned policy, the SHA-256 of that policy in canonical form. Written down with gate.policy.pin.v1 on 25 November 2026, before the code. In the tests a version 3 body signed with a key made for the test verifies, and each of ten changes (the four fields of the pin, the three decisions, which decided, the pin's reasons, the SHA-256 of the policy asked) breaks the signature; the body holds no part of the pinned policy; stored receipts of versions 1 and 2 verify as before with the published key. In force from 26 November 2026, 22:40 UTC.",
+      "excludes": [
+        "Answers for agents without a pin: they keep gate.receipt.v2.",
+        "Receipts issued before 26 November 2026, 22:40 UTC: they stay as issued.",
+        "The facts snapshot and the pinned policy's limits: they stay in our record of the decision and are not part of the receipt."
+      ],
+      "does_not_assert": [
+        "That a payment was made, or that the client followed the answer.",
+        "That the payee or the agent is safe: the Gate is advisory and the client decides.",
+        "That the pinned policy is strict: a pin holds what its policy holds, and no more."
+      ],
+      "assumptions": "The client that keeps a receipt beside a payment is the one that asked for the check. A reader who wants to know the pinned limits asks the operator for the policy and compares its SHA-256.",
+      "known_gaps": "Receipts of anonymous checks are signed but not in the public log, so their time rests on our signature alone. A receipt is not bound to a transaction hash: the payment does not exist yet when the check runs.",
+      "intended_use": "Evidence for an operator, a seller or a co-signer that a payment was checked before it was signed under limits the owner of the registration had pinned, and what the answer was.",
+      "not_intended_for": "Proof that a payment was safe, authorised or made.",
+      "source": "AFG-Pulse intake (lib/receipt.mjs; lib/gatepin.mjs)",
+      "since": "2026-11-26",
+      "revisions": [],
+      "body_sha256": "047e64a7a0374836f424f531f3f05f3574f10b742954f62d700cfef0693158bb",
+      "url": "https://agenticfinancegraph.com/def/gate.receipt.v3",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
@@ -6746,7 +6825,12 @@
       ],
       "source": "AFG-Pulse poisoning watch",
       "since": "2026-11-08",
-      "revisions": [],
+      "revisions": [
+        {
+          "date": "2026-11-26",
+          "what": "From 22:49 UTC on 26 November 2026 the copy lag is also published once per wallet and copied address, by kind of plant (poison.copy_lag.pairs.v1). These figures count every copied payment, so a wallet that paid one address many times weighs as many cases: on 26 November 2026 one plant on one wallet with 1,816 payments to one address took the median from 1,440.4 to 4,407.7 minutes. They are unchanged and keep being published; the figures by kind of poison.copy_lag.pairs.v1 say how soon a copy follows a payment."
+        }
+      ],
       "body_sha256": "973f57a610677b1ee6b3b4ff64faf3e1c6c6ca20fbf53553ab6a7b1aded1f542",
       "url": "https://agenticfinancegraph.com/def/poison.copy_lag.median.bykind.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
@@ -6773,10 +6857,52 @@
         {
           "date": "2026-11-15",
           "what": "Correction of the method text, and a note on reading. The method says block times come from the Base block number at two seconds a block. Base has made a block every 0.2 seconds since block 53,556,127 (5 November 2026, 18:00:01 UTC), and since 6 November the job takes times from that schedule (cp-2026-11-06-base-block-time). On 15 November 2026 the stored time of all 21,035 plants held since 27 October and of all 1,881,666 payments held since 23 October equalled the time of its block. Reading: this median runs over two kinds of plant with very different speeds, look-alike tokens within minutes and fake symbols hours to days later, so it moves by hundreds of minutes when the mix shifts. It has stood at 1,440 minutes since 11 November, when more than half of the copied payments (909 of 1,732) had a lag of a day or more and one planter's plants land one day after the payment to the minute. The medians by kind (poison.copy_lag.median.bykind.v1) are the figures to read."
+        },
+        {
+          "date": "2026-11-26",
+          "what": "From 22:49 UTC on 26 November 2026 the copy lag is also published once per wallet and copied address, by kind of plant (poison.copy_lag.pairs.v1). This figure counts every copied payment, so a wallet that paid one address many times weighs as many cases: on 26 November 2026 one plant on one wallet with 1,816 payments to one address took the median from 1,440.4 to 4,407.7 minutes. It is unchanged and keeps being published; the figures by kind of poison.copy_lag.pairs.v1 say how soon a copy follows a payment."
         }
       ],
       "body_sha256": "45485947bfbec8176138b2715221430c6fee564c3ac9ee1176c0dc6685a6acd7",
       "url": "https://agenticfinancegraph.com/def/poison.copy_lag.median.v1",
+      "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
+    },
+    {
+      "id": "poison.copy_lag.pairs.v1",
+      "title": "Copy lag of address-poisoning plants, counted once per wallet and copied address, by kind",
+      "unit": "minutes (medians); pairs (counts)",
+      "chain_set": "eip155:8453 (Base)",
+      "window": "plants of the last 14 days; the copied payment up to 7 days before its plant",
+      "definition": "For the counted plants of the last 14 days (the rule of poison.copy_lag.median.v1: a fake-symbol token, or a zero-value transfer or a look-alike token whose recipient matches a paid address on its first four and last four characters, or first three and last four), the copied payment of a plant on wallet W to an address L is W's newest payment strictly before the plant to an address A that is not L and has the same first four and last four characters as L, within 7 days. Each pair of wallet and copied address (W, A) is one case: its first plant in the 14 days. The lag is the plant's time less the copied payment's time, in minutes. Published: the median lag and the number of pairs, over all pairs and by the kind of the pair's first plant where at least five pairs have that kind.",
+      "method": "One statement in the poisoning watch run (hourly), beside the figures of poison.copy_lag.median.v1, which are unchanged. Two kinds a day apart: look-alike tokens arrive minutes after the payment they copy and fake-symbol tokens about a day after it, so the median over all pairs sits at one speed or the other according to which kind has more pairs; the medians by kind are the figures to read. Written down before it was measured (25 and 26 November 2026, with forecasts, five tests and one amendment kept as written): the lateral join and a window function gave the same copied payment for 12,339 of 12,340 plants of 30 days, the one that differed being a payment in the same second as its plant, which the rule does not take (amendment 1); 8 of 8 pairs fixed by position were found on two public Base nodes with the stored addresses and lags; a constructed wallet with 1,000 payments to one address and one plant makes one case; replayed over 16 days the fake-symbol median was 1,440.4 to 1,455.2 minutes on 15 days and the look-alike-token median 2.9 to 5.8 minutes on 15 days. First written on 26 November 2026 at 22:49 UTC: 624 pairs; look-alike token 5.0 minutes over 226 pairs, fake-symbol 1,441.1 minutes over 397 pairs; zero-value under the five pairs needed; over all pairs 1,440.2 minutes. Metric keys: poison_copy_lag_pairs_median_min, poison_copy_lag_pairs, poison_copy_lag_pairs_median_min_fake_symbol, poison_copy_lag_pairs_fake_symbol, poison_copy_lag_pairs_median_min_lookalike_token, poison_copy_lag_pairs_lookalike_token, poison_copy_lag_pairs_median_min_zero_value, poison_copy_lag_pairs_zero_value.",
+      "excludes": [
+        "Plants with no payment from the wallet to an address of the same pattern in the 7 days before.",
+        "A payment in the same second as its plant (the order inside one second is not known from stored times).",
+        "Kinds with fewer than five pairs, for the figures by kind."
+      ],
+      "does_not_assert": [
+        "How many payments a plant copies: that is what poison.copy_lag.median.v1 weights, and it stays published.",
+        "That a wallet was harmed: a plant is a transfer into the wallet's history; losses are poison.losses.v2.",
+        "Who sent a plant, or that one sender sends one kind."
+      ],
+      "assumptions": [
+        "A plant copies the newest earlier payment of its pattern; an older payment of the same pattern is not looked at."
+      ],
+      "known_gaps": [
+        "Plants whose pattern matches an address the wallet paid more than 7 days before are not timed.",
+        "Zero-value plants are few; their figure is written only when five pairs exist."
+      ],
+      "intended_use": "How soon after a payment a look-alike of the payee's address arrives, per kind, so a check before paying knows how long a copy can sit in the history.",
+      "not_intended_for": [
+        "Rating an agent or the people behind it."
+      ],
+      "source": "AFG-Pulse poisoning watch (poison-pairs.mjs)",
+      "since": "2026-11-26",
+      "revisions": [],
+      "body_sha256": "4c93a7ebad92d769f9020b0b4adf79c89045f28854b3b14ba20d0bed440a05ea",
+      "url": "https://agenticfinancegraph.com/def/poison.copy_lag.pairs.v1",
       "ladder": "https://agenticfinancegraph.com/ai-agent-liveness-methodology-l0-l9-ladder",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "Agentic Finance Graph — https://agenticfinancegraph.com"
