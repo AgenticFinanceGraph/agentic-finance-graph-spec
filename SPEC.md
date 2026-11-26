@@ -1,6 +1,6 @@
 # The Agentic Finance Graph accounting specification
 
-**Version 0.11.3 (draft), 8 November 2026.** Licence: CC BY 4.0.
+**Version 0.12.0 (draft), 26 November 2026.** Licence: CC BY 4.0.
 
 This document states how Agentic Finance Graph counts money held and spent by AI agents: which transfers count as an agent paying someone, which are excluded and why, how an agent is ranked, and how the counting is checked. It is written so that anyone can implement it from public chain data and compare their numbers with ours. Where this document and a definition in [`definitions/definitions.json`](definitions/definitions.json) disagree, the definition wins; definitions are frozen once published (a breaking change is a new id ending `.v2`, never an edit to `.v1`).
 
@@ -47,8 +47,8 @@ The counted set is further split by reading each receipt:
 
 $$C = C_{own} \;\cup\; C_{left}$$
 
-- **Own positions $C_{own}$** (`pay.usd.ownpositions.v1`). The recipient is labelled lending or yield vault, and in the same transaction the payer receives the position's claim token: a `Transfer` to the payer from the zero address, or from the recipient contract of its own token. The money went into a position the payer still holds.
-- **Left control $C_{left}$** (`pay.usd.leftcontrol.v1`). $C \setminus C_{own}$: what left the paying wallet's control on Base.
+- **Own positions $C_{own}$** (`pay.usd.ownpositions.v2`, from 23 November 2026). The recipient is a lending market or vault, and in the same transaction either the payer is minted the position's claim token or is sent the market's own token, or the market books the supply in the payer's name without a token (a `Supply` or `SupplyCollateral` event of Morpho Blue whose `onBehalf` is the paying wallet, for an amount within 1% of the payment). The money went into a position the payer still holds. Before 23 November only the claim token counted (`pay.usd.ownpositions.v1`, now superseded).
+- **Left control $C_{left}$** (`pay.usd.leftcontrol.v2`). $C \setminus C_{own}$: what left the paying wallet's control on Base (`pay.usd.leftcontrol.v1` until 23 November 2026, now superseded).
 
 Every excluded amount is published as its own metric, so each exclusion can be audited, not just trusted. The three shares of $O$ always add up to 100%.
 
@@ -136,4 +136,4 @@ A signed tree head (size, root hash, time; Ed25519, `afg-statement-log:v1:<size>
 
 ## 10. Citing
 
-Agentic Finance Graph, *Accounting specification for machine money*, v0.11.3, 8 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.
+Agentic Finance Graph, *Accounting specification for machine money*, v0.12.0, 26 November 2026, https://agenticfinancegraph.com. Live figures: https://agenticfinancegraph.com/api/state. Definitions: https://agenticfinancegraph.com/api/def.
